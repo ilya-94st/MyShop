@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MyShop</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="myshop">MyShop</string>
+    <string name="checkedName">enter name</string>
+    <string name="checkedLatName">enter last name</string>
+    <string name="checkedPassword">enter password</string>
+    <string name="checkedConfirm">enter confirm</string>
+    <string name="checkedAgree">enter agree</string>
+    <string name="checkedEmail">enter email</string>
+    <string name="checkedMobile">enter mobile number</string>
+    <string name="checkedEmailCorrect">enter the correct email</string>
+    <string name="forgot_text">Enter your username and e-mail address we`ll \n send you email to reset your \n password</string>
+    <string name="read_storage_permission_dined">\"Oops, you just denied the permission storage. You can also allow it from settings \"</string>
+</resources>

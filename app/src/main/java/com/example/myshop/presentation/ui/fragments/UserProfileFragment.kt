@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
-import com.example.myshop.UserProfileFragmentArgs
 import com.example.myshop.common.Constants
 import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentUserProfileBinding

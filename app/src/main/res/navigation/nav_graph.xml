@@ -45,12 +45,12 @@
         tools:layout="@layout/fragment_registration" />
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.myshop.MainFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/userProfileFragment"
-        android:name="com.example.myshop.UserProfileFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.UserProfileFragment"
         android:label="fragment_user_profile"
         tools:layout="@layout/fragment_user_profile" >
         <argument
@@ -64,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.example.myshop.ForgotPasswordFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
 </navigation>

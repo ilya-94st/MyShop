@@ -3,7 +3,17 @@ package com.example.myshop.data
 import android.net.Uri
 import android.util.Log
 import androidx.fragment.app.Fragment
+import com.example.myshop.common.Constants
+import com.example.myshop.domain.models.Users
+import com.example.myshop.presentation.ui.fragments.LoginFragment
+import com.example.myshop.presentation.ui.fragments.RegistrationFragment
+import com.example.myshop.presentation.ui.fragments.UserProfileFragment
+import com.example.myshop.presentation.ui.prefs
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class FireStore {
 

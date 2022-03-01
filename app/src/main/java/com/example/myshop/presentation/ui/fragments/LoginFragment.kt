@@ -7,8 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.example.myshop.R
+import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentLoginBinding
+import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckLogin
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.LoginFactoryViewModel

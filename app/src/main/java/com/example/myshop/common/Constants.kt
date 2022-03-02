@@ -20,11 +20,9 @@ object Constants {
 
     const val MOBILE = "mobile"
     const val GENDER = "gender"
+    const val IMAGE ="image"
+    const val COMPLETE_PROFILE = "profileCompleted"
 
     const val USER_PROFILE_IMAGE = "User_Profile_Image"
 
-    fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
-
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
-    }
 }

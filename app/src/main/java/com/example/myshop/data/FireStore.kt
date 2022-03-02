@@ -2,6 +2,7 @@ package com.example.myshop.data
 
 import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.fragment.app.Fragment
 import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Users
@@ -98,7 +99,7 @@ class FireStore {
     fun upLoadImageToCloudStorage(fragment: Fragment, imageFileUri: Uri?) {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
             Constants.USER_PROFILE_IMAGE + System.currentTimeMillis() + "."
-                    + Constants.getFileExtension(
+                    + getFileExtension(
                 fragment, imageFileUri
             )
         )
@@ -124,5 +125,10 @@ class FireStore {
             }
             Log.e(fragment.activity?.javaClass?.simpleName, execption.message, execption)
         }
+    }
+
+    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
+
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 }

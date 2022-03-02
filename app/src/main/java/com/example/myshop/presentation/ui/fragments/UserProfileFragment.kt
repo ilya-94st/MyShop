@@ -6,10 +6,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -32,6 +30,7 @@ import java.io.IOException
 class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPermissions.PermissionCallbacks  {
     private val args: UserProfileFragmentArgs by navArgs()
     private var mSelectedImageFileUri: Uri? = null
+    private var mUserProfileImageURL: String = ""
     private lateinit var glideLoader: GlideLoader
     private lateinit var checkMobile: CheckMobile
     private lateinit var userProfileFactory: UserProfileFactory
@@ -69,43 +68,54 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                 }
                 is UserProfileViewModel.UserProfileInEvent.Success -> {
                     showProgressDialog("please wait ")
-
-                    FireStore().upLoadImageToCloudStorage(this, mSelectedImageFileUri)
-
-                    //   val userHasMap = HashMap<String, Any>()
-
-                    //  val mobileNumber = binding.etMobile.text.toString().trim { it <= ' ' }
-
-                    // val gender = if(binding.rbMale.isChecked) {
-                    //     Constants.MALE
-                    //  } else {
-                    //     Constants.FEMALE
-                    //  }
-
-                    //  if (mobileNumber.isNotEmpty()) {
-                    //      userHasMap[Constants.MOBILE] = mobileNumber.toLong()
-                    //   }
-
-                    //     userHasMap[Constants.GENDER] = gender
-
-                    //      showProgressDialog("please wait")
-
-                    //        FireStore().updateUserProfileData(this, userHasMap)
+                    if(mSelectedImageFileUri != null) {
+                        FireStore().upLoadImageToCloudStorage(this, mSelectedImageFileUri)
+                    } else {
+                        updateProfileUserDetails()
+                    }
                 }
+                else -> Unit
             }
         }
     }
 
-    fun imageUploadSuccess(imageUri: String) {
-        hideProgressDialog()
-        toast("Your image is uploaded successfully. Image URL is $imageUri")
+    private fun updateProfileUserDetails() {
+        val userHasMap = HashMap<String, Any>()
+
+        val mobileNumber = binding.etMobile.text.toString().trim { it <= ' ' }
+
+        val gender = if(binding.rbMale.isChecked) {
+            Constants.MALE
+        } else {
+            Constants.FEMALE
+        }
+
+        if (mobileNumber.isNotEmpty()) {
+            userHasMap[Constants.MOBILE] = mobileNumber.toLong()
+        }
+
+        if(mUserProfileImageURL.isNotEmpty()) {
+            userHasMap[Constants.IMAGE] = mUserProfileImageURL
+        }
+
+        userHasMap[Constants.GENDER] = gender
+
+        userHasMap[Constants.COMPLETE_PROFILE] = 1
+
+        FireStore().updateUserProfileData(this, userHasMap)
+    }
+
+    fun imageUploadSuccess(imageURL: String) {
+      //  hideProgressDialog()
+       mUserProfileImageURL = imageURL
+        updateProfileUserDetails()
     }
 
     fun userProfileUpdateSuccess() {
         hideProgressDialog()
         toast("success")
 
-        findNavController().navigate(R.id.action_userProfileFragment_to_mainFragment)
+        findNavController().navigate(R.id.action_userProfileFragment_to_dashBoardFragment)
     }
 
     private fun getUsers() {

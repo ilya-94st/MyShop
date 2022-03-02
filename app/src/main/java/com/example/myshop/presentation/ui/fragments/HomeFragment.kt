@@ -6,17 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.example.myshop.databinding.FragmentMainBinding
+import com.example.myshop.databinding.FragmentHomeBinding
 import com.example.myshop.presentation.base.BaseFragment
-import com.example.myshop.presentation.ui.prefs
 
-class MainFragment : BaseFragment<FragmentMainBinding>() {
+
+class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
-        get() = FragmentMainBinding::inflate
+        get() = FragmentHomeBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.textView2.text = prefs.name
     }
 }

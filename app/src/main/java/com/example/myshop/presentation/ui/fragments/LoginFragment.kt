@@ -74,11 +74,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     fun userLoggedInSuccessful(user: Users) {
         hideProgressDialog()
-        Log.i("First Name", user.firstName)
-        Log.i("Last Name", user.lastName)
-        Log.i("Email", user.email)
 
-        if(user.profileCommitted == 0) {
+        if(user.profileCompleted == 0) {
             // if user profile is incomplete then launch the UserProfileFragment
             val bundle = Bundle().apply {
                 putSerializable("users", user)
@@ -86,7 +83,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             findNavController().navigate(R.id.action_loginFragment_to_userProfileFragment, bundle)
         } else {
             // Redirect the user to Main screen after log in
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
         }
     }
 

@@ -8,6 +8,7 @@ import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.ui.fragments.LoginFragment
 import com.example.myshop.presentation.ui.fragments.RegistrationFragment
+import com.example.myshop.presentation.ui.fragments.SettingsFragment
 import com.example.myshop.presentation.ui.fragments.UserProfileFragment
 import com.example.myshop.presentation.ui.prefs
 import com.google.firebase.auth.FirebaseAuth
@@ -61,6 +62,9 @@ class FireStore {
                     is LoginFragment -> {
                         fragment.userLoggedInSuccessful(user)
                     }
+                    is SettingsFragment -> {
+                        fragment.userDetailsSuccessful(user)
+                    }
                 }
             }.addOnFailureListener {
                     e->
@@ -68,6 +72,10 @@ class FireStore {
                     is LoginFragment -> {
                         fragment.hideProgressDialog()
                     }
+                    is SettingsFragment -> {
+                        fragment.hideProgressDialog()
+                    }
+
                 }
                 Log.e("registration2","Error while registering the user $e")
             }

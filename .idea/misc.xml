@@ -5,6 +5,13 @@
       <map>
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/checked_button.xml" value="0.2265" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/empty_oval_button.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/empty_view.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/ic_baseline_dashboard_24.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/ic_baseline_shop_24.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/item_border.xml" value="0.2265" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/item_grey_border.xml" value="0.2265" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/oval_button.xml" value="0.2265" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/drawable/screen.xml" value="0.2265" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/font/aguafina_script.xml" value="0.284375" />
@@ -16,9 +23,13 @@
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_login.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_main.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_notification.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_orders.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_products.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_registration.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_settings.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_splash.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_user_profile.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/menu/dash_board_settings.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/menu/menu_shop.xml" value="0.25416666666666665" />
       </map>
     </option>

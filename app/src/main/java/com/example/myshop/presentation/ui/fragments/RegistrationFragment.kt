@@ -114,7 +114,7 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
                             FireStore().registerUser(this@RegistrationFragment, user)
 
                             //    FirebaseAuth.getInstance().signOut()
-                            //     findNavController().popBackStack()
+                                 findNavController().popBackStack()
 
                         } else {
                             hideProgressDialog()

@@ -20,6 +20,7 @@ abstract class BaseFragment<out T : ViewBinding> : Fragment() {
     private var _binding: ViewBinding? = null
     private lateinit var mProgressDialog: Dialog
 
+
     @Suppress("UNCHECKED_CAST")
     protected val binding: T
         get() = _binding as T
@@ -76,5 +77,4 @@ abstract class BaseFragment<out T : ViewBinding> : Fragment() {
     fun toast(message: String) {
         requireContext().toast(message)
     }
-
 }

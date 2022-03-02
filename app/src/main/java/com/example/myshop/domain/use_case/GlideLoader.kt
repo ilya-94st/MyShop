@@ -8,9 +8,9 @@ import java.io.IOException
 
 class GlideLoader {
 
-    fun loadUserPicture(imageUri: Uri, imageView: ImageView, context: Context) {
+    fun loadUserPicture(image: Any, imageView: ImageView, context: Context) {
         try {
-            Glide.with(context).load(imageUri)
+            Glide.with(context).load(image)
                 .centerCrop()
                 .into(imageView)
         } catch (e: IOException) {

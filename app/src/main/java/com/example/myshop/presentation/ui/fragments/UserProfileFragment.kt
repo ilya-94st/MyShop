@@ -80,9 +80,21 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     }
 
     private fun updateProfileUserDetails() {
+        val users = args.users
+
         val userHasMap = HashMap<String, Any>()
 
         val mobileNumber = binding.etMobile.text.toString().trim { it <= ' ' }
+
+        val firstName = binding.etFirstName.text.toString().trim { it <= ' ' }
+        if(firstName != users.firstName) {
+            userHasMap[Constants.FIRST_NAME] = firstName
+        }
+
+        val lastName = binding.etLastName.text.toString().trim { it <= ' ' }
+        if(lastName != users.lastName) {
+            userHasMap[Constants.LAST_NAME] = lastName
+        }
 
         val gender = if(binding.rbMale.isChecked) {
             Constants.MALE
@@ -90,8 +102,12 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
             Constants.FEMALE
         }
 
-        if (mobileNumber.isNotEmpty()) {
+        if (mobileNumber.isNotEmpty() && mobileNumber != users.mobile.toString()) {
             userHasMap[Constants.MOBILE] = mobileNumber.toLong()
+        }
+
+        if (gender.isNotEmpty() && gender != users.gender) {
+            userHasMap[Constants.GENDER] = gender
         }
 
         if(mUserProfileImageURL.isNotEmpty()) {
@@ -120,14 +136,38 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
     private fun getUsers() {
         val users = args.users
-        binding.etFirstName.isEnabled = false
-        binding.etFirstName.setText(users.firstName)
 
-        binding.etLastName.isEnabled = false
+        binding.etFirstName.setText(users.firstName)
         binding.etLastName.setText(users.lastName)
 
         binding.etEmailID.isEnabled = false
         binding.etEmailID.setText(users.email)
+
+        if(users.profileCompleted == 0) {
+            binding.tvTitle.text = requireContext().getString(R.string.completed_profile)
+
+            binding.etFirstName.isEnabled = false
+
+            binding.etLastName.isEnabled = false
+
+
+        } else {
+            binding.tvTitle.text = requireContext().getString(R.string.exit_profile)
+            glideLoader.loadUserPicture(users.image, binding.ivUserPhoto, requireContext())
+
+            binding.etEmailID.isEnabled = false
+            binding.etEmailID.setText(users.email)
+
+            if(users.mobile != 0L) {
+                binding.etMobile.setText(users.mobile.toString())
+            }
+
+            if(users.gender == Constants.MALE) {
+                binding.rbMale.isChecked = true
+            } else {
+                binding.rbFemale.isChecked = true
+            }
+        }
     }
 
     private fun showImageChooser() {

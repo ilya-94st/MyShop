@@ -14,4 +14,6 @@
     <string name="forgot_text">Enter your username and e-mail address we`ll \n send you email to reset your \n password</string>
     <string name="read_storage_permission_dined">\"Oops, you just denied the permission storage. You can also allow it from settings \"</string>
     <string name="settings">Settings</string>
+    <string name="completed_profile">completed profile</string>
+    <string name="exit_profile">exit profile</string>
 </resources>

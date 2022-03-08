@@ -1,28 +1,19 @@
 package com.example.myshop.presentation.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
-import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentLoginBinding
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckLogin
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.LoginFactoryViewModel
 import com.example.myshop.presentation.viewmodels.LoginViewModel
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
+
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     private lateinit var viewModel: LoginViewModel
@@ -53,7 +44,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         viewModel.loginEvent.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is LoginViewModel.LoginInEvent.Success -> {
-                    logInRegisterUser()
+                    viewModel.logInRegisterUser(this@LoginFragment, binding.etEmail.text.toString(), binding.etPassword.text.toString())
                 }
                 is LoginViewModel.LoginInEvent.ErrorLoginIn -> {
                     errorSnackBar(event.error, true)
@@ -84,30 +75,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         } else {
             // Redirect the user to Main screen after log in
             findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
-        }
-    }
-
-    private fun logInRegisterUser() {
-        val email = binding.etEmail.text.toString().trim { it <= ' ' }
-        val password = binding.etPassword.text.toString().trim { it <= ' ' }
-
-        showProgressDialog("Please wait ...")
-
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main){
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-
-                        //  hideProgressDialog()
-
-                        if (task.isSuccessful) {
-                            FireStore().getUsersDetails(this@LoginFragment)
-                        } else {
-                            hideProgressDialog()
-                            errorSnackBar(task.exception!!.message.toString(), true)
-                        }
-                    }.await()
-            }
         }
     }
 }

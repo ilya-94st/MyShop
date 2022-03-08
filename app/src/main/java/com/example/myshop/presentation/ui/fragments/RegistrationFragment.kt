@@ -84,9 +84,6 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
         }
     }
 
-
-
-
     private fun registerUser() {
         val email = binding.etEmailID.text.toString().trim { it <= ' ' }
         val password = binding.etPassword.text.toString().trim { it <= ' ' }
@@ -130,7 +127,4 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
 
         toast("You are registered successfully")
     }
-
-
-
 }

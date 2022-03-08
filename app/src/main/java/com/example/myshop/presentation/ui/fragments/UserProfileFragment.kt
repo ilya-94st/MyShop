@@ -18,7 +18,7 @@ import com.example.myshop.R
 import com.example.myshop.common.Constants
 import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentUserProfileBinding
-import com.example.myshop.domain.use_case.CheckMobile
+import com.example.myshop.domain.use_case.GetUserProfile
 import com.example.myshop.domain.use_case.GlideLoader
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.UserProfileFactory
@@ -32,7 +32,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProfileImageURL: String = ""
     private lateinit var glideLoader: GlideLoader
-    private lateinit var checkMobile: CheckMobile
+    private lateinit var getUserProfile: GetUserProfile
     private lateinit var userProfileFactory: UserProfileFactory
     private lateinit var viewModel: UserProfileViewModel
 
@@ -44,8 +44,8 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         glideLoader = GlideLoader()
-        checkMobile = CheckMobile()
-        userProfileFactory = UserProfileFactory(checkMobile)
+        getUserProfile = GetUserProfile()
+        userProfileFactory = UserProfileFactory(getUserProfile)
         viewModel = ViewModelProvider(this, userProfileFactory).get(UserProfileViewModel::class.java)
         changeColorRadioGroup()
         getUsers()
@@ -69,9 +69,11 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                 is UserProfileViewModel.UserProfileInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if(mSelectedImageFileUri != null) {
-                        FireStore().upLoadImageToCloudStorage(this, mSelectedImageFileUri)
+                        FireStore().upLoadImageToCloudStorage(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
                     } else {
-                        updateProfileUserDetails()
+                       viewModel.updateProfileUserDetails(this, args.users, binding.etMobile.text.toString(),
+                       binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
+                           )
                     }
                 }
                 else -> Unit
@@ -79,52 +81,12 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         }
     }
 
-    private fun updateProfileUserDetails() {
-        val users = args.users
-
-        val userHasMap = HashMap<String, Any>()
-
-        val mobileNumber = binding.etMobile.text.toString().trim { it <= ' ' }
-
-        val firstName = binding.etFirstName.text.toString().trim { it <= ' ' }
-        if(firstName != users.firstName) {
-            userHasMap[Constants.FIRST_NAME] = firstName
-        }
-
-        val lastName = binding.etLastName.text.toString().trim { it <= ' ' }
-        if(lastName != users.lastName) {
-            userHasMap[Constants.LAST_NAME] = lastName
-        }
-
-        val gender = if(binding.rbMale.isChecked) {
-            Constants.MALE
-        } else {
-            Constants.FEMALE
-        }
-
-        if (mobileNumber.isNotEmpty() && mobileNumber != users.mobile.toString()) {
-            userHasMap[Constants.MOBILE] = mobileNumber.toLong()
-        }
-
-        if (gender.isNotEmpty() && gender != users.gender) {
-            userHasMap[Constants.GENDER] = gender
-        }
-
-        if(mUserProfileImageURL.isNotEmpty()) {
-            userHasMap[Constants.IMAGE] = mUserProfileImageURL
-        }
-
-        userHasMap[Constants.GENDER] = gender
-
-        userHasMap[Constants.COMPLETE_PROFILE] = 1
-
-        FireStore().updateUserProfileData(this, userHasMap)
-    }
-
     fun imageUploadSuccess(imageURL: String) {
       //  hideProgressDialog()
        mUserProfileImageURL = imageURL
-        updateProfileUserDetails()
+        viewModel.updateProfileUserDetails(this, args.users, binding.etMobile.text.toString(),
+            binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
+        )
     }
 
     fun userProfileUpdateSuccess() {
@@ -227,7 +189,6 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults ,this)
     }
-
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun changeColorRadioGroup() {

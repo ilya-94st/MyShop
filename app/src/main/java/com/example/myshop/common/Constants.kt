@@ -1,13 +1,11 @@
 package com.example.myshop.common
 
 import android.content.Context
-import android.net.Uri
-import android.webkit.MimeTypeMap
-import androidx.fragment.app.Fragment
 import pub.devrel.easypermissions.EasyPermissions
 
 object Constants {
     const val USERS = "users"
+    const val PRODUCTS = "products"
 
     const val READ_STORAGE_PERMISSION_CODE = 2
 
@@ -27,5 +25,11 @@ object Constants {
     const val COMPLETE_PROFILE = "profileCompleted"
 
     const val USER_PROFILE_IMAGE = "User_Profile_Image"
+    const val USER_PRODUCTS_IMAGES = "USER_Products_Images"
 
+    const val TITLE = "title"
+    const val PRICE = "price"
+    const val DESCRIPTION = "description"
+    const val QUALITY = "quality"
+    const val IMAGE_PRODUCTS = "image_products"
 }

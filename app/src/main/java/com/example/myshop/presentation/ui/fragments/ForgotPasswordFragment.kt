@@ -1,10 +1,8 @@
 package com.example.myshop.presentation.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,13 +13,7 @@ import com.example.myshop.domain.use_case.CheckForgotPassword
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.ForgotPasswordFactoryViewModel
 import com.example.myshop.presentation.viewmodels.ForgotPasswordViewModel
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
     private lateinit var viewModel: ForgotPasswordViewModel
@@ -50,7 +42,7 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
                     event->
                 when(event) {
                     is ForgotPasswordViewModel.ForgotPasswordInEvent.Success -> {
-                        checkSendPasswordResetEmail()
+                        viewModel.checkSendPasswordResetEmail(this@ForgotPasswordFragment, binding.etEmail.text.toString())
                     }
                     is ForgotPasswordViewModel.ForgotPasswordInEvent.ErrorForgotPasswordIn -> {
                         errorSnackBar(event.error, true)
@@ -61,30 +53,8 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
                             binding.etEmail.error = event.error
                         }
                     }
+                    else -> Unit
                 }
-            }
-        }
-    }
-
-    private fun checkSendPasswordResetEmail() {
-        showProgressDialog("Please wait ...")
-
-        val email = binding.etEmail.text.toString().trim { it <= ' ' }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main){
-                FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                    .addOnCompleteListener { task ->
-
-                        hideProgressDialog()
-
-                        if (task.isSuccessful) {
-                            errorSnackBar("You are logged successfully", false)
-                            findNavController().popBackStack()
-                        } else {
-                            errorSnackBar(task.exception!!.message.toString(), true)
-                        }
-                    }.await()
             }
         }
     }

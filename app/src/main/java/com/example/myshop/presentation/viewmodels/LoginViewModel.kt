@@ -3,13 +3,20 @@ package com.example.myshop.presentation.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.use_case.CheckLogin
+import com.example.myshop.presentation.ui.fragments.LoginFragment
+import kotlinx.coroutines.launch
 
 class LoginViewModel(private val checkLogin: CheckLogin): ViewModel() {
     private val _loginEvent = MutableLiveData<LoginInEvent>(LoginInEvent.Empty)
 
     val loginEvent: LiveData<LoginInEvent> = _loginEvent
 
+    fun logInRegisterUser(fragment: LoginFragment, etEmail :String, etPassword: String) =
+        viewModelScope.launch {
+            checkLogin.logInRegisterUser(fragment, etEmail, etPassword)
+        }
 
     fun validLoginDetails(etEmail: String, etPassword: String): Boolean {
         return when {

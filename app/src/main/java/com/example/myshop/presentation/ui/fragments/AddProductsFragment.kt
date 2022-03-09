@@ -12,11 +12,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.common.Constants
-import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentAddProductsBinding
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.use_case.AddProducts
-import com.example.myshop.domain.use_case.GlideLoader
+import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.ProductFactory
 import com.example.myshop.presentation.viewmodels.ProductViewModel
@@ -31,14 +30,14 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
 
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProductImageURL: String = ""
-    private lateinit var glideLoader: GlideLoader
+    private lateinit var imageLoader: ImageLoader
     private lateinit var addProducts: AddProducts
     private lateinit var  viewModel: ProductViewModel
     private lateinit var productFactory: ProductFactory
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        glideLoader = GlideLoader()
+        imageLoader = ImageLoader()
         addProducts = AddProducts()
         productFactory = ProductFactory(addProducts)
         viewModel = ViewModelProvider(this, productFactory).get(ProductViewModel::class.java)
@@ -59,7 +58,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                 is ProductViewModel.ProductInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if (mSelectedImageFileUri != null) {
-                        FireStore().upLoadImageToCloudStorage(this, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
+                        imageLoader.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
                     } else {
                         val title = binding.etTitle.text.toString()
                         val price = binding.etPrice.text.toString()
@@ -102,7 +101,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        glideLoader.loadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
+                        imageLoader.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")

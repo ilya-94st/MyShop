@@ -1,18 +1,18 @@
 package com.example.myshop.presentation.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.use_case.CheckForgotPassword
 import com.example.myshop.presentation.ui.fragments.ForgotPasswordFragment
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ForgotPasswordViewModel(private  val checkForgotPassword: CheckForgotPassword): ViewModel() {
 
-    private val _emailEvent = MutableStateFlow<ForgotPasswordInEvent>(ForgotPasswordInEvent.Empty)
+    private val _emailEvent = MutableLiveData<ForgotPasswordInEvent>(ForgotPasswordInEvent.Empty)
 
-    val emailEvent: StateFlow<ForgotPasswordInEvent> = _emailEvent
+    val emailEvent: LiveData<ForgotPasswordInEvent> = _emailEvent
 
     fun checkSendPasswordResetEmail(fragment: ForgotPasswordFragment, etEmail: String)
     = viewModelScope.launch { checkForgotPassword.checkSendPasswordResetEmail(fragment, etEmail) }

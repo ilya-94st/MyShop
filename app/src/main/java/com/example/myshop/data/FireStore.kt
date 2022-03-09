@@ -25,7 +25,9 @@ import java.io.IOException
 class FireStore {
 
     private val fireStore = FirebaseFirestore.getInstance()
-    private lateinit var arrayList: ArrayList<Products>
+    private lateinit var listProducts: ArrayList<Products>
+    private lateinit var listAllProducts: ArrayList<Products>
+
 
     fun registerUser(registrationFragment: RegistrationFragment, userInfo: Users) {
 
@@ -33,7 +35,8 @@ class FireStore {
             .document(userInfo.id)
             .set(userInfo, SetOptions.merge())
             .addOnCompleteListener {
-                registrationFragment.userRegistrationSuccessful()
+                registrationFragment.hideProgressDialog()
+                registrationFragment.toast("You are registered successfully")
             }
             .addOnFailureListener {
                 registrationFragment.hideProgressDialog()
@@ -72,6 +75,9 @@ class FireStore {
                     is SettingsFragment -> {
                         fragment.userDetailsSuccessful(user)
                     }
+                    is DescriptionProductFragment -> {
+                        fragment.userDetailsSuccessful(user)
+                    }
                 }
             }.addOnFailureListener {
                     e->
@@ -80,6 +86,9 @@ class FireStore {
                         fragment.hideProgressDialog()
                     }
                     is SettingsFragment -> {
+                        fragment.hideProgressDialog()
+                    }
+                    is DescriptionProductFragment -> {
                         fragment.hideProgressDialog()
                     }
 
@@ -111,9 +120,9 @@ class FireStore {
             }
     }
 
-    fun upLoadImageToCloudStorage(fragment: Fragment, imageFileUri: Uri?, ConstantsImages: String) {
+    fun upLoadImageToCloudStorage(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            ConstantsImages + System.currentTimeMillis() + "."
+            constantsImages + System.currentTimeMillis() + "."
                     + getFileExtension(
                 fragment, imageFileUri
             )
@@ -169,29 +178,20 @@ class FireStore {
         }
     }
 
-    fun getProducts(fragment: Fragment, productsAdapter: ProductsAdapter) {
+    fun getProducts(productsAdapter: ProductsAdapter) {
+        listProducts = arrayListOf()
         fireStore.collection(Constants.PRODUCTS)
-            .get()
-            .addOnSuccessListener { documents ->
-                Log.i(fragment.activity?.javaClass?.simpleName, documents.toString())
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
 
-                when(fragment) {
-                    is ProductsFragment -> {
-                        for (document in documents) {
-                           arrayList = arrayListOf()
-                            arrayList.add(document.toObject(Products::class.java))
-                            productsAdapter.submitList(arrayList)
-                        }
+                for (dc: DocumentChange in value?.documentChanges!!) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        listProducts.add(dc.document.toObject(Products::class.java))
+                        productsAdapter.submitList(listProducts)
                     }
                 }
-            }.addOnFailureListener {
-                    e->
-                when(fragment){
-                    is ProductsFragment -> {
-                        fragment.toast("$e")
-                    }
-                }
-                Log.e("registration2","Error while registering the user $e")
             }
     }
 
@@ -199,24 +199,21 @@ class FireStore {
 
 
 
-    fun getAllProducts(allProductsAdapter: AllProductsAdapter) = CoroutineScope(Dispatchers.IO).launch {
+    fun getAllProducts(allProductsAdapter: AllProductsAdapter) {
+        listAllProducts = arrayListOf()
         fireStore.collection(Constants.PRODUCTS)
-            .addSnapshotListener(object : EventListener<QuerySnapshot>{
-                override fun onEvent(value: QuerySnapshot?, error: FirebaseFirestoreException?) {
-
-                    if(error != null) {
-                        return
-                    }
-
-                    for(dc: DocumentChange in value?.documentChanges!!) {
-                        if (dc.type == DocumentChange.Type.ADDED) {
-                            val list = arrayListOf(dc.document.toObject(Products::class.java))
-                            allProductsAdapter.submitList(list)
-                        }
-                    }
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
                 }
 
-            })
+                for (dc: DocumentChange in value?.documentChanges!!) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        listAllProducts.add(dc.document.toObject(Products::class.java))
+                        allProductsAdapter.submitList(listAllProducts)
+                    }
+                }
+            }
     }
 
 

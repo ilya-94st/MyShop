@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.data.FireStore
@@ -19,11 +18,14 @@ private lateinit var productsAdapter: ProductsAdapter
 private lateinit var getProducts: GetProducts
 
 
+
+
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentProductsBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.ibAddProducts.setOnClickListener {
             findNavController().navigate(R.id.action_productsFragment_to_addProductsFragment)
         }
@@ -39,8 +41,7 @@ private lateinit var getProducts: GetProducts
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
+         getProducts.getProduct(productsAdapter)
 
-          getProducts.getProduct(productsAdapter, this)
     }
-
 }

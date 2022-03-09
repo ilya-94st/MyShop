@@ -7,24 +7,26 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
-import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentSettingsBinding
 import com.example.myshop.domain.models.Users
-import com.example.myshop.domain.use_case.GlideLoader
+import com.example.myshop.domain.use_case.CheckSettings
+import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
 import com.google.firebase.auth.FirebaseAuth
 
 
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
-    private lateinit var glideLoader: GlideLoader
+    private lateinit var imageLoader: ImageLoader
     private lateinit var  mUserDetails: Users
+    private lateinit var checkSettings: CheckSettings
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentSettingsBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        glideLoader = GlideLoader()
+        imageLoader = ImageLoader()
+        checkSettings = CheckSettings()
 
         binding.tvEdit.setOnClickListener {
             val bundle = Bundle().apply {
@@ -47,7 +49,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     private fun getUserDetails() {
         showProgressDialog("please wait")
-        FireStore().getUsersDetails(this)
+        checkSettings.checkUserDetails(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -56,7 +58,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
         hideProgressDialog()
 
-        glideLoader.loadUserPicture(users.image, binding.ivUserPhoto, requireContext())
+        imageLoader.glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
         binding.tvName.text = "${users.firstName} ${users.lastName}"
         binding.tvEmail.text = users.email
         binding.tvGender.text = users.gender

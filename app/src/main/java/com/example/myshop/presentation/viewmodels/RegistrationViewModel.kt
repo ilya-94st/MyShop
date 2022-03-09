@@ -1,14 +1,21 @@
 package com.example.myshop.presentation.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.use_case.CheckRegistration
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.myshop.presentation.ui.fragments.RegistrationFragment
+import kotlinx.coroutines.launch
 
 class RegistrationViewModel(private val checkRegistration: CheckRegistration): ViewModel() {
-    private val _registrationEvent = MutableStateFlow<RegistrationInEvent>(RegistrationInEvent.Empty)
+    private val _registrationEvent = MutableLiveData<RegistrationInEvent>(RegistrationInEvent.Empty)
 
-    val registrationEvent: StateFlow<RegistrationInEvent> = _registrationEvent
+    val registrationEvent: LiveData<RegistrationInEvent> = _registrationEvent
+
+    fun registrationUser(etEmailID: String, etPassword: String, registrationFragment: RegistrationFragment, etFirstName: String, etLastName: String) = viewModelScope.launch {
+        checkRegistration.checkRegisterUser(etEmailID, etPassword, registrationFragment, etFirstName, etLastName)
+    }
 
 
     fun validRegisterDetails(etFirstName: String, etLastName: String, etEmailID: String, etPassword: String, etConfirm: String, checked: Boolean): Boolean {

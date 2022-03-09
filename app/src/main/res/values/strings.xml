@@ -17,4 +17,5 @@
     <string name="completed_profile">completed profile</string>
     <string name="exit_profile">exit profile</string>
     <string name="product_description">Product Description</string>
+    <string name="mobile">Mobile</string>
 </resources>

@@ -16,10 +16,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.common.Constants
-import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentUserProfileBinding
 import com.example.myshop.domain.use_case.GetUserProfile
-import com.example.myshop.domain.use_case.GlideLoader
+import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.UserProfileFactory
 import com.example.myshop.presentation.viewmodels.UserProfileViewModel
@@ -31,7 +30,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     private val args: UserProfileFragmentArgs by navArgs()
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProfileImageURL: String = ""
-    private lateinit var glideLoader: GlideLoader
+    private lateinit var imageLoader: ImageLoader
     private lateinit var getUserProfile: GetUserProfile
     private lateinit var userProfileFactory: UserProfileFactory
     private lateinit var viewModel: UserProfileViewModel
@@ -43,7 +42,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        glideLoader = GlideLoader()
+        imageLoader = ImageLoader()
         getUserProfile = GetUserProfile()
         userProfileFactory = UserProfileFactory(getUserProfile)
         viewModel = ViewModelProvider(this, userProfileFactory).get(UserProfileViewModel::class.java)
@@ -69,7 +68,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                 is UserProfileViewModel.UserProfileInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if(mSelectedImageFileUri != null) {
-                        FireStore().upLoadImageToCloudStorage(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
+                        imageLoader.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
                     } else {
                        viewModel.updateProfileUserDetails(this, args.users, binding.etMobile.text.toString(),
                        binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
@@ -115,7 +114,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         } else {
             binding.tvTitle.text = requireContext().getString(R.string.exit_profile)
-            glideLoader.loadUserPicture(users.image, binding.ivUserPhoto, requireContext())
+            imageLoader.glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
 
             binding.etEmailID.isEnabled = false
             binding.etEmailID.setText(users.email)
@@ -145,7 +144,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        glideLoader.loadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
+                        imageLoader.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")

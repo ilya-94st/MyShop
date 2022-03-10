@@ -3,6 +3,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.databinding.FragmentDescriptionProductBinding
@@ -25,6 +26,10 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         imageLoader = ImageLoader()
         checkDescriptionsProduct = CheckDescriptionsProduct()
         descriptionProduct()
+
+        binding.ibLeft.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     override fun onResume() {
@@ -39,6 +44,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price}"
+        binding.tvQuantity.text = "${products.quality}"
     }
 
     @SuppressLint("SetTextI18n")

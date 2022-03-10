@@ -18,4 +18,5 @@
     <string name="exit_profile">exit profile</string>
     <string name="product_description">Product Description</string>
     <string name="mobile">Mobile</string>
+    <string name="stock_quantity">Stock Quantity</string>
 </resources>

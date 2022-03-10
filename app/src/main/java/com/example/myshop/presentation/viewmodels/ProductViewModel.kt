@@ -18,6 +18,11 @@ class ProductViewModel(private val addProducts: AddProducts) : ViewModel() {
         addProducts.addProducts(fragment, products)
     }
 
+
+    fun getUserId(addProductsFragment: AddProductsFragment) {
+        addProducts.checkUserDetails(addProductsFragment)
+    }
+
     fun observeProduct(etTitle: String, etPrice: String, etDescription: String, etQuality: String): Boolean {
         return when {
             addProducts.isEmptyField(etTitle) -> {

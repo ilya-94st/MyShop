@@ -1,5 +1,6 @@
 package com.example.myshop.presentation.ui.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +15,7 @@ import com.example.myshop.R
 import com.example.myshop.common.Constants
 import com.example.myshop.databinding.FragmentAddProductsBinding
 import com.example.myshop.domain.models.Products
+import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.AddProducts
 import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
@@ -34,6 +36,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     private lateinit var addProducts: AddProducts
     private lateinit var  viewModel: ProductViewModel
     private lateinit var productFactory: ProductFactory
+    private lateinit var  mUserDetails: Users
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,7 +67,8 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                         val price = binding.etPrice.text.toString()
                         val description = binding.etDescription.text.toString()
                         val quality = binding.etQuality.text.toString()
-                        val products = Products(title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
+                        val userId = mUserDetails.id
+                        val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
                         viewModel.addProducts(this, products)
                     }
                 }
@@ -76,6 +80,20 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        getUserDetails()
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun userDetailsSuccessful(users: Users) {
+        mUserDetails = users
+    }
+
+    private fun getUserDetails() {
+       viewModel.getUserId(this)
+    }
+
     fun addProductsImageSuccessful(imageUrl: String) {
         hideProgressDialog()
         mUserProductImageURL = imageUrl
@@ -83,7 +101,8 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
         val price = binding.etPrice.text.toString()
         val description = binding.etDescription.text.toString()
         val quality = binding.etQuality.text.toString()
-        val products = Products(title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
+        val userId = mUserDetails.id
+        val products = Products(id = userId ,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
         viewModel.addProducts(this, products)
         findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
     }

@@ -48,7 +48,7 @@ class CheckRegistration {
                                 )
 
                             FireStore().registerUser(registrationFragment, user)
-
+                            registrationFragment.toast("You are registered successfully")
                             //    FirebaseAuth.getInstance().signOut()
                             registrationFragment.findNavController().popBackStack()
 

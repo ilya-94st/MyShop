@@ -6,6 +6,7 @@ import pub.devrel.easypermissions.EasyPermissions
 object Constants {
     const val USERS = "users"
     const val PRODUCTS = "products"
+    const val ALL_PRODUCTS = "all_products"
 
     const val READ_STORAGE_PERMISSION_CODE = 2
 

@@ -6,7 +6,7 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.databinding.FragmentDescriptionProductBinding
-import com.example.myshop.domain.models.Users
+import com.example.myshop.domain.use_case.CheckDescriptionsProduct
 import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
 
@@ -17,8 +17,8 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     private val args: DescriptionProductFragmentArgs by navArgs()
     private lateinit var imageLoader: ImageLoader
-    private lateinit var  mUserDetails: Users
     private lateinit var checkDescriptionsProduct: CheckDescriptionsProduct
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,7 +29,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     override fun onResume() {
         super.onResume()
-        getUserDetails()
+        getUserMobile()
     }
 
     @SuppressLint("SetTextI18n")
@@ -42,16 +42,12 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
     }
 
     @SuppressLint("SetTextI18n")
-    fun userDetailsSuccessful(users: Users) {
-        mUserDetails = users
-
-        hideProgressDialog()
-
-        binding.tvMobile.text = "${users.mobile}"
+    fun userMobileSuccessful(userMobile: Any) {
+        binding.tvMobile.text = "$userMobile"
     }
 
-    private fun getUserDetails() {
-        showProgressDialog("please wait")
-        checkDescriptionsProduct.checkUserDetails(this)
+    private fun getUserMobile() {
+        val products = args.products
+        checkDescriptionsProduct.checkUserMobile(this, products.id)
     }
 }

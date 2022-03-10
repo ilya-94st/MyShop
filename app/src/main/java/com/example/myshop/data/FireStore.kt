@@ -36,7 +36,6 @@ class FireStore {
             .set(userInfo, SetOptions.merge())
             .addOnCompleteListener {
                 registrationFragment.hideProgressDialog()
-                registrationFragment.toast("You are registered successfully")
             }
             .addOnFailureListener {
                 registrationFragment.hideProgressDialog()
@@ -75,7 +74,10 @@ class FireStore {
                     is SettingsFragment -> {
                         fragment.userDetailsSuccessful(user)
                     }
-                    is DescriptionProductFragment -> {
+                    is AddProductsFragment -> {
+                        fragment.userDetailsSuccessful(user)
+                    }
+                    is ProductsFragment -> {
                         fragment.userDetailsSuccessful(user)
                     }
                 }
@@ -86,9 +88,6 @@ class FireStore {
                         fragment.hideProgressDialog()
                     }
                     is SettingsFragment -> {
-                        fragment.hideProgressDialog()
-                    }
-                    is DescriptionProductFragment -> {
                         fragment.hideProgressDialog()
                     }
 
@@ -163,12 +162,12 @@ class FireStore {
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 
-    fun addProducts(fragment: AddProductsFragment, products: Products) {
+    fun addProducts(fragment: AddProductsFragment, products: Products, constants: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-                fireStore.collection(Constants.PRODUCTS).add(products).await()
+                fireStore.collection(constants).add(products).await()
 
             } catch (e: IOException) {
                 withContext(Dispatchers.Main){
@@ -178,9 +177,9 @@ class FireStore {
         }
     }
 
-    fun getProducts(productsAdapter: ProductsAdapter) {
+    fun getProducts(productsAdapter: ProductsAdapter, userID: String) {
         listProducts = arrayListOf()
-        fireStore.collection(Constants.PRODUCTS)
+        fireStore.collection(Constants.PRODUCTS).whereEqualTo("id", userID)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     return@addSnapshotListener
@@ -194,9 +193,6 @@ class FireStore {
                 }
             }
     }
-
-
-
 
 
     fun getAllProducts(allProductsAdapter: AllProductsAdapter) {
@@ -240,4 +236,23 @@ class FireStore {
         }
     }
 
+    fun getUserMobile(descriptionProductFragment: DescriptionProductFragment, userId: String) = CoroutineScope(Dispatchers.IO).launch {
+            try {
+                fireStore.collection(Constants.USERS).whereEqualTo("id", userId)
+                    .get()
+                    .addOnSuccessListener { document ->
+
+                        val userMobile = document.documents[0].data?.get("mobile")
+
+                        if (userMobile != null) {
+                            descriptionProductFragment.userMobileSuccessful(userMobile)
+                        }
+
+                    }.await()
+            } catch (e: IOException){
+                withContext(Dispatchers.Main){
+                    descriptionProductFragment.toast("$e")
+                }
+            }
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.myshop.presentation.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.data.FireStore
 import com.example.myshop.databinding.FragmentProductsBinding
+import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.GetProducts
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.base.BaseFragment
@@ -16,7 +18,8 @@ import com.example.myshop.presentation.base.BaseFragment
 class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
 private lateinit var productsAdapter: ProductsAdapter
 private lateinit var getProducts: GetProducts
-
+private lateinit var mUserDetails: Users
+private var userId = ""
 
 
 
@@ -38,10 +41,24 @@ private lateinit var getProducts: GetProducts
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        getUserDetails()
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun userDetailsSuccessful(users: Users) {
+        mUserDetails = users
+        userId =  users.id
+        getProducts.getProduct(productsAdapter, userId)
+    }
+
+    private fun getUserDetails() {
+        getProducts.checkUserDetails(this)
+    }
+
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
-         getProducts.getProduct(productsAdapter)
-
     }
 }

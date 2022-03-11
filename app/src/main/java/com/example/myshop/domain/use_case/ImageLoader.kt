@@ -5,10 +5,10 @@ import android.net.Uri
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.example.myshop.data.repository.ShopRepositoryImp
+import com.example.myshop.domain.repository.UpdateRepository
 import java.io.IOException
 
-class ImageLoader(private val shopRepositoryImp: ShopRepositoryImp) {
+class ImageLoader(private val updateRepository: UpdateRepository) {
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
         try {
@@ -21,6 +21,6 @@ class ImageLoader(private val shopRepositoryImp: ShopRepositoryImp) {
     }
 
     fun loadImageToFirestore(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
-        shopRepositoryImp.upLoadImageToCloudStorage(fragment, imageFileUri, constantsImages)
+        updateRepository.upLoadImageToCloudStorage(fragment, imageFileUri, constantsImages)
     }
 }

@@ -3,10 +3,10 @@ package com.example.myshop.domain.use_case
 import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import com.example.myshop.common.Constants
-import com.example.myshop.data.repository.ShopRepositoryImp
 import com.example.myshop.domain.models.Users
+import com.example.myshop.domain.repository.UpdateRepository
 
-class GetUserProfile(private val shopRepositoryImp: ShopRepositoryImp) {
+class GetUserProfile(private val updateRepository: UpdateRepository) {
 
     fun isEmptyField(filed:String) = TextUtils.isEmpty(filed.trim { it <= ' ' })
 
@@ -48,6 +48,6 @@ class GetUserProfile(private val shopRepositoryImp: ShopRepositoryImp) {
 
         userHashMap[Constants.COMPLETE_PROFILE] = 1
 
-        shopRepositoryImp.updateUserProfileData(fragment, userHashMap)
+       updateRepository.updateUserProfileData(fragment, userHashMap)
     }
 }

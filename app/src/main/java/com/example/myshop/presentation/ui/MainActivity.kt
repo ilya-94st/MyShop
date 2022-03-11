@@ -10,7 +10,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.myshop.R
 import com.example.myshop.databinding.ActivityMainBinding
 import com.example.myshop.presentation.tools.toast
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var doubleBackToExitPressedOnce = false

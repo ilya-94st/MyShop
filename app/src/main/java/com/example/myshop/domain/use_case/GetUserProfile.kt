@@ -5,8 +5,9 @@ import androidx.fragment.app.Fragment
 import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.repository.UpdateRepository
+import javax.inject.Inject
 
-class GetUserProfile(private val updateRepository: UpdateRepository) {
+class GetUserProfile @Inject constructor(private val updateRepository: UpdateRepository) {
 
     fun isEmptyField(filed:String) = TextUtils.isEmpty(filed.trim { it <= ' ' })
 

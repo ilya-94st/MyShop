@@ -6,8 +6,9 @@ import com.example.myshop.presentation.ui.fragments.AddProductsFragment
 import com.example.myshop.presentation.ui.fragments.DescriptionProductFragment
 import com.example.myshop.presentation.ui.fragments.ProductsFragment
 import com.example.myshop.presentation.ui.fragments.SettingsFragment
+import javax.inject.Inject
 
-class CheckProductsRepositoryImp: CheckProductsRepository {
+class CheckProductsRepositoryImp @Inject constructor(): CheckProductsRepository {
 
     override fun checkUsersGetProducts(productsFragment: ProductsFragment) {
         FireStore().getUsersDetails(productsFragment)

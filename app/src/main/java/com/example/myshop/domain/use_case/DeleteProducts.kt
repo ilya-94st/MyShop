@@ -1,15 +1,16 @@
 package com.example.myshop.domain.use_case
 
-import com.example.myshop.data.repository.ProductsRepositoryImp
+import com.example.myshop.domain.repository.ProductsRepository
 import com.example.myshop.presentation.ui.fragments.ProductsFragment
+import javax.inject.Inject
 
-class DeleteProducts(private val shopRepositoryImp: ProductsRepositoryImp) {
+class DeleteProducts @Inject constructor(private val productsRepository: ProductsRepository) {
 
     fun deleteProduct(productsFragment: ProductsFragment) {
-       shopRepositoryImp.deleteProduct(productsFragment)
+       productsRepository.deleteProduct(productsFragment)
     }
 
     fun deleteImage(productsFragment: ProductsFragment) {
-       shopRepositoryImp.deleteImageProduct(productsFragment)
+       productsRepository.deleteImageProduct(productsFragment)
     }
 }

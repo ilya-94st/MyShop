@@ -7,8 +7,9 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.myshop.domain.repository.UpdateRepository
 import java.io.IOException
+import javax.inject.Inject
 
-class ImageLoader(private val updateRepository: UpdateRepository) {
+class ImageLoader @Inject constructor(private val updateRepository: UpdateRepository) {
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
         try {

@@ -5,8 +5,9 @@ import com.example.myshop.domain.repository.ProductsRepository
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.ui.fragments.ProductsFragment
+import javax.inject.Inject
 
-class GetProducts(private val productsRepository: ProductsRepository, private val checkProductsRepository: CheckProductsRepository) {
+class GetProducts @Inject constructor(private val productsRepository: ProductsRepository, private val checkProductsRepository: CheckProductsRepository) {
 
     fun getProduct(productsAdapter: ProductsAdapter, userId: String) {
         productsRepository.getProduct(productsAdapter, userId)

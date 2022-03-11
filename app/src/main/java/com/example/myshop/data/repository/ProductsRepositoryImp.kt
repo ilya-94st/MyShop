@@ -8,8 +8,9 @@ import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.ui.fragments.AddProductsFragment
 import com.example.myshop.presentation.ui.fragments.ProductsFragment
+import javax.inject.Inject
 
-class ProductsRepositoryImp: ProductsRepository {
+class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
     override fun addProducts(fragment: AddProductsFragment, products: Products) {
         FireStore().addProducts(fragment, products, Constants.PRODUCTS)
     }

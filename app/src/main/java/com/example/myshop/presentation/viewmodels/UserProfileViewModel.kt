@@ -1,13 +1,20 @@
 package com.example.myshop.presentation.viewmodels
 
+import android.content.Context
+import android.net.Uri
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.GetUserProfile
+import com.example.myshop.domain.use_case.ImageLoader
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class UserProfileViewModel(private val getUserProfile: GetUserProfile): ViewModel() {
+@HiltViewModel
+class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUserProfile, private val loader: ImageLoader): ViewModel() {
 
     private val _mobilePhoneEvent: MutableLiveData<UserProfileInEvent> = MutableLiveData(UserProfileInEvent.Empty)
 
@@ -27,6 +34,14 @@ class UserProfileViewModel(private val getUserProfile: GetUserProfile): ViewMode
                 true
             }
         }
+    }
+
+    fun loadImageToFirestore(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
+        loader.loadImageToFirestore(fragment, imageFileUri, constantsImages)
+    }
+
+    fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
+        loader.glideLoadUserPicture(image, imageView, context)
     }
 
     sealed class UserProfileInEvent {

@@ -3,11 +3,13 @@ package com.example.myshop.presentation.ui
 import android.annotation.SuppressLint
 import android.app.Application
 import com.example.myshop.common.SharedPref
+import dagger.hilt.android.HiltAndroidApp
 
 val prefs: SharedPref by lazy {
     BaseApplication.prefs!!
 }
 
+@HiltAndroidApp
 class BaseApplication: Application() {
     companion object {
         @SuppressLint("StaticFieldLeak")

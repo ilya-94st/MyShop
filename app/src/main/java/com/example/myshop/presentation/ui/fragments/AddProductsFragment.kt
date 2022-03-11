@@ -8,7 +8,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
@@ -16,34 +16,26 @@ import com.example.myshop.common.Constants
 import com.example.myshop.databinding.FragmentAddProductsBinding
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.Users
-import com.example.myshop.domain.use_case.AddProducts
-import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
-import com.example.myshop.presentation.viewmodels.ProductFactory
 import com.example.myshop.presentation.viewmodels.ProductViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.IOException
 
-
+@AndroidEntryPoint
 class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPermissions.PermissionCallbacks {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentAddProductsBinding::inflate
 
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProductImageURL: String = ""
-    private lateinit var imageLoader: ImageLoader
-    private lateinit var addProducts: AddProducts
-    private lateinit var  viewModel: ProductViewModel
-    private lateinit var productFactory: ProductFactory
+    private  val  viewModel: ProductViewModel by viewModels()
     private lateinit var  mUserDetails: Users
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        imageLoader = ImageLoader()
-        addProducts = AddProducts()
-        productFactory = ProductFactory(addProducts)
-        viewModel = ViewModelProvider(this, productFactory).get(ProductViewModel::class.java)
+
 
 
         binding.ivGetPhoto.setOnClickListener {
@@ -61,7 +53,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                 is ProductViewModel.ProductInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if (mSelectedImageFileUri != null) {
-                        imageLoader.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
+                        viewModel.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
                     } else {
                         val title = binding.etTitle.text.toString()
                         val price = binding.etPrice.text.toString()
@@ -120,7 +112,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        imageLoader.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
+                        viewModel.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")

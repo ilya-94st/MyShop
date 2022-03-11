@@ -10,30 +10,26 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.common.Constants
 import com.example.myshop.databinding.FragmentUserProfileBinding
-import com.example.myshop.domain.use_case.GetUserProfile
-import com.example.myshop.domain.use_case.ImageLoader
 import com.example.myshop.presentation.base.BaseFragment
-import com.example.myshop.presentation.viewmodels.UserProfileFactory
 import com.example.myshop.presentation.viewmodels.UserProfileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.IOException
 
+@AndroidEntryPoint
 class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPermissions.PermissionCallbacks  {
     private val args: UserProfileFragmentArgs by navArgs()
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProfileImageURL: String = ""
-    private lateinit var imageLoader: ImageLoader
-    private lateinit var getUserProfile: GetUserProfile
-    private lateinit var userProfileFactory: UserProfileFactory
-    private lateinit var viewModel: UserProfileViewModel
+    private val viewModel: UserProfileViewModel by viewModels()
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentUserProfileBinding::inflate
@@ -42,10 +38,6 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        imageLoader = ImageLoader()
-        getUserProfile = GetUserProfile()
-        userProfileFactory = UserProfileFactory(getUserProfile)
-        viewModel = ViewModelProvider(this, userProfileFactory).get(UserProfileViewModel::class.java)
         changeColorRadioGroup()
         getUsers()
 
@@ -68,7 +60,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                 is UserProfileViewModel.UserProfileInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if(mSelectedImageFileUri != null) {
-                        imageLoader.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
+                        viewModel.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
                     } else {
                        viewModel.updateProfileUserDetails(this, args.users, binding.etMobile.text.toString(),
                        binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
@@ -114,7 +106,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         } else {
             binding.tvTitle.text = requireContext().getString(R.string.exit_profile)
-            imageLoader.glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
+            viewModel.glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
 
             binding.etEmailID.isEnabled = false
             binding.etEmailID.setText(users.email)
@@ -144,7 +136,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        imageLoader.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
+                        viewModel.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")

@@ -1,11 +1,11 @@
 package com.example.myshop.domain.use_case
 
-import com.example.myshop.data.FireStore
+import com.example.myshop.data.repository.ShopRepositoryImp
 import com.example.myshop.presentation.ui.fragments.SettingsFragment
 
-class CheckSettings {
+class CheckSettings(private val shopRepositoryImp: ShopRepositoryImp) {
 
     fun checkUserDetails(settingsFragment: SettingsFragment) {
-        FireStore().getUsersDetails(settingsFragment)
+        shopRepositoryImp.checkUserDetailsSettings(settingsFragment)
     }
 }

@@ -1,10 +1,10 @@
 package com.example.myshop.domain.use_case
 
-import com.example.myshop.data.FireStore
+import com.example.myshop.data.repository.ShopRepositoryImp
 import com.example.myshop.presentation.ui.fragments.DescriptionProductFragment
 
-class CheckDescriptionsProduct {
+class CheckDescriptionsProduct(private val shopRepositoryImp: ShopRepositoryImp) {
     fun checkUserMobile(descriptionProductFragment: DescriptionProductFragment, usersId: String) {
-        FireStore().getUserMobile(descriptionProductFragment, usersId)
+        shopRepositoryImp.checkUserMobile(descriptionProductFragment, usersId)
     }
 }

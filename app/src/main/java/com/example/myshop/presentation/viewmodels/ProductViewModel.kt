@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class ProductViewModel(private val addProducts: AddProducts) : ViewModel() {
 
-    private val _productEvent = MutableLiveData<ProductViewModel.ProductInEvent>(ProductViewModel.ProductInEvent.Empty)
+    private val _productEvent = MutableLiveData<ProductInEvent>(ProductInEvent.Empty)
 
     val productEvent: LiveData<ProductInEvent> = _productEvent
 

@@ -1,15 +1,15 @@
 package com.example.myshop.domain.use_case
 
-import com.example.myshop.data.FireStore
+import com.example.myshop.data.repository.ShopRepositoryImp
 import com.example.myshop.presentation.ui.fragments.ProductsFragment
 
-class DeleteProducts {
+class DeleteProducts(private val shopRepositoryImp: ShopRepositoryImp) {
 
     fun deleteProduct(productsFragment: ProductsFragment) {
-        FireStore().deleteProducts(productsFragment)
+       shopRepositoryImp.deleteProduct(productsFragment)
     }
 
     fun deleteImage(productsFragment: ProductsFragment) {
-        FireStore().deleteImage(productsFragment)
+       shopRepositoryImp.deleteImage(productsFragment)
     }
 }

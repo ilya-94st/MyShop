@@ -1,21 +1,14 @@
 package com.example.myshop.data.repository
 
+import androidx.fragment.app.Fragment
 import com.example.myshop.data.FireStore
 import com.example.myshop.domain.repository.CheckProductsRepository
-import com.example.myshop.presentation.ui.fragments.AddProductsFragment
 import com.example.myshop.presentation.ui.fragments.DescriptionProductFragment
-import com.example.myshop.presentation.ui.fragments.ProductsFragment
-import com.example.myshop.presentation.ui.fragments.SettingsFragment
 import javax.inject.Inject
 
 class CheckProductsRepositoryImp @Inject constructor(): CheckProductsRepository {
-
-    override fun checkUsersGetProducts(productsFragment: ProductsFragment) {
-        FireStore().getUsersDetails(productsFragment)
-    }
-
-    override fun checkUserDetailsSettings(settingsFragment: SettingsFragment) {
-        FireStore().getUsersDetails(settingsFragment)
+    override fun checkUsersDetails(fragment: Fragment) {
+        FireStore().getUsersDetails(fragment)
     }
 
     override fun checkUserMobile(
@@ -23,9 +16,5 @@ class CheckProductsRepositoryImp @Inject constructor(): CheckProductsRepository 
         usersId: String
     ) {
         FireStore().getUserMobile(descriptionProductFragment, usersId)
-    }
-
-    override fun checkUserDetailsAddProducts(addProductsFragment: AddProductsFragment) {
-        FireStore().getUsersDetails(addProductsFragment)
     }
 }

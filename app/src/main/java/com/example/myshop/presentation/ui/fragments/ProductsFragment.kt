@@ -53,7 +53,7 @@ private var userId = ""
     }
 
     private fun getUserDetails() {
-        viewModel.checkUserDetails(this)
+        viewModel.checkUserDetailProduct(this)
     }
 
     private fun initAdapter() {

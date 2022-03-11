@@ -8,10 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.models.Products
-import com.example.myshop.domain.use_case.AddProducts
-import com.example.myshop.domain.use_case.DeleteProducts
-import com.example.myshop.domain.use_case.GetProducts
-import com.example.myshop.domain.use_case.ImageLoader
+import com.example.myshop.domain.use_case.*
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.ui.fragments.AddProductsFragment
 import com.example.myshop.presentation.ui.fragments.ProductsFragment
@@ -21,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(private val addProducts: AddProducts, private val imageLoader: ImageLoader, private val deleteProducts: DeleteProducts,
-private val getProducts: GetProducts) : ViewModel() {
+private val getProducts: GetProducts, private val checkUserDetails: CheckUserDetails) : ViewModel() {
 
     private val _productEvent = MutableLiveData<ProductInEvent>(ProductInEvent.Empty)
 
@@ -30,9 +27,9 @@ private val getProducts: GetProducts) : ViewModel() {
     fun addProducts(fragment: AddProductsFragment, products: Products) = viewModelScope.launch {
         addProducts.addProducts(fragment, products)
     }
-
-    fun checkUserDetails(productsFragment: ProductsFragment) {
-        getProducts.checkUserDetails(productsFragment)
+    
+    fun checkUserDetailProduct(productsFragment: ProductsFragment) {
+        checkUserDetails.checkUserDetails(productsFragment)
     }
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
@@ -44,7 +41,7 @@ private val getProducts: GetProducts) : ViewModel() {
     }
 
     fun getUserId(addProductsFragment: AddProductsFragment) {
-        addProducts.checkUserDetails(addProductsFragment)
+        checkUserDetails.checkUserDetails(addProductsFragment)
     }
 
     fun deleteProduct(productsFragment: ProductsFragment) {

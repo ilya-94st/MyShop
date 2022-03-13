@@ -16,12 +16,21 @@ import javax.inject.Inject
 @HiltViewModel
 class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUserProfile, private val loader: ImageLoader): ViewModel() {
 
+    private var _isUserProfileSuccessful = MutableLiveData<Boolean>()
+
+    var isUserProfileSuccessful: LiveData<Boolean> = _isUserProfileSuccessful
+
     private val _mobilePhoneEvent: MutableLiveData<UserProfileInEvent> = MutableLiveData(UserProfileInEvent.Empty)
 
     val mobilePhoneEvent: LiveData<UserProfileInEvent> = _mobilePhoneEvent
 
-    fun updateProfileUserDetails(fragment: Fragment, users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String) =
-        getUserProfile.getProfileUserDetails(fragment, users, etMobile, etFirstName, etLastName, rbMale, mUserProfileImageURL)
+    fun updateProfileUserDetails(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String) {
+        _isUserProfileSuccessful.value = false
+        getUserProfile.getProfileUserDetails(users, etMobile, etFirstName, etLastName, rbMale, mUserProfileImageURL)
+        _isUserProfileSuccessful.value = true
+    }
+
+
 
     fun validMobile(etMobile: String): Boolean {
         return when {

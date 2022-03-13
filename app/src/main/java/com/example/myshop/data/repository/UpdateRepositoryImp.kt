@@ -8,8 +8,8 @@ import javax.inject.Inject
 
 class UpdateRepositoryImp @Inject constructor(): UpdateRepository {
 
-    override fun updateUserProfileData(fragment: Fragment, userHashMap: HashMap<String, Any>) {
-        FireStore().updateUserProfileData(fragment, userHashMap)
+    override fun updateUserProfileData(userHashMap: HashMap<String, Any>) {
+        FireStore().updateUserProfileData(userHashMap)
     }
 
     override fun upLoadImageToCloudStorage(

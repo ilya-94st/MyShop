@@ -8,11 +8,11 @@ import com.example.myshop.presentation.ui.fragments.ProductsFragment
 
 interface ProductsRepository {
 
-    fun addProducts(fragment: AddProductsFragment, products: Products)
+   suspend fun addProducts(products: Products)
 
-    fun deleteProduct(productsFragment: ProductsFragment)
+   suspend fun deleteProduct()
 
-    fun deleteImageProduct(productsFragment: ProductsFragment)
+   suspend fun deleteImageProduct()
 
     fun getProduct(productsAdapter: ProductsAdapter, userId: String)
 

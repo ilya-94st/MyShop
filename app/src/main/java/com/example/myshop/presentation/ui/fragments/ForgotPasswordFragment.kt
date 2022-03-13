@@ -3,29 +3,26 @@ package com.example.myshop.presentation.ui.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentForgotPasswordBinding
-import com.example.myshop.domain.use_case.CheckForgotPassword
 import com.example.myshop.presentation.base.BaseFragment
-import com.example.myshop.presentation.viewmodels.ForgotPasswordFactoryViewModel
 import com.example.myshop.presentation.viewmodels.ForgotPasswordViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
-    private lateinit var viewModel: ForgotPasswordViewModel
-    private lateinit var factory: ForgotPasswordFactoryViewModel
-    private lateinit var checkForgotPassword: CheckForgotPassword
+    private val viewModel: ForgotPasswordViewModel by viewModels()
+
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentForgotPasswordBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkForgotPassword = CheckForgotPassword()
-        factory = ForgotPasswordFactoryViewModel(checkForgotPassword)
-        viewModel = ViewModelProvider(this, factory).get(ForgotPasswordViewModel::class.java)
+
 
         binding.backPress.setOnClickListener {
             findNavController().popBackStack()
@@ -35,11 +32,21 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
             viewModel.validEmailDetails(binding.etEmail.text.toString())
         }
 
+        viewModel.isLogged.observe(viewLifecycleOwner) {
+            if(it == true) {
+                hideProgressDialog()
+                toast("You are logged successfully")
+                findNavController().popBackStack()
+            } else {
+                showProgressDialog("Please wait...")
+            }
+        }
+
         viewModel.emailEvent.observe(viewLifecycleOwner){
                 event->
             when(event) {
                 is ForgotPasswordViewModel.ForgotPasswordInEvent.Success -> {
-                    viewModel.checkSendPasswordResetEmail(this@ForgotPasswordFragment, binding.etEmail.text.toString())
+                    viewModel.checkSendPasswordResetEmail(binding.etEmail.text.toString())
                 }
                 is ForgotPasswordViewModel.ForgotPasswordInEvent.ErrorForgotPasswordIn -> {
                     errorSnackBar(event.error, true)

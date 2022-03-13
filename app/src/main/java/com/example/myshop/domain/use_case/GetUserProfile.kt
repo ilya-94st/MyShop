@@ -1,7 +1,6 @@
 package com.example.myshop.domain.use_case
 
 import android.text.TextUtils
-import androidx.fragment.app.Fragment
 import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.repository.UpdateRepository
@@ -11,7 +10,7 @@ class GetUserProfile @Inject constructor(private val updateRepository: UpdateRep
 
     fun isEmptyField(filed:String) = TextUtils.isEmpty(filed.trim { it <= ' ' })
 
-    fun getProfileUserDetails(fragment: Fragment, users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String) {
+    fun getProfileUserDetails(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String) {
 
         val userHashMap = HashMap<String, Any>()
 
@@ -49,6 +48,6 @@ class GetUserProfile @Inject constructor(private val updateRepository: UpdateRep
 
         userHashMap[Constants.COMPLETE_PROFILE] = 1
 
-       updateRepository.updateUserProfileData(fragment, userHashMap)
+       updateRepository.updateUserProfileData(userHashMap)
     }
 }

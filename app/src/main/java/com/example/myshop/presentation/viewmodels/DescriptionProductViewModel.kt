@@ -5,7 +5,6 @@ import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import com.example.myshop.domain.use_case.CheckDescriptionsProduct
 import com.example.myshop.domain.use_case.ImageLoader
-import com.example.myshop.presentation.ui.fragments.DescriptionProductFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +15,8 @@ class DescriptionProductViewModel @Inject constructor(private val loader: ImageL
         loader.glideLoadUserPicture(image, imageView, context)
     }
 
-    fun checkUserMobile(descriptionProductFragment: DescriptionProductFragment, usersId: String) {
-        checkDescriptionsProduct.checkUserMobile(descriptionProductFragment, usersId)
+    suspend fun getUserMobile(usersId: String): Any? {
+       return checkDescriptionsProduct.checkUserMobile(usersId)
     }
+
 }

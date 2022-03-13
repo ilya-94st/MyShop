@@ -6,16 +6,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.use_case.CheckLogin
 import com.example.myshop.presentation.ui.fragments.LoginFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel(private val checkLogin: CheckLogin): ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin): ViewModel() {
+    private var _isLogged = MutableLiveData<Boolean>()
+
+    var isLogged: LiveData<Boolean> = _isLogged
+
     private val _loginEvent = MutableLiveData<LoginInEvent>(LoginInEvent.Empty)
 
     val loginEvent: LiveData<LoginInEvent> = _loginEvent
 
     fun logInRegisterUser(fragment: LoginFragment, etEmail :String, etPassword: String) =
         viewModelScope.launch {
+            _isLogged.value = false
             checkLogin.logInRegisterUser(fragment, etEmail, etPassword)
+            _isLogged.value = true
         }
 
     fun validLoginDetails(etEmail: String, etPassword: String): Boolean {

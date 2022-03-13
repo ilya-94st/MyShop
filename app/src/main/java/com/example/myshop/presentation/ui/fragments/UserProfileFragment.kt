@@ -49,6 +49,12 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
             viewModel.validMobile(binding.etMobile.text.toString())
         }
 
+        viewModel.isUserProfileSuccessful.observe(viewLifecycleOwner){
+            if(it == true) {
+                userProfileUpdateSuccess()
+            }
+        }
+
         viewModel.mobilePhoneEvent.observe(viewLifecycleOwner) { event ->
             when(event) {
                 is UserProfileViewModel.UserProfileInEvent.ErrorUserProfileInEvent -> {
@@ -62,7 +68,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                     if(mSelectedImageFileUri != null) {
                         viewModel.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
                     } else {
-                       viewModel.updateProfileUserDetails(this, args.users, binding.etMobile.text.toString(),
+                       viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
                        binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
                            )
                     }
@@ -75,15 +81,14 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     fun imageUploadSuccess(imageURL: String) {
       //  hideProgressDialog()
        mUserProfileImageURL = imageURL
-        viewModel.updateProfileUserDetails(this, args.users, binding.etMobile.text.toString(),
+        viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
             binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
         )
     }
 
-    fun userProfileUpdateSuccess() {
+  private  fun userProfileUpdateSuccess() {
         hideProgressDialog()
         toast("success")
-
         findNavController().navigate(R.id.action_userProfileFragment_to_dashBoardFragment)
     }
 

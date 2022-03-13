@@ -6,21 +6,19 @@ import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.repository.ProductsRepository
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
-import com.example.myshop.presentation.ui.fragments.AddProductsFragment
-import com.example.myshop.presentation.ui.fragments.ProductsFragment
 import javax.inject.Inject
 
 class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
-    override fun addProducts(fragment: AddProductsFragment, products: Products) {
-        FireStore().addProducts(fragment, products, Constants.PRODUCTS)
+    override suspend fun addProducts(products: Products) {
+        FireStore().addProducts(products, Constants.PRODUCTS)
     }
 
-    override fun deleteProduct(productsFragment: ProductsFragment) {
-        FireStore().deleteProducts(productsFragment)
+    override suspend fun deleteProduct() {
+        FireStore().deleteProducts()
     }
 
-    override fun deleteImageProduct(productsFragment: ProductsFragment) {
-        FireStore().deleteImage(productsFragment)
+    override suspend fun deleteImageProduct() {
+        FireStore().deleteImage()
     }
 
     override fun getProduct(productsAdapter: ProductsAdapter, userId: String) {

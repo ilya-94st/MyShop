@@ -1,15 +1,10 @@
 package com.example.myshop.domain.use_case
 
 import android.text.TextUtils
-import androidx.navigation.fragment.findNavController
-import com.example.myshop.data.FireStore
-import com.example.myshop.domain.models.Users
-import com.example.myshop.presentation.ui.fragments.RegistrationFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.tasks.await
+import com.example.myshop.domain.repository.AuthenticationRepository
+import javax.inject.Inject
 
-class CheckRegistration {
+class CheckRegistration @Inject constructor(private val authenticationRepository: AuthenticationRepository)  {
 
     fun isEmptyField(filed:String) = TextUtils.isEmpty(filed.trim { it <= ' ' })
 
@@ -19,39 +14,7 @@ class CheckRegistration {
 
     fun passwordAndConfirm(filedPassword: String, fieldConfirm: String) = filedPassword.trim{ it <= ' ' } != fieldConfirm.trim { it <= ' ' }
 
-  suspend  fun checkRegisterUser(etEmailID: String, etPassword: String, registrationFragment: RegistrationFragment, etFirstName: String, etLastName: String) {
-        val email = etEmailID.trim { it <= ' ' }
-        val password = etPassword.trim { it <= ' ' }
-
-        registrationFragment.showProgressDialog("Please wait...")
-
-
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        //  hideProgressDialog()
-
-                        if (task.isSuccessful) {
-
-                            val firebaseUser: FirebaseUser = task.result!!.user!!
-
-                            val user = Users(
-                                firebaseUser.uid,
-                                etFirstName,
-                                etLastName,
-                                etEmailID,
-
-                                )
-
-                            FireStore().registerUser(registrationFragment, user)
-                            registrationFragment.toast("You are registered successfully")
-                            //    FirebaseAuth.getInstance().signOut()
-                            registrationFragment.findNavController().popBackStack()
-
-                        } else {
-                            registrationFragment.hideProgressDialog()
-                            registrationFragment.errorSnackBar(task.exception!!.message.toString(), true)
-                        }
-                    }.await()
-
+    suspend fun checkRegisterUser( etEmailID: String, etPassword: String, etFirstName: String, etLastName: String) {
+        authenticationRepository.registration(etEmailID, etPassword, etFirstName, etLastName)
     }
 }

@@ -3,20 +3,19 @@ package com.example.myshop.presentation.ui.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentRegistrationBinding
-import com.example.myshop.domain.use_case.CheckRegistration
 import com.example.myshop.presentation.base.BaseFragment
-import com.example.myshop.presentation.viewmodels.RegistrationFactoryViewModel
 import com.example.myshop.presentation.viewmodels.RegistrationViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
-    private lateinit var viewModel: RegistrationViewModel
-    private lateinit var viewModelFactory: RegistrationFactoryViewModel
-    private lateinit var checkRegistration: CheckRegistration
+    private val viewModel: RegistrationViewModel by viewModels()
+
 
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -24,9 +23,7 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkRegistration = CheckRegistration()
-        viewModelFactory = RegistrationFactoryViewModel(checkRegistration)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(RegistrationViewModel::class.java)
+
 
 
         binding.tvLogin.setOnClickListener {
@@ -41,11 +38,21 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
             )
         }
 
+        viewModel.isUserCreate.observe(viewLifecycleOwner) {
+               if(it == true) {
+                   hideProgressDialog()
+                   toast("You are registered successfully")
+                   findNavController().popBackStack()
+               } else {
+                   showProgressDialog("Please wait...")
+               }
+        }
+
         viewModel.registrationEvent.observe(viewLifecycleOwner) {
                 event->
             when(event) {
                 is RegistrationViewModel.RegistrationInEvent.Success -> {
-                    viewModel.registrationUser(binding.etEmailID.text.toString(), binding.etPassword.text.toString(), this@RegistrationFragment, binding.etFirstName.text.toString(),
+                    viewModel.registrationUser(binding.etEmailID.text.toString(), binding.etPassword.text.toString(), binding.etFirstName.text.toString(),
                         binding.etLastName.text.toString()
                     )
                 }
@@ -67,6 +74,7 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
                         binding.etConfirm.error = event.error
                     }
                 }
+                else -> Unit
             }
         }
     }

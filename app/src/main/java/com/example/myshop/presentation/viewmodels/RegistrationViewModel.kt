@@ -6,15 +6,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.use_case.CheckRegistration
 import com.example.myshop.presentation.ui.fragments.RegistrationFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RegistrationViewModel(private val checkRegistration: CheckRegistration): ViewModel() {
+@HiltViewModel
+class RegistrationViewModel @Inject constructor(private val checkRegistration: CheckRegistration): ViewModel() {
     private val _registrationEvent = MutableLiveData<RegistrationInEvent>(RegistrationInEvent.Empty)
+
+    private var _isUserCreate = MutableLiveData<Boolean>()
+
+    var isUserCreate: LiveData<Boolean> = _isUserCreate
 
     val registrationEvent: LiveData<RegistrationInEvent> = _registrationEvent
 
-    fun registrationUser(etEmailID: String, etPassword: String, registrationFragment: RegistrationFragment, etFirstName: String, etLastName: String) = viewModelScope.launch {
-        checkRegistration.checkRegisterUser(etEmailID, etPassword, registrationFragment, etFirstName, etLastName)
+    fun registrationUser(etEmailID: String, etPassword: String, etFirstName: String, etLastName: String) = viewModelScope.launch {
+        _isUserCreate.value = false
+        checkRegistration.checkRegisterUser(etEmailID, etPassword, etFirstName, etLastName)
+        _isUserCreate.value = true
     }
 
 

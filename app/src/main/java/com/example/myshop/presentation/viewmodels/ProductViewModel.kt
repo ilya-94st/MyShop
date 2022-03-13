@@ -24,8 +24,8 @@ private val getProducts: GetProducts, private val checkUserDetails: CheckUserDet
 
     val productEvent: LiveData<ProductInEvent> = _productEvent
 
-    fun addProducts(fragment: AddProductsFragment, products: Products) = viewModelScope.launch {
-        addProducts.addProducts(fragment, products)
+    fun addProducts(products: Products) = viewModelScope.launch {
+        addProducts.addProducts(products)
     }
     
     fun checkUserDetailProduct(productsFragment: ProductsFragment) {
@@ -44,8 +44,8 @@ private val getProducts: GetProducts, private val checkUserDetails: CheckUserDet
         checkUserDetails.checkUserDetails(addProductsFragment)
     }
 
-    fun deleteProduct(productsFragment: ProductsFragment) {
-        deleteProducts.deleteProduct(productsFragment)
+    fun deleteProduct() = viewModelScope.launch {
+        deleteProducts.deleteProduct()
     }
 
     fun getProduct(productsAdapter: ProductsAdapter, userId: String) {

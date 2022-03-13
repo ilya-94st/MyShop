@@ -61,7 +61,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                         val quality = binding.etQuality.text.toString()
                         val userId = mUserDetails.id
                         val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
-                        viewModel.addProducts(this, products)
+                        viewModel.addProducts(products)
                     }
                 }
                 is ProductViewModel.ProductInEvent.ErrorProductIn -> {
@@ -95,7 +95,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
         val quality = binding.etQuality.text.toString()
         val userId = mUserDetails.id
         val products = Products(id = userId ,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
-        viewModel.addProducts(this, products)
+        viewModel.addProducts(products)
         findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
     }
 

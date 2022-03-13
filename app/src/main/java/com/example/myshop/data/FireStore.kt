@@ -15,11 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class FireStore {
@@ -29,18 +25,11 @@ class FireStore {
     private lateinit var listAllProducts: ArrayList<Products>
 
 
-    fun registerUser(registrationFragment: RegistrationFragment, userInfo: Users) {
+    fun registerUser(userInfo: Users) {
 
         fireStore.collection(Constants.USERS)
             .document(userInfo.id)
             .set(userInfo, SetOptions.merge())
-            .addOnCompleteListener {
-                registrationFragment.hideProgressDialog()
-            }
-            .addOnFailureListener {
-                registrationFragment.hideProgressDialog()
-                Log.e("registration", "Error while registering the user")
-            }
     }
 
     private  fun getCurrentUserID(): String {
@@ -53,10 +42,17 @@ class FireStore {
         return currentUserID
     }
 
+    suspend fun getUserDetails2(): Users {
+        val userDetails = fireStore.collection(Constants.USERS)
+            .document(getCurrentUserID())
+            .get().await()
+
+        return userDetails.toObject(Users::class.java)!!
+    }
+
     fun getUsersDetails(fragment: Fragment) {
 
         fireStore.collection(Constants.USERS)
-
             .document(getCurrentUserID())
             .get()
             .addOnSuccessListener { document ->
@@ -96,27 +92,10 @@ class FireStore {
             }
     }
 
-    fun updateUserProfileData(fragment: Fragment, userHashMap: HashMap<String, Any>) {
-
+    fun updateUserProfileData(userHashMap: HashMap<String, Any>) {
         fireStore.collection(Constants.USERS)
             .document(getCurrentUserID())
             .update(userHashMap)
-            .addOnSuccessListener {
-                when(fragment) {
-                    is UserProfileFragment -> {
-
-                        fragment.userProfileUpdateSuccess()
-                    }
-                }
-            }
-            .addOnFailureListener { error ->
-                when(fragment) {
-                    is UserProfileFragment -> {
-                        fragment.hideProgressDialog()
-                    }
-                }
-                Log.e("registration2","Error while registering the user $error")
-            }
     }
 
     fun upLoadImageToCloudStorage(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
@@ -162,19 +141,14 @@ class FireStore {
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 
-    fun addProducts(fragment: AddProductsFragment, products: Products, constants: String) {
-
-        CoroutineScope(Dispatchers.IO).launch {
+  suspend  fun addProducts(products: Products, constants: String) {
             try {
 
                 fireStore.collection(constants).add(products).await()
 
             } catch (e: IOException) {
-                withContext(Dispatchers.Main){
-                    fragment.toast("error addProducts")
-                }
+                   Log.e("addProducts", "error addProducts")
             }
-        }
     }
 
     fun getProducts(productsAdapter: ProductsAdapter, userID: String) {
@@ -213,7 +187,7 @@ class FireStore {
     }
 
 
-         fun deleteProducts(productsFragment: ProductsFragment) = CoroutineScope(Dispatchers.IO).launch {
+        suspend fun deleteProducts() {
            val productsQuery =  fireStore.collection(Constants.PRODUCTS)
                  .get()
                  .await()
@@ -222,37 +196,24 @@ class FireStore {
                      try {
                          fireStore.collection(Constants.PRODUCTS).document(document.id).delete().await()
                      } catch (e: IOException) {
-                         productsFragment.toast("$e")
+                         Log.e("deleteProducts", "$e")
                      }
                  }
              }
          }
 
-    fun deleteImage(productsFragment: ProductsFragment) = CoroutineScope(Dispatchers.IO).launch {
+  suspend  fun deleteImage()  {
         try {
             FirebaseStorage.getInstance().reference.child(Constants.USER_PRODUCTS_IMAGES).delete().await()
         } catch (e: IOException) {
-            productsFragment.toast("$e")
+            Log.e("deleteImage", "$e")
         }
     }
 
-    fun getUserMobile(descriptionProductFragment: DescriptionProductFragment, userId: String) = CoroutineScope(Dispatchers.IO).launch {
-            try {
-                fireStore.collection(Constants.USERS).whereEqualTo("id", userId)
-                    .get()
-                    .addOnSuccessListener { document ->
+    suspend fun getUserMobile(userId: String): Any? {
 
-                        val userMobile = document.documents[0].data?.get("mobile")
+        val querySnapshot = fireStore.collection(Constants.USERS).whereEqualTo("id", userId).get().await()
 
-                        if (userMobile != null) {
-                            descriptionProductFragment.userMobileSuccessful(userMobile)
-                        }
-
-                    }.await()
-            } catch (e: IOException){
-                withContext(Dispatchers.Main){
-                    descriptionProductFragment.toast("$e")
-                }
-            }
+        return querySnapshot.documents[0].data?.get("mobile")
     }
 }

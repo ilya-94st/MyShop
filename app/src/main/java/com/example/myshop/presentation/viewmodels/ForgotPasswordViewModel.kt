@@ -5,17 +5,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.use_case.CheckForgotPassword
-import com.example.myshop.presentation.ui.fragments.ForgotPasswordFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ForgotPasswordViewModel(private  val checkForgotPassword: CheckForgotPassword): ViewModel() {
+@HiltViewModel
+class ForgotPasswordViewModel @Inject constructor(private  val checkForgotPassword: CheckForgotPassword): ViewModel() {
+    private var _isLogged = MutableLiveData<Boolean>()
+
+    var isLogged: LiveData<Boolean>  = _isLogged
 
     private val _emailEvent = MutableLiveData<ForgotPasswordInEvent>(ForgotPasswordInEvent.Empty)
 
     val emailEvent: LiveData<ForgotPasswordInEvent> = _emailEvent
 
-    fun checkSendPasswordResetEmail(fragment: ForgotPasswordFragment, etEmail: String)
-    = viewModelScope.launch { checkForgotPassword.checkSendPasswordResetEmail(fragment, etEmail) }
+    fun checkSendPasswordResetEmail(etEmail: String)
+    = viewModelScope.launch {
+        _isLogged.value = false
+        checkForgotPassword.checkSendPasswordResetEmail(etEmail)
+        _isLogged.value = true
+    }
 
     fun validEmailDetails(etEmail: String): Boolean {
         return when {

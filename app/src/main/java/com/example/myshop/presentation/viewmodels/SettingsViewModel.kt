@@ -2,18 +2,37 @@ package com.example.myshop.presentation.viewmodels
 
 import android.content.Context
 import android.widget.ImageView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckUserDetails
 import com.example.myshop.domain.use_case.ImageLoader
-import com.example.myshop.presentation.ui.fragments.SettingsFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(private val loader: ImageLoader, private val checkSettings: CheckUserDetails): ViewModel() {
 
-    fun checkUserDetails(settingsFragment: SettingsFragment) {
-        checkSettings.checkUserDetails(settingsFragment)
+    private var _users = MutableLiveData<Users>()
+
+    var users: LiveData<Users> = _users
+
+    private var _isLoader = MutableLiveData<Boolean>()
+
+    var isLoader: LiveData<Boolean> = _isLoader
+
+   private fun getUserDetails() = viewModelScope.launch {
+        _isLoader.postValue(false)
+        _users.postValue(checkSettings.getUserDetails())
+       _isLoader.postValue(true)
+    }
+
+
+    init {
+        getUserDetails()
     }
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {

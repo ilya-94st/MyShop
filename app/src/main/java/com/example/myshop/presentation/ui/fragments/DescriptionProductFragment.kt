@@ -11,10 +11,7 @@ import com.example.myshop.databinding.FragmentDescriptionProductBinding
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.DescriptionProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 @AndroidEntryPoint
 class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBinding>() {
@@ -56,14 +53,13 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     private fun getUserMobile() {
         val products = args.products
+        viewModel.getUserMobile(products.id)
         binding.tvMobile.visibility = View.INVISIBLE
         showProgressDialog("please wait...")
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main){
-                binding.tvMobile.text =  "${viewModel.getUserMobile(products.id)}"
-                hideProgressDialog()
-                binding.tvMobile.visibility = View.VISIBLE
-            }
+        viewModel.users.observe(viewLifecycleOwner){
+            binding.tvMobile.text =  "$it"
+            hideProgressDialog()
+            binding.tvMobile.visibility = View.VISIBLE
         }
     }
 }

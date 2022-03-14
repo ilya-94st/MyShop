@@ -10,7 +10,6 @@ import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.ui.fragments.*
-import com.example.myshop.presentation.ui.prefs
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
@@ -23,6 +22,7 @@ class FireStore {
     private val fireStore = FirebaseFirestore.getInstance()
     private lateinit var listProducts: ArrayList<Products>
     private lateinit var listAllProducts: ArrayList<Products>
+    private var mSelectedImageFileUri: Uri? = null
 
 
     fun registerUser(userInfo: Users) {
@@ -42,7 +42,7 @@ class FireStore {
         return currentUserID
     }
 
-    suspend fun getUserDetails2(): Users {
+    suspend fun getUserDetails(): Users {
         val userDetails = fireStore.collection(Constants.USERS)
             .document(getCurrentUserID())
             .get().await()
@@ -50,53 +50,14 @@ class FireStore {
         return userDetails.toObject(Users::class.java)!!
     }
 
-    fun getUsersDetails(fragment: Fragment) {
 
-        fireStore.collection(Constants.USERS)
-            .document(getCurrentUserID())
-            .get()
-            .addOnSuccessListener { document ->
-                Log.i(fragment.activity?.javaClass?.simpleName, document.toString())
-
-                val user = document.toObject(Users::class.java)!!
-
-
-                prefs.name = "${user.firstName} ${user.lastName}"
-
-                when(fragment) {
-                    is LoginFragment -> {
-                        fragment.userLoggedInSuccessful(user)
-                    }
-                    is SettingsFragment -> {
-                        fragment.userDetailsSuccessful(user)
-                    }
-                    is AddProductsFragment -> {
-                        fragment.userDetailsSuccessful(user)
-                    }
-                    is ProductsFragment -> {
-                        fragment.userDetailsSuccessful(user)
-                    }
-                }
-            }.addOnFailureListener {
-                    e->
-                when(fragment){
-                    is LoginFragment -> {
-                        fragment.hideProgressDialog()
-                    }
-                    is SettingsFragment -> {
-                        fragment.hideProgressDialog()
-                    }
-
-                }
-                Log.e("registration2","Error while registering the user $e")
-            }
-    }
 
     fun updateUserProfileData(userHashMap: HashMap<String, Any>) {
         fireStore.collection(Constants.USERS)
             .document(getCurrentUserID())
             .update(userHashMap)
     }
+
 
     fun upLoadImageToCloudStorage(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
@@ -135,6 +96,9 @@ class FireStore {
             Log.e(fragment.activity?.javaClass?.simpleName, execption.message, execption)
         }
     }
+
+
+
 
     private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
 
@@ -216,4 +180,6 @@ class FireStore {
 
         return querySnapshot.documents[0].data?.get("mobile")
     }
+
+
 }

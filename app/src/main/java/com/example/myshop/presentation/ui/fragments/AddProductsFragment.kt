@@ -1,6 +1,5 @@
 package com.example.myshop.presentation.ui.fragments
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,10 +14,13 @@ import com.example.myshop.R
 import com.example.myshop.common.Constants
 import com.example.myshop.databinding.FragmentAddProductsBinding
 import com.example.myshop.domain.models.Products
-import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.ProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.IOException
@@ -31,7 +33,6 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProductImageURL: String = ""
     private  val  viewModel: ProductViewModel by viewModels()
-    private lateinit var  mUserDetails: Users
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,13 +56,16 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                     if (mSelectedImageFileUri != null) {
                         viewModel.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
                     } else {
-                        val title = binding.etTitle.text.toString()
-                        val price = binding.etPrice.text.toString()
-                        val description = binding.etDescription.text.toString()
-                        val quality = binding.etQuality.text.toString()
-                        val userId = mUserDetails.id
-                        val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
-                        viewModel.addProducts(products)
+                      viewModel.users.observe(viewLifecycleOwner){
+                          val users = it
+                          val title = binding.etTitle.text.toString()
+                          val price = binding.etPrice.text.toString()
+                          val description = binding.etDescription.text.toString()
+                          val quality = binding.etQuality.text.toString()
+                          val userId = users.id
+                          val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
+                          viewModel.addProducts(products)
+                      }
                     }
                 }
                 is ProductViewModel.ProductInEvent.ErrorProductIn -> {
@@ -72,31 +76,20 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        getUserDetails()
-    }
-
-    @SuppressLint("SetTextI18n")
-    fun userDetailsSuccessful(users: Users) {
-        mUserDetails = users
-    }
-
-    private fun getUserDetails() {
-       viewModel.getUserId(this)
-    }
-
     fun addProductsImageSuccessful(imageUrl: String) {
         hideProgressDialog()
         mUserProductImageURL = imageUrl
-        val title = binding.etTitle.text.toString()
-        val price = binding.etPrice.text.toString()
-        val description = binding.etDescription.text.toString()
-        val quality = binding.etQuality.text.toString()
-        val userId = mUserDetails.id
-        val products = Products(id = userId ,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
-        viewModel.addProducts(products)
-        findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
+        viewModel.users.observe(viewLifecycleOwner){
+            val users = it
+            val title = binding.etTitle.text.toString()
+            val price = binding.etPrice.text.toString()
+            val description = binding.etDescription.text.toString()
+            val quality = binding.etQuality.text.toString()
+            val userId = users.id
+            val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
+            viewModel.addProducts(products)
+            findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
+        }
     }
 
     private fun showImageChooser() {
@@ -156,4 +149,5 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults ,this)
     }
+
 }

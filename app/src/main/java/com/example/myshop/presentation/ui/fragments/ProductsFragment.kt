@@ -15,6 +15,7 @@ import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.ProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
 private lateinit var productsAdapter: ProductsAdapter
@@ -33,6 +34,8 @@ private var userId = ""
             findNavController().navigate(R.id.action_productsFragment_to_addProductsFragment)
         }
         initAdapter()
+        userDetailsSuccessful()
+
 
         productsAdapter.setOnItemClickListener {
            viewModel.deleteProduct()
@@ -40,20 +43,13 @@ private var userId = ""
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        getUserDetails()
-    }
-
     @SuppressLint("SetTextI18n")
-    fun userDetailsSuccessful(users: Users) {
-        mUserDetails = users
-        userId =  users.id
-        viewModel.getProduct(productsAdapter, userId)
-    }
-
-    private fun getUserDetails() {
-        viewModel.checkUserDetailProduct(this)
+  private  fun userDetailsSuccessful() {
+                viewModel.users.observe(viewLifecycleOwner){
+                    mUserDetails = it
+                    userId =  mUserDetails.id
+                    viewModel.getProduct(productsAdapter, userId)
+                }
     }
 
     private fun initAdapter() {

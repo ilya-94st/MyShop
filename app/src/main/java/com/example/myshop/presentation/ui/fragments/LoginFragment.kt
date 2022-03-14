@@ -8,10 +8,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentLoginBinding
-import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
@@ -45,7 +45,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         viewModel.loginEvent.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is LoginViewModel.LoginInEvent.Success -> {
-                    viewModel.logInRegisterUser(this@LoginFragment, binding.etEmail.text.toString(), binding.etPassword.text.toString())
+                    viewModel.logInRegisterUser(binding.etEmail.text.toString(), binding.etPassword.text.toString())
+                    viewModel.getUserDetails()
+                    userLoggedInSuccessful()
                 }
                 is LoginViewModel.LoginInEvent.ErrorLoginIn -> {
                     errorSnackBar(event.error, true)
@@ -64,18 +66,22 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
     }
 
-    fun userLoggedInSuccessful(user: Users) {
-        hideProgressDialog()
+    private fun userLoggedInSuccessful() {
+                viewModel.users.observe(viewLifecycleOwner){ user ->
+                    if(user.profileCompleted == 0) {
+                        // if user profile is incomplete then launch the UserProfileFragment
+                        val bundle = Bundle().apply {
+                            putSerializable("users", user)
+                        }
+                        findNavController().navigate(R.id.action_loginFragment_to_userProfileFragment, bundle)
+                        hideProgressDialog()
+                    } else {
+                        // Redirect the user to Main screen after log in
 
-        if(user.profileCompleted == 0) {
-            // if user profile is incomplete then launch the UserProfileFragment
-            val bundle = Bundle().apply {
-                putSerializable("users", user)
-            }
-            findNavController().navigate(R.id.action_loginFragment_to_userProfileFragment, bundle)
-        } else {
-            // Redirect the user to Main screen after log in
-            findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
+                        findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
+                        hideProgressDialog()
+                    }
+                }
+
         }
-    }
 }

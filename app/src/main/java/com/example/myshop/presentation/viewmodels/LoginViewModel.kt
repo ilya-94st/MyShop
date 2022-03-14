@@ -4,14 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckLogin
-import com.example.myshop.presentation.ui.fragments.LoginFragment
+import com.example.myshop.domain.use_case.CheckUserDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin): ViewModel() {
+class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin, private val checkUserDetails: CheckUserDetails): ViewModel() {
+    private var _users = MutableLiveData<Users>()
+
+    var users: LiveData<Users> = _users
+
+
     private var _isLogged = MutableLiveData<Boolean>()
 
     var isLogged: LiveData<Boolean> = _isLogged
@@ -20,10 +26,14 @@ class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin): Vi
 
     val loginEvent: LiveData<LoginInEvent> = _loginEvent
 
-    fun logInRegisterUser(fragment: LoginFragment, etEmail :String, etPassword: String) =
+    fun getUserDetails() = viewModelScope.launch {
+        _users.postValue(checkUserDetails.getUserDetails())
+    }
+
+    fun logInRegisterUser(etEmail :String, etPassword: String) =
         viewModelScope.launch {
             _isLogged.value = false
-            checkLogin.logInRegisterUser(fragment, etEmail, etPassword)
+            checkLogin.logInRegisterUser(etEmail, etPassword)
             _isLogged.value = true
         }
 

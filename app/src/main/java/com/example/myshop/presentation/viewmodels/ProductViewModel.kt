@@ -8,10 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.models.Products
+import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.*
 import com.example.myshop.presentation.adapters.ProductsAdapter
-import com.example.myshop.presentation.ui.fragments.AddProductsFragment
-import com.example.myshop.presentation.ui.fragments.ProductsFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,16 +19,17 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(private val addProducts: AddProducts, private val imageLoader: ImageLoader, private val deleteProducts: DeleteProducts,
 private val getProducts: GetProducts, private val checkUserDetails: CheckUserDetails) : ViewModel() {
 
+    private var _users = MutableLiveData<Users>()
+
+    var users: LiveData<Users> = _users
+
+
     private val _productEvent = MutableLiveData<ProductInEvent>(ProductInEvent.Empty)
 
     val productEvent: LiveData<ProductInEvent> = _productEvent
 
     fun addProducts(products: Products) = viewModelScope.launch {
         addProducts.addProducts(products)
-    }
-    
-    fun checkUserDetailProduct(productsFragment: ProductsFragment) {
-        checkUserDetails.checkUserDetails(productsFragment)
     }
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
@@ -40,8 +40,12 @@ private val getProducts: GetProducts, private val checkUserDetails: CheckUserDet
         imageLoader.loadImageToFirestore(fragment, imageFileUri, constantsImages)
     }
 
-    fun getUserId(addProductsFragment: AddProductsFragment) {
-        checkUserDetails.checkUserDetails(addProductsFragment)
+    private fun getUsers() = viewModelScope.launch {
+       _users.postValue( checkUserDetails.getUserDetails())
+   }
+
+    init {
+        getUsers()
     }
 
     fun deleteProduct() = viewModelScope.launch {

@@ -9,15 +9,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentSettingsBinding
-import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.SettingsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
-    private lateinit var  mUserDetails: Users
     private val viewModel: SettingsViewModel by viewModels()
 
 
@@ -26,11 +25,13 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        isLoader()
+        userDetailsSuccessful()
         binding.tvEdit.setOnClickListener {
             val bundle = Bundle().apply {
-                putSerializable("users", mUserDetails)
+                viewModel.users.observe(viewLifecycleOwner){
+                    putSerializable("users", it)
+                }
             }
             findNavController().navigate(R.id.action_settingsFragment_to_userProfileFragment, bundle)
         }
@@ -42,26 +43,24 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        getUserDetails()
-    }
-
-    private fun getUserDetails() {
-        showProgressDialog("please wait")
-        viewModel.checkUserDetails(this)
+    private fun isLoader() {
+        viewModel.isLoader.observe(viewLifecycleOwner){
+            if(it == true) {
+                hideProgressDialog()
+            } else {
+                showProgressDialog("Please wait...")
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
-    fun userDetailsSuccessful(users: Users) {
-        mUserDetails = users
-
-        hideProgressDialog()
-
-        viewModel.glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
-        binding.tvName.text = "${users.firstName} ${users.lastName}"
-        binding.tvEmail.text = users.email
-        binding.tvGender.text = users.gender
-        binding.tvMobile.text = "${users.mobile}"
+   private fun userDetailsSuccessful() {
+                viewModel.users.observe(viewLifecycleOwner){
+                    viewModel.glideLoadUserPicture(it.image, binding.ivUserPhoto, requireContext())
+                    binding.tvName.text = "${it.firstName} ${it.lastName}"
+                    binding.tvEmail.text = it.email
+                    binding.tvGender.text = it.gender
+                    binding.tvMobile.text = "${it.mobile}"
+                }
     }
 }

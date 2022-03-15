@@ -2,7 +2,6 @@ package com.example.myshop.presentation.viewmodels
 import android.content.Context
 import android.net.Uri
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,9 +35,8 @@ private val getProducts: GetProducts, private val checkUserDetails: CheckUserDet
         imageLoader.glideLoadUserPicture(image, imageView, context)
     }
 
-    fun loadImageToFirestore(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
-        imageLoader.loadImageToFirestore(fragment, imageFileUri, constantsImages)
-    }
+    fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) =
+        imageLoader.loadImageToFirestore(fileExtension, imageFileUri, constantsImages)
 
     private fun getUsers() = viewModelScope.launch {
        _users.postValue( checkUserDetails.getUserDetails())

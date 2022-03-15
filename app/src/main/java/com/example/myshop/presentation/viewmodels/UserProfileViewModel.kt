@@ -3,7 +3,6 @@ package com.example.myshop.presentation.viewmodels
 import android.content.Context
 import android.net.Uri
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -45,9 +44,9 @@ class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUs
         }
     }
 
-    fun loadImageToFirestore(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
-        loader.loadImageToFirestore(fragment, imageFileUri, constantsImages)
-    }
+    fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) =
+        loader.loadImageToFirestore(fileExtension, imageFileUri, constantsImages)
+
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
         loader.glideLoadUserPicture(image, imageView, context)

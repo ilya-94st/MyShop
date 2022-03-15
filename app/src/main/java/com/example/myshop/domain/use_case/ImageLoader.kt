@@ -3,7 +3,6 @@ package com.example.myshop.domain.use_case
 import android.content.Context
 import android.net.Uri
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.myshop.domain.repository.UpdateRepository
 import java.io.IOException
@@ -21,7 +20,5 @@ class ImageLoader @Inject constructor(private val updateRepository: UpdateReposi
         }
     }
 
-    fun loadImageToFirestore(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
-        updateRepository.upLoadImageToCloudStorage(fragment, imageFileUri, constantsImages)
-    }
+    fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) = updateRepository.upLoadImageToCloudStorage(fileExtension, imageFileUri, constantsImages)
 }

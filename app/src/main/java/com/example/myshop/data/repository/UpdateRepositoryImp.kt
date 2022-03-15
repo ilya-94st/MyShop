@@ -1,9 +1,9 @@
 package com.example.myshop.data.repository
 
 import android.net.Uri
-import androidx.fragment.app.Fragment
 import com.example.myshop.data.FireStore
 import com.example.myshop.domain.repository.UpdateRepository
+import com.google.firebase.storage.UploadTask
 import javax.inject.Inject
 
 class UpdateRepositoryImp @Inject constructor(): UpdateRepository {
@@ -13,10 +13,8 @@ class UpdateRepositoryImp @Inject constructor(): UpdateRepository {
     }
 
     override fun upLoadImageToCloudStorage(
-        fragment: Fragment,
+        fileExtension: String,
         imageFileUri: Uri?,
         constantsImages: String
-    ) {
-        FireStore().upLoadImageToCloudStorage(fragment, imageFileUri, constantsImages)
-    }
+    ): UploadTask = FireStore().upLoadImageToCloudStorage(fileExtension, imageFileUri, constantsImages)
 }

@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
+import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -66,7 +68,13 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                 is UserProfileViewModel.UserProfileInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if(mSelectedImageFileUri != null) {
-                        viewModel.loadImageToFirestore(this, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
+                        getFileExtension(this, mSelectedImageFileUri)?.let {
+                            viewModel.loadImageToFirestore(it, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE).addOnSuccessListener { taskSnapshot->
+                                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri->
+                                    imageUploadSuccess(uri.toString())
+                                }
+                            }
+                        }
                     } else {
                        viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
                        binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
@@ -78,7 +86,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         }
     }
 
-    fun imageUploadSuccess(imageURL: String) {
+  private fun imageUploadSuccess(imageURL: String) {
       //  hideProgressDialog()
        mUserProfileImageURL = imageURL
         viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
@@ -200,5 +208,10 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                 }
             }
         }
+    }
+
+    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
+
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 }

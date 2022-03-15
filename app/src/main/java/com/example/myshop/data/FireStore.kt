@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
@@ -59,51 +60,14 @@ class FireStore {
     }
 
 
-    fun upLoadImageToCloudStorage(fragment: Fragment, imageFileUri: Uri?, constantsImages: String) {
+    fun upLoadImageToCloudStorage(fileExtension: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
             constantsImages + System.currentTimeMillis() + "."
-                    + getFileExtension(
-                fragment, imageFileUri
-            )
+                    + fileExtension
         )
-        sRef.putFile(imageFileUri!!).addOnSuccessListener { taskSnapShot ->
-            // the image upload is success
-            Log.e("Firebase image Url", taskSnapShot.metadata!!.reference!!.downloadUrl.toString())
-
-            taskSnapShot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri->
-                Log.e("Download image Url", uri.toString())
-
-                when(fragment) {
-                    is UserProfileFragment -> {
-                        fragment.imageUploadSuccess(uri.toString())
-                    }
-                    is AddProductsFragment -> {
-                        fragment.addProductsImageSuccessful(uri.toString())
-                    }
-
-                }
-            }
-        }.addOnFailureListener{
-                execption ->
-            when(fragment) {
-                is UserProfileFragment -> {
-                    fragment.hideProgressDialog()
-                }
-                is AddProductsFragment -> {
-                    fragment.hideProgressDialog()
-                }
-            }
-            Log.e(fragment.activity?.javaClass?.simpleName, execption.message, execption)
-        }
+        return sRef.putFile(imageFileUri!!)
     }
 
-
-
-
-    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
-
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
-    }
 
   suspend  fun addProducts(products: Products, constants: String) {
             try {

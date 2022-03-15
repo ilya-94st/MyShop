@@ -2,19 +2,18 @@ package com.example.myshop.data
 
 import android.net.Uri
 import android.util.Log
-import android.webkit.MimeTypeMap
-import androidx.fragment.app.Fragment
 import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
-import com.example.myshop.presentation.ui.fragments.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
@@ -23,7 +22,6 @@ class FireStore {
     private val fireStore = FirebaseFirestore.getInstance()
     private lateinit var listProducts: ArrayList<Products>
     private lateinit var listAllProducts: ArrayList<Products>
-    private var mSelectedImageFileUri: Uri? = null
 
 
     fun registerUser(userInfo: Users) {
@@ -58,16 +56,6 @@ class FireStore {
             .document(getCurrentUserID())
             .update(userHashMap)
     }
-
-
-    fun upLoadImageToCloudStorage(fileExtension: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
-        val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            constantsImages + System.currentTimeMillis() + "."
-                    + fileExtension
-        )
-        return sRef.putFile(imageFileUri!!)
-    }
-
 
   suspend  fun addProducts(products: Products, constants: String) {
             try {
@@ -130,9 +118,19 @@ class FireStore {
              }
          }
 
-  suspend  fun deleteImage()  {
+    fun upLoadImageToCloudStorage(fileExtension: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
+        val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+            constantsImages + System.currentTimeMillis() + "."
+                    + fileExtension
+        )
+        return sRef.putFile(imageFileUri!!)
+    }
+
+  suspend  fun deleteImage(fileExtension: String)  {
         try {
-            FirebaseStorage.getInstance().reference.child(Constants.USER_PRODUCTS_IMAGES).delete().await()
+            val imageDelete = Firebase.storage.reference
+            imageDelete.child(Constants.USER_PRODUCTS_IMAGES + System.currentTimeMillis() + "."
+                    + fileExtension).delete().await()
         } catch (e: IOException) {
             Log.e("deleteImage", "$e")
         }

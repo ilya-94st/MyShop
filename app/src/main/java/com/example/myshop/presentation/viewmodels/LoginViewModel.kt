@@ -17,7 +17,6 @@ class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin, pri
 
     var users: LiveData<Users> = _users
 
-
     private var _isLogged = MutableLiveData<Boolean>()
 
     var isLogged: LiveData<Boolean> = _isLogged
@@ -30,8 +29,7 @@ class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin, pri
         _users.postValue(checkUserDetails.getUserDetails())
     }
 
-    fun logInRegisterUser(etEmail :String, etPassword: String) =
-        viewModelScope.launch {
+    fun logInRegisterUser(etEmail :String, etPassword: String) = viewModelScope.launch {
             _isLogged.value = false
             checkLogin.logInRegisterUser(etEmail, etPassword)
             _isLogged.value = true
@@ -55,6 +53,11 @@ class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin, pri
                 _loginEvent.value = LoginInEvent.ErrorLoginIn("enter the correct email")
                 false
             }
+            checkLogin.checkUserLoginRegister(etEmail, etPassword) -> {
+                _loginEvent.value = LoginInEvent.ErrorLoginIn("no")
+                false
+            }
+
             else -> {
                 _loginEvent.value = LoginInEvent.Success
                 true

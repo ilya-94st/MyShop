@@ -1,9 +1,12 @@
 package com.example.myshop.presentation.ui.fragments
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.webkit.MimeTypeMap
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
@@ -38,8 +41,8 @@ private var userId = ""
 
 
         productsAdapter.setOnItemClickListener {
-           viewModel.deleteProduct()
-          // deleteProducts.deleteImage(this)
+          // viewModel.deleteProduct()
+           viewModel.deleteImage("jpg")
         }
     }
 
@@ -55,5 +58,10 @@ private var userId = ""
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
+    }
+
+    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
+
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 }

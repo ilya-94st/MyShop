@@ -12,7 +12,7 @@ interface ProductsRepository {
 
    suspend fun deleteProduct()
 
-   suspend fun deleteImageProduct()
+   suspend fun deleteImageProduct(fileExtension: String)
 
     fun getProduct(productsAdapter: ProductsAdapter, userId: String)
 

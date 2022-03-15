@@ -5,6 +5,8 @@ import android.util.Log
 import com.example.myshop.data.FireStore
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.repository.AuthenticationRepository
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
@@ -48,11 +50,17 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
         val password = etPassword.trim { it <= ' ' }
 
         firebaseAuth.signInWithEmailAndPassword(email, password).await()
-
     }
 
     override suspend fun checkForgotPassword(etEmail: String) {
         val email = etEmail.trim { it <= ' ' }
             firebaseAuth.sendPasswordResetEmail(email).await()
+    }
+
+    override fun checkUserRegister(etEmail: String, etPassword: String): Boolean {
+        val email = etEmail.trim { it <= ' ' }
+        val password = etPassword.trim { it <= ' ' }
+
+        return firebaseAuth.signInWithEmailAndPassword(email, password).isSuccessful
     }
 }

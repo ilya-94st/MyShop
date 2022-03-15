@@ -50,6 +50,10 @@ private val getProducts: GetProducts, private val checkUserDetails: CheckUserDet
         deleteProducts.deleteProduct()
     }
 
+    fun deleteImage(fileExtension: String) = viewModelScope.launch {
+        deleteProducts.deleteImage(fileExtension)
+    }
+
     fun getProduct(productsAdapter: ProductsAdapter, userId: String) {
         getProducts.getProduct(productsAdapter, userId)
     }

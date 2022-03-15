@@ -6,6 +6,7 @@ import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.repository.ProductsRepository
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
+import java.security.cert.Extension
 import javax.inject.Inject
 
 class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
@@ -17,8 +18,8 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
         FireStore().deleteProducts()
     }
 
-    override suspend fun deleteImageProduct() {
-        FireStore().deleteImage()
+    override suspend fun deleteImageProduct(fileExtension: String) {
+        FireStore().deleteImage(fileExtension)
     }
 
     override fun getProduct(productsAdapter: ProductsAdapter, userId: String) {

@@ -1,6 +1,7 @@
 package com.example.myshop.domain.use_case
 
 import com.example.myshop.domain.repository.ProductsRepository
+import java.security.cert.Extension
 import javax.inject.Inject
 
 class DeleteProducts @Inject constructor(private val productsRepository: ProductsRepository) {
@@ -9,7 +10,7 @@ class DeleteProducts @Inject constructor(private val productsRepository: Product
        productsRepository.deleteProduct()
     }
 
-   suspend fun deleteImage() {
-       productsRepository.deleteImageProduct()
+   suspend fun deleteImage(fileExtension: String) {
+       productsRepository.deleteImageProduct(fileExtension)
     }
 }

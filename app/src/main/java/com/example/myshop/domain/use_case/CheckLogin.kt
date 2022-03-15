@@ -13,7 +13,10 @@ class CheckLogin @Inject constructor(private val authenticationRepository: Authe
 
     fun  passwordLength(field: String) = field.length <= 6
 
-    suspend fun logInRegisterUser(etEmail :String, etPassword: String) {
+  suspend fun logInRegisterUser(etEmail :String, etPassword: String) {
         authenticationRepository.logInUser(etEmail, etPassword)
     }
+
+    fun checkUserLoginRegister(etEmail :String, etPassword: String) = authenticationRepository.checkUserRegister(etEmail, etPassword)
+
 }

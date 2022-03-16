@@ -38,7 +38,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
         viewModel.isLogged.observe(viewLifecycleOwner) {
             if(it == false) {
-                showProgressDialog("Please wait...")
+                hideProgressDialog()
+                errorSnackBar("No", true)
+            } else {
+                viewModel.getUserDetails()
+                userLoggedInSuccessful()
             }
         }
 
@@ -46,8 +50,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             when (event) {
                 is LoginViewModel.LoginInEvent.Success -> {
                     viewModel.logInRegisterUser(binding.etEmail.text.toString(), binding.etPassword.text.toString())
-                    viewModel.getUserDetails()
-                    userLoggedInSuccessful()
+                    showProgressDialog("Please wait...")
                 }
                 is LoginViewModel.LoginInEvent.ErrorLoginIn -> {
                     errorSnackBar(event.error, true)

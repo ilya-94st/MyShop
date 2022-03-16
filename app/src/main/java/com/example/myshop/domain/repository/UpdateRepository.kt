@@ -7,5 +7,4 @@ interface UpdateRepository {
 
     fun updateUserProfileData(userHashMap: HashMap<String, Any>)
 
-    fun upLoadImageToCloudStorage(fileExtension: String, imageFileUri: Uri?, constantsImages: String): UploadTask
 }

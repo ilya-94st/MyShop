@@ -8,9 +8,8 @@ interface AuthenticationRepository {
 
    suspend fun registration(etEmailID: String, etPassword: String, etFirstName: String, etLastName: String)
 
-   suspend fun logInUser(etEmail :String, etPassword: String)
+   fun logInUser(etEmail :String, etPassword: String): Task<AuthResult>
 
    suspend fun checkForgotPassword(etEmail: String)
 
-   fun checkUserRegister(etEmail: String, etPassword: String): Boolean
 }

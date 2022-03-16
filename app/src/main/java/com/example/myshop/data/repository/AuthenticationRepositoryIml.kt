@@ -45,11 +45,11 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
 
     }
 
-    override suspend fun logInUser(etEmail: String, etPassword: String) {
+    override fun logInUser(etEmail: String, etPassword: String): Task<AuthResult> {
         val email = etEmail.trim { it <= ' ' }
         val password = etPassword.trim { it <= ' ' }
 
-        firebaseAuth.signInWithEmailAndPassword(email, password).await()
+        return firebaseAuth.signInWithEmailAndPassword(email, password)
     }
 
     override suspend fun checkForgotPassword(etEmail: String) {
@@ -57,10 +57,4 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
             firebaseAuth.sendPasswordResetEmail(email).await()
     }
 
-    override fun checkUserRegister(etEmail: String, etPassword: String): Boolean {
-        val email = etEmail.trim { it <= ' ' }
-        val password = etPassword.trim { it <= ' ' }
-
-        return firebaseAuth.signInWithEmailAndPassword(email, password).isSuccessful
-    }
 }

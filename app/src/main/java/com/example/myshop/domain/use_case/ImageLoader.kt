@@ -4,11 +4,11 @@ import android.content.Context
 import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.example.myshop.domain.repository.UpdateRepository
+import com.example.myshop.domain.repository.LoadImageToCloudStorageRepository
 import java.io.IOException
 import javax.inject.Inject
 
-class ImageLoader @Inject constructor(private val updateRepository: UpdateRepository) {
+class ImageLoader @Inject constructor(private val loadImageToCloudStorageRepository: LoadImageToCloudStorageRepository) {
 
     fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
         try {
@@ -20,5 +20,5 @@ class ImageLoader @Inject constructor(private val updateRepository: UpdateReposi
         }
     }
 
-    fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) = updateRepository.upLoadImageToCloudStorage(fileExtension, imageFileUri, constantsImages)
+    fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) = loadImageToCloudStorageRepository.upLoadImageToCloudStorage(fileExtension, imageFileUri, constantsImages)
 }

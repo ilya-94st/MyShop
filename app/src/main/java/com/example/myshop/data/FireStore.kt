@@ -120,8 +120,8 @@ class FireStore {
 
     fun upLoadImageToCloudStorage(fileExtension: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            constantsImages + System.currentTimeMillis() + "."
-                    + fileExtension
+            constantsImages
+                    + "." + fileExtension
         )
         return sRef.putFile(imageFileUri!!)
     }
@@ -129,7 +129,7 @@ class FireStore {
   suspend  fun deleteImage(fileExtension: String)  {
         try {
             val imageDelete = Firebase.storage.reference
-            imageDelete.child(Constants.USER_PRODUCTS_IMAGES + System.currentTimeMillis() + "."
+            imageDelete.child(Constants.USER_PRODUCTS_IMAGES + "."
                     + fileExtension).delete().await()
         } catch (e: IOException) {
             Log.e("deleteImage", "$e")

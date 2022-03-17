@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
-import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
@@ -52,8 +50,8 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                 is ProductViewModel.ProductInEvent.Success -> {
                     showProgressDialog("please wait ")
                     if (mSelectedImageFileUri != null) {
-                        getFileExtension(this, mSelectedImageFileUri)?.let {
-                            viewModel.loadImageToFirestore(it, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES).addOnSuccessListener { taskSnapshot ->
+                        viewModel.users.observe(viewLifecycleOwner){
+                            viewModel.loadImageToFirestore(it.id, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES).addOnSuccessListener { taskSnapshot ->
                                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
                                     observeUsers(uri.toString())
                                 }
@@ -72,7 +70,6 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
    private fun observeUsers(imageUrl: String) {
        viewModel.users.observe(viewLifecycleOwner){
            mUserProductImageURL = imageUrl
-           hideProgressDialog()
            val users = it
            val title = binding.etTitle.text.toString()
            val price = binding.etPrice.text.toString()
@@ -81,6 +78,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
            val userId = users.id
            val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
            viewModel.addProducts(products)
+           hideProgressDialog()
            findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
        }
    }
@@ -141,10 +139,5 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults ,this)
-    }
-
-    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
-
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 }

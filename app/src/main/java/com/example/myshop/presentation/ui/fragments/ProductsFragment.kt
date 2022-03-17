@@ -41,8 +41,8 @@ private var userId = ""
 
 
         productsAdapter.setOnItemClickListener {
-          // viewModel.deleteProduct()
-           viewModel.deleteImage("jpg")
+           viewModel.deleteProduct()
+           viewModel.deleteImage(userId)
         }
     }
 
@@ -58,10 +58,5 @@ private var userId = ""
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
-    }
-
-    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
-
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
     }
 }

@@ -39,7 +39,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         viewModel.isLogged.observe(viewLifecycleOwner) {
             if(it == false) {
                 hideProgressDialog()
-                errorSnackBar("No", true)
+                errorSnackBar("no such user", true)
             } else {
                 viewModel.getUserDetails()
                 userLoggedInSuccessful()

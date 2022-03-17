@@ -16,7 +16,4 @@ class CheckLogin @Inject constructor(private val authenticationRepository: Authe
    fun logInRegisterUser(etEmail :String, etPassword: String) =
         authenticationRepository.logInUser(etEmail, etPassword)
 
-
-    fun checkUserLoginRegister(etEmail :String, etPassword: String) = authenticationRepository.checkUserRegister(etEmail, etPassword)
-
 }

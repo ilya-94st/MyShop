@@ -43,7 +43,7 @@ class ProductsAdapter:  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>
         holder.itemView.apply {
             Glide.with(this).load(products.image).into(holder.binding.ivProduct)
         }
-        holder.binding.tvPrice.text = "${products.price}"
+        holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title
         holder.binding.ivDeleteProduct.setOnClickListener {
            onItemClickListener.let {

@@ -6,16 +6,18 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.common.Constants
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentAddProductsBinding
 import com.example.myshop.domain.models.Products
 import com.example.myshop.presentation.base.BaseFragment
-import com.example.myshop.presentation.viewmodels.ProductViewModel
+import com.example.myshop.presentation.viewmodels.AddProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -28,38 +30,46 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
 
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProductImageURL: String = ""
-    private  val  viewModel: ProductViewModel by viewModels()
+    private var currency: String = ""
+    private  val  viewModelAdd: AddProductViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
 
         binding.ivGetPhoto.setOnClickListener {
             getPhotoPermission()
         }
 
-        binding.btSubmit.setOnClickListener {
-            viewModel.observeProduct(binding.etTitle.text.toString(), binding.etPrice.text.toString(),
-            binding.etDescription.text.toString(), binding.etQuality.text.toString()
-                )
+        binding.spCurrency.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
+                when(position){
+                    0 ->  {
+                        currency = "USD"
+                    }
+                    1 -> {
+                        currency = "EUR"
+                    }
+                    2 -> currency = "BYN"
+                    3 -> currency = "RUB"
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        viewModel.productEvent.observe(viewLifecycleOwner) { event->
+        binding.btSubmit.setOnClickListener {
+            showProgressDialog("please wait ")
+            loadImageToFireStore()
+        }
+
+        viewModelAdd.result.observe(viewLifecycleOwner) { event->
             when(event) {
-                is ProductViewModel.ProductInEvent.Success -> {
-                    showProgressDialog("please wait ")
-                    if (mSelectedImageFileUri != null) {
-                        viewModel.users.observe(viewLifecycleOwner){
-                            viewModel.loadImageToFirestore(it.id, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES).addOnSuccessListener { taskSnapshot ->
-                                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
-                                    observeUsers(uri.toString())
-                                }
-                            }
-                        }
-                    }
+                is EventClass.Success -> {
+                    hideProgressDialog()
+                    findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
                 }
-                is ProductViewModel.ProductInEvent.ErrorProductIn -> {
+                is EventClass.ErrorIn -> {
                     errorSnackBar(event.error, true)
                 }
                 else -> Unit
@@ -68,7 +78,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     }
 
    private fun observeUsers(imageUrl: String) {
-       viewModel.users.observe(viewLifecycleOwner){
+       viewModelAdd.users.observe(viewLifecycleOwner){
            mUserProductImageURL = imageUrl
            val users = it
            val title = binding.etTitle.text.toString()
@@ -76,12 +86,30 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
            val description = binding.etDescription.text.toString()
            val quality = binding.etQuality.text.toString()
            val userId = users.id
-           val products = Products(id = userId,title = title, price = price.toFloat(), description = description, quality = quality.toInt(), image = mUserProductImageURL)
-           viewModel.addProducts(products)
-           hideProgressDialog()
-           findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
+           val products = Products(
+               id = userId,
+               title = title,
+               price = price.toFloat(),
+               description = description,
+               quality = quality.toInt(),
+               image = mUserProductImageURL,
+               currency = currency)
+           viewModelAdd.addProducts(products, binding.etTitle.text.toString(), binding.etPrice.text.toString(),
+               binding.etDescription.text.toString(), binding.etQuality.text.toString())
        }
    }
+
+    private fun loadImageToFireStore() {
+        if (mSelectedImageFileUri != null) {
+            viewModelAdd.users.observe(viewLifecycleOwner){
+                viewModelAdd.loadImageToFirestore(it.id, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES).addOnSuccessListener { taskSnapshot ->
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
+                        observeUsers(uri.toString())
+                    }
+                }
+            }
+        }
+    }
 
     private fun showImageChooser() {
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -96,7 +124,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        viewModel.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
+                        viewModelAdd.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")

@@ -2,17 +2,18 @@ package com.example.myshop.data.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
+import com.example.myshop.common.EventClass
 import com.example.myshop.data.FireStore
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.repository.AuthenticationRepository
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: FirebaseAuth): AuthenticationRepository {
+
+
     @SuppressLint("LongLogTag")
     override suspend fun registration(
         etEmailID: String,
@@ -20,10 +21,9 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
         etFirstName: String,
         etLastName: String
     ) {
-        val email = etEmailID.trim { it <= ' ' }
-        val password = etPassword.trim { it <= ' ' }
 
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+
+        firebaseAuth.createUserWithEmailAndPassword(etEmailID, etPassword)
             .addOnCompleteListener { task ->
 
                 if (task.isSuccessful) {
@@ -45,16 +45,32 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
 
     }
 
-    override fun logInUser(etEmail: String, etPassword: String): Task<AuthResult> {
-        val email = etEmail.trim { it <= ' ' }
-        val password = etPassword.trim { it <= ' ' }
+    override suspend fun logInUser(etEmail: String, etPassword: String): EventClass? {
+        var registerResult: EventClass? = null
 
-        return firebaseAuth.signInWithEmailAndPassword(email, password)
+        try {
+            firebaseAuth.signInWithEmailAndPassword(etEmail, etPassword).addOnCompleteListener {
+                task ->
+                registerResult = if(task.isSuccessful) {
+                    EventClass.Success
+                } else {
+                    EventClass.ErrorIn("${task.exception?.message}")
+                }
+            }.await()
+        }catch (e: Exception) {
+            registerResult =  EventClass.ErrorIn("${e.message}")
+        }
+
+       return registerResult
     }
 
     override suspend fun checkForgotPassword(etEmail: String) {
         val email = etEmail.trim { it <= ' ' }
             firebaseAuth.sendPasswordResetEmail(email).await()
+    }
+
+    override fun logout() {
+        FirebaseAuth.getInstance().signOut()
     }
 
 }

@@ -1,12 +1,9 @@
 package com.example.myshop.presentation.ui.fragments
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.webkit.MimeTypeMap
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
@@ -47,7 +44,7 @@ private var userId = ""
     }
 
     @SuppressLint("SetTextI18n")
-  private  fun userDetailsSuccessful() {
+  private fun userDetailsSuccessful() {
                 viewModel.users.observe(viewLifecycleOwner){
                     mUserDetails = it
                     userId =  mUserDetails.id

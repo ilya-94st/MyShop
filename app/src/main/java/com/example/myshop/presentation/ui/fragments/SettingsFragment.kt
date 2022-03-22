@@ -11,7 +11,6 @@ import com.example.myshop.R
 import com.example.myshop.databinding.FragmentSettingsBinding
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.SettingsViewModel
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -38,7 +37,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
         binding.btLogout.setOnClickListener {
             // log out of the current account
-            FirebaseAuth.getInstance().signOut()
+            viewModel.logout()
             findNavController().navigate(R.id.action_settingsFragment_to_loginFragment)
         }
     }

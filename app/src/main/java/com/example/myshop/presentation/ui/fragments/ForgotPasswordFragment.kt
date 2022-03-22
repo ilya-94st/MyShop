@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentForgotPasswordBinding
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.ForgotPasswordViewModel
@@ -29,26 +30,20 @@ class ForgotPasswordFragment : BaseFragment<FragmentForgotPasswordBinding>() {
         }
 
         binding.btSubmit.setOnClickListener {
-            viewModel.validEmailDetails(binding.etEmail.text.toString())
+            showProgressDialog("Please wait...")
+            viewModel.checkSendPasswordResetEmail(binding.etEmail.text.toString())
         }
 
-        viewModel.isLogged.observe(viewLifecycleOwner) {
-            if(it == true) {
-                hideProgressDialog()
-                toast("You are logged successfully")
-                findNavController().popBackStack()
-            } else {
-                showProgressDialog("Please wait...")
-            }
-        }
-
-        viewModel.emailEvent.observe(viewLifecycleOwner){
+        viewModel.result.observe(viewLifecycleOwner){
                 event->
             when(event) {
-                is ForgotPasswordViewModel.ForgotPasswordInEvent.Success -> {
-                    viewModel.checkSendPasswordResetEmail(binding.etEmail.text.toString())
+                is EventClass.Success -> {
+                    hideProgressDialog()
+                    toast("You are logged successfully")
+                    findNavController().popBackStack()
                 }
-                is ForgotPasswordViewModel.ForgotPasswordInEvent.ErrorForgotPasswordIn -> {
+                is EventClass.ErrorIn -> {
+                    hideProgressDialog()
                     errorSnackBar(event.error, true)
                     if(event.error == requireContext().getString(R.string.checkedEmail)) {
                         binding.etEmail.error = event.error

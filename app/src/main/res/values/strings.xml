@@ -19,4 +19,11 @@
     <string name="product_description">Product Description</string>
     <string name="mobile">Mobile</string>
     <string name="stock_quantity">Stock Quantity</string>
+
+    <string-array name="currencyArray">
+        <item>USD</item>
+        <item>EUR</item>
+        <item>BYN</item>
+        <item>RUB</item>
+    </string-array>
 </resources>

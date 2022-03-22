@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class LoadImageToCloudStorageRepositoryImp @Inject constructor(): LoadImageToCloudStorageRepository {
     override fun upLoadImageToCloudStorage(
-        fileExtension: String,
+        userId: String,
         imageFileUri: Uri?,
         constantsImages: String
-    ) = FireStore().upLoadImageToCloudStorage(fileExtension, imageFileUri, constantsImages)
+    ) = FireStore().upLoadImageToCloudStorage(userId, imageFileUri, constantsImages)
 }

@@ -18,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.common.Constants
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentUserProfileBinding
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.UserProfileViewModel
@@ -48,38 +49,33 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         }
 
         binding.btSave.setOnClickListener {
-            viewModel.validMobile(binding.etMobile.text.toString())
-        }
-
-        viewModel.isUserProfileSuccessful.observe(viewLifecycleOwner){
-            if(it == true) {
-                userProfileUpdateSuccess()
+            showProgressDialog("please wait ")
+            viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
+                binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
+            )
+            getFileExtension(this, mSelectedImageFileUri)?.let {
+                viewModel.loadImageToFirestore(it, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE).addOnSuccessListener { taskSnapshot->
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri->
+                        imageUploadSuccess(uri.toString())
+                        userProfileUpdateSuccess()
+                    }
+                }
             }
+
         }
 
-        viewModel.mobilePhoneEvent.observe(viewLifecycleOwner) { event ->
+
+
+        viewModel.result.observe(viewLifecycleOwner) { event ->
             when(event) {
-                is UserProfileViewModel.UserProfileInEvent.ErrorUserProfileInEvent -> {
+                is EventClass.ErrorIn -> {
                     errorSnackBar(event.error, true)
                     if (event.error == requireContext().getString(R.string.checkedMobile)) {
                         binding.etMobile.error = event.error
                     }
                 }
-                is UserProfileViewModel.UserProfileInEvent.Success -> {
-                    showProgressDialog("please wait ")
-                    if(mSelectedImageFileUri != null) {
-                        getFileExtension(this, mSelectedImageFileUri)?.let {
-                            viewModel.loadImageToFirestore(it, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE).addOnSuccessListener { taskSnapshot->
-                                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri->
-                                    imageUploadSuccess(uri.toString())
-                                }
-                            }
-                        }
-                    } else {
-                       viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
-                       binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
-                           )
-                    }
+                is EventClass.Success -> {
+                        userProfileUpdateSuccess()
                 }
                 else -> Unit
             }

@@ -1,16 +1,17 @@
 package com.example.myshop.domain.use_case
 
-import android.text.TextUtils
+
+import com.example.myshop.common.CheckValid
 import com.example.myshop.common.Constants
+import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.repository.UpdateRepository
 import javax.inject.Inject
 
 class GetUserProfile @Inject constructor(private val updateRepository: UpdateRepository) {
 
-    fun isEmptyField(filed:String) = TextUtils.isEmpty(filed.trim { it <= ' ' })
 
-    fun getProfileUserDetails(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String) {
+   operator fun invoke(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String): EventClass {
 
         val userHashMap = HashMap<String, Any>()
 
@@ -48,6 +49,14 @@ class GetUserProfile @Inject constructor(private val updateRepository: UpdateRep
 
         userHashMap[Constants.COMPLETE_PROFILE] = 1
 
-       updateRepository.updateUserProfileData(userHashMap)
+       return when(val result = CheckValid.validMobileDetails(etMobile)) {
+           is EventClass.ErrorIn -> {
+               result
+           }
+           else -> {
+               updateRepository.updateUserProfileData(userHashMap)
+               EventClass.Success
+           }
+       }
     }
 }

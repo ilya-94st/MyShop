@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckDescriptionsProduct
 import com.example.myshop.domain.use_case.ImageLoader
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +25,7 @@ class DescriptionProductViewModel @Inject constructor(private val loader: ImageL
     }
 
     fun getUserMobile(usersId: String) = viewModelScope.launch {
-        _users.postValue(checkDescriptionsProduct.checkUserMobile(usersId))
+        _users.postValue(checkDescriptionsProduct.invoke(usersId))
 
     }
 }

@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class CheckUserDetails @Inject constructor(private val checkUsersRepository: CheckUsersRepository) {
 
-    suspend fun getUserDetails() = checkUsersRepository.getUserDetails()
+    suspend operator fun invoke() = checkUsersRepository.getUserDetails()
 }

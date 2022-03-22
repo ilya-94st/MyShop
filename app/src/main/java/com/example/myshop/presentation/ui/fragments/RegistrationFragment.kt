@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentRegistrationBinding
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.RegistrationViewModel
@@ -33,30 +34,23 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
             findNavController().popBackStack()
         }
         binding.btRegister.setOnClickListener {
-            viewModel.validRegisterDetails(binding.etFirstName.text.toString(), binding.etLastName.text.toString(),
-                binding.etEmailID.text.toString(), binding.etPassword.text.toString(), binding.etConfirm.text.toString(), binding.checkBox.isChecked
+            showProgressDialog("Please wait...")
+            viewModel.registrationUser(
+                etEmailID = binding.etEmailID.text.toString(), etPassword = binding.etPassword.text.toString(),
+                etFirstName = binding.etFirstName.text.toString(), etLastName = binding.etLastName.text.toString(), etConfirmPassword = binding.etConfirm.text.toString(), checked = binding.checkBox.isChecked
             )
         }
 
-        viewModel.isUserCreate.observe(viewLifecycleOwner) {
-               if(it == true) {
-                   hideProgressDialog()
-                   toast("You are registered successfully")
-                   findNavController().popBackStack()
-               } else {
-                   showProgressDialog("Please wait...")
-               }
-        }
-
-        viewModel.registrationEvent.observe(viewLifecycleOwner) {
+        viewModel.result.observe(viewLifecycleOwner) {
                 event->
             when(event) {
-                is RegistrationViewModel.RegistrationInEvent.Success -> {
-                    viewModel.registrationUser(binding.etEmailID.text.toString(), binding.etPassword.text.toString(), binding.etFirstName.text.toString(),
-                        binding.etLastName.text.toString()
-                    )
+                is EventClass.Success -> {
+                    hideProgressDialog()
+                    toast("You are registered successfully")
+                    findNavController().popBackStack()
                 }
-                is RegistrationViewModel.RegistrationInEvent.ErrorRegistrationIn -> {
+                is EventClass.ErrorIn -> {
+                    hideProgressDialog()
                     errorSnackBar(event.error, true)
                     if (event.error == requireContext().getString(R.string.checkedName)){
                         binding.etFirstName.error = event.error

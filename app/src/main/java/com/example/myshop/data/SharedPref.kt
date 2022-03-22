@@ -1,4 +1,4 @@
-package com.example.myshop.common
+package com.example.myshop.data
 
 import android.content.Context
 import android.content.SharedPreferences

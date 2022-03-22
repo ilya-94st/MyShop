@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckLogin
 import com.example.myshop.domain.use_case.CheckUserDetails
@@ -17,55 +18,16 @@ class LoginViewModel @Inject constructor(private val checkLogin: CheckLogin, pri
 
     var users: LiveData<Users> = _users
 
-    private var _isLogged = MutableLiveData<Boolean>()
+    private var _result = MutableLiveData<EventClass>()
 
-    var isLogged: LiveData<Boolean> = _isLogged
+    var result: LiveData<EventClass> = _result
 
-    private val _loginEvent = MutableLiveData<LoginInEvent>(LoginInEvent.Empty)
-
-    val loginEvent: LiveData<LoginInEvent> = _loginEvent
+    fun validLoginDetails(etEmail :String, etPassword: String) = viewModelScope.launch {
+       _result.postValue(checkLogin.invoke(etEmail, etPassword))
+    }
 
     fun getUserDetails() = viewModelScope.launch {
-        _users.postValue(checkUserDetails.getUserDetails())
-    }
-
-    fun logInRegisterUser(etEmail :String, etPassword: String) {
-        checkLogin.logInRegisterUser(etEmail, etPassword).addOnCompleteListener {
-         task-> _isLogged.value = task.isSuccessful
-        }
-        }
-
-    fun validLoginDetails(etEmail: String, etPassword: String): Boolean {
-        return when {
-            checkLogin.isEmptyField(etEmail) -> {
-                _loginEvent.value = LoginInEvent.ErrorLoginIn("enter email")
-                false
-            }
-            checkLogin.isEmptyField(etPassword) -> {
-                _loginEvent.value = LoginInEvent.ErrorLoginIn("enter password")
-                false
-            }
-            checkLogin.passwordLength(etPassword)-> {
-                _loginEvent.value = LoginInEvent.ErrorLoginIn("Введите password больше 6")
-                false
-            }
-            checkLogin.checkEmail(etEmail) -> {
-                _loginEvent.value = LoginInEvent.ErrorLoginIn("enter the correct email")
-                false
-            }
-
-
-            else -> {
-                _loginEvent.value = LoginInEvent.Success
-                true
-            }
-        }
-    }
-
-    sealed class LoginInEvent {
-        data class ErrorLoginIn(val error: String) : LoginInEvent()
-        object Success : LoginInEvent()
-        object Empty: LoginInEvent()
+        _users.postValue(checkUserDetails.invoke())
     }
 
 }

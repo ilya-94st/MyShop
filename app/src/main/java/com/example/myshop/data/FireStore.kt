@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Products
+import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.Users
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
@@ -67,9 +68,19 @@ class FireStore {
             }
     }
 
-    fun getProducts(productsAdapter: ProductsAdapter, userID: String) {
+    suspend  fun addProductsInCart(products: ProductsInCart, constants: String) {
+        try {
+
+            fireStore.collection(constants).add(products).await()
+
+        } catch (e: IOException) {
+            Log.e("addProducts", "error addProducts")
+        }
+    }
+
+    fun getProducts(productsAdapter: ProductsAdapter, userID: String, constants: String) {
         listProducts = arrayListOf()
-        fireStore.collection(Constants.PRODUCTS).whereEqualTo("id", userID)
+        fireStore.collection(constants).whereEqualTo("id", userID)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     return@addSnapshotListener
@@ -118,19 +129,19 @@ class FireStore {
              }
          }
 
-    fun upLoadImageToCloudStorage(fileExtension: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
+    fun upLoadImageToCloudStorage(userId: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
             constantsImages
-                    + "." + fileExtension
+                    + "." + userId
         )
         return sRef.putFile(imageFileUri!!)
     }
 
-  suspend  fun deleteImage(fileExtension: String)  {
+  suspend  fun deleteImage(userId: String)  {
         try {
             val imageDelete = Firebase.storage.reference
             imageDelete.child(Constants.USER_PRODUCTS_IMAGES + "."
-                    + fileExtension).delete().await()
+                    + userId).delete().await()
         } catch (e: IOException) {
             Log.e("deleteImage", "$e")
         }

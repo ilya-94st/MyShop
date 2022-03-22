@@ -20,5 +20,5 @@ class ImageLoader @Inject constructor(private val loadImageToCloudStorageReposit
         }
     }
 
-    fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) = loadImageToCloudStorageRepository.upLoadImageToCloudStorage(fileExtension, imageFileUri, constantsImages)
+    fun loadImageToFirestore(userId: String, imageFileUri: Uri?, constantsImages: String) = loadImageToCloudStorageRepository.upLoadImageToCloudStorage(userId, imageFileUri, constantsImages)
 }

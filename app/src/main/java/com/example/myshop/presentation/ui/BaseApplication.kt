@@ -2,7 +2,7 @@ package com.example.myshop.presentation.ui
 
 import android.annotation.SuppressLint
 import android.app.Application
-import com.example.myshop.common.SharedPref
+import com.example.myshop.data.SharedPref
 import dagger.hilt.android.HiltAndroidApp
 
 val prefs: SharedPref by lazy {

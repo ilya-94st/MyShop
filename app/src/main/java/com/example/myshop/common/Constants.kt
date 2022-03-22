@@ -7,6 +7,7 @@ object Constants {
     const val USERS = "users"
     const val PRODUCTS = "products"
     const val ALL_PRODUCTS = "all_products"
+    const val PRODUCT_IN_CART = "product_in_cart"
 
     const val READ_STORAGE_PERMISSION_CODE = 2
 

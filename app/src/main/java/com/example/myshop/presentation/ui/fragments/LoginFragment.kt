@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentLoginBinding
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.LoginViewModel
@@ -29,6 +30,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
 
         binding.btLogin.setOnClickListener {
+            showProgressDialog("Please wait...")
             viewModel.validLoginDetails(binding.etEmail.text.toString(), binding.etPassword.text.toString())
         }
 
@@ -36,23 +38,14 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
-        viewModel.isLogged.observe(viewLifecycleOwner) {
-            if(it == false) {
-                hideProgressDialog()
-                errorSnackBar("no such user", true)
-            } else {
-                viewModel.getUserDetails()
-                userLoggedInSuccessful()
-            }
-        }
-
-        viewModel.loginEvent.observe(viewLifecycleOwner) { event ->
+        viewModel.result.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is LoginViewModel.LoginInEvent.Success -> {
-                    viewModel.logInRegisterUser(binding.etEmail.text.toString(), binding.etPassword.text.toString())
-                    showProgressDialog("Please wait...")
+                 is EventClass.Success -> {
+                    viewModel.getUserDetails()
+                    userLoggedInSuccessful()
                 }
-                is LoginViewModel.LoginInEvent.ErrorLoginIn -> {
+                is EventClass.ErrorIn -> {
+                    hideProgressDialog()
                     errorSnackBar(event.error, true)
                     if (event.error == requireContext().getString(R.string.checkedEmail)) {
                         binding.etEmail.error = event.error
@@ -67,6 +60,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 else -> Unit
             }
         }
+
     }
 
     private fun userLoggedInSuccessful() {

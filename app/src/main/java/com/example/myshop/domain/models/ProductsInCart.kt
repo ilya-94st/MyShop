@@ -1,13 +1,11 @@
 package com.example.myshop.domain.models
 
-import java.io.Serializable
-
-data class Products(
+data class ProductsInCart(
     val id: String = "",
     val title: String = "",
     val price: Float = 0F,
-    val description: String = "",
+    val priceSum: Float =0F,
     val quality: Int = 0,
     val image: String = "",
     val currency: String =""
-): Serializable
+)

@@ -33,4 +33,15 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
     override fun getAllProducts(allProductsAdapter: AllProductsAdapter) {
         FireStore().getAllProducts(allProductsAdapter)
     }
+
+    override fun getProductInCart(
+        productsAdapter: ProductsAdapter,
+        userId: String
+    ) {
+        FireStore().getProducts(productsAdapter, userId, Constants.PRODUCT_IN_CART)
+    }
+
+    override suspend fun getAllPrice(userId: String): Float? =
+        FireStore().getAllPrice(userId, Constants.PRODUCT_IN_CART)
+
 }

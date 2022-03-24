@@ -65,8 +65,7 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
     }
 
     override suspend fun checkForgotPassword(etEmail: String) {
-        val email = etEmail.trim { it <= ' ' }
-            firebaseAuth.sendPasswordResetEmail(email).await()
+            firebaseAuth.sendPasswordResetEmail(etEmail).await()
     }
 
     override fun logout() {

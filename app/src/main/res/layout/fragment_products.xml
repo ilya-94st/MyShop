@@ -20,6 +20,17 @@
             android:layout_height="?attr/actionBarSize">
 
             <ImageButton
+                android:id="@+id/ibCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="#5F79FA"
+                android:src="@drawable/ic_baseline_shopping_cart_24"
+                tools:ignore="RtlHardcoded" />
+
+
+            <ImageButton
                 android:id="@+id/ibAddProducts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

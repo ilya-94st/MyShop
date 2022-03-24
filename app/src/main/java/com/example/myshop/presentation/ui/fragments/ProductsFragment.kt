@@ -33,6 +33,11 @@ private var userId = ""
         binding.ibAddProducts.setOnClickListener {
             findNavController().navigate(R.id.action_productsFragment_to_addProductsFragment)
         }
+
+        binding.ibCart.setOnClickListener {
+           findNavController().navigate(R.id.action_productsFragment_to_myCartFragment)
+        }
+
         initAdapter()
         userDetailsSuccessful()
 

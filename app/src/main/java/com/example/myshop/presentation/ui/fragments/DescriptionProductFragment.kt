@@ -9,6 +9,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentDescriptionProductBinding
+import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.DescriptionProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +30,14 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         descriptionProduct()
 
         binding.btAddToCart.setOnClickListener {
+            val product = args.products
+            val userId = product.id
+            val imageProduct = product.image
+            val price = product.price
+            val title = product.title
+            val currency = product.currency
+            val productInCart = ProductsInCart(userId, title, price, imageProduct, currency)
+            viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
         }
 
@@ -51,8 +60,6 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         binding.tvPrice.text = "${products.price} ${products.currency}"
         binding.tvQuantity.text = "${products.quality}"
     }
-
-
 
     private fun getUserMobile() {
         val products = args.products

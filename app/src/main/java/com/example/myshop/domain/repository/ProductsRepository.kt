@@ -4,8 +4,6 @@ import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
-import com.example.myshop.presentation.ui.fragments.AddProductsFragment
-import com.example.myshop.presentation.ui.fragments.ProductsFragment
 
 interface ProductsRepository {
 
@@ -21,4 +19,7 @@ interface ProductsRepository {
 
     fun getAllProducts(allProductsAdapter: AllProductsAdapter)
 
+    fun getProductInCart(productsAdapter: ProductsAdapter, userId: String)
+
+  suspend  fun getAllPrice(userId: String): Float?
 }

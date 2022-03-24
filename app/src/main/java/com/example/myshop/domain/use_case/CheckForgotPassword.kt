@@ -9,12 +9,13 @@ import javax.inject.Inject
 class CheckForgotPassword @Inject constructor(private val authenticationRepository: AuthenticationRepository) {
 
 suspend operator fun invoke(etEmail: String): EventClass {
-    return when(val result = CheckValid.validEmailDetails(etEmail)) {
+    val email = etEmail.trim { it <= ' ' }
+    return when(val result = CheckValid.validEmailDetails(email)) {
         is EventClass.ErrorIn -> {
             result
         }
         else -> {
-            authenticationRepository.checkForgotPassword(etEmail)
+            authenticationRepository.checkForgotPassword(email)
             EventClass.Success
         }
     }

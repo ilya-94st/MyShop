@@ -10,6 +10,7 @@ import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -23,6 +24,7 @@ class FireStore {
     private val fireStore = FirebaseFirestore.getInstance()
     private lateinit var listProducts: ArrayList<Products>
     private lateinit var listAllProducts: ArrayList<Products>
+
 
 
     fun registerUser(userInfo: Users) {
@@ -76,6 +78,21 @@ class FireStore {
         } catch (e: IOException) {
             Log.e("addProducts", "error addProducts")
         }
+    }
+
+   suspend fun getAllPrice(userId: String, constants: String): Float? {
+        var priceAll: Float? = 0F
+        val querySnapshot = fireStore.collection(constants).whereEqualTo("id", userId).get().await()
+         for(document in querySnapshot.documents) {
+             val product = document.toObject<ProductsInCart>()
+             val price = product?.price
+             if (priceAll != null) {
+                 if (price != null) {
+                     priceAll += price
+                 }
+             }
+         }
+        return priceAll
     }
 
     fun getProducts(productsAdapter: ProductsAdapter, userID: String, constants: String) {

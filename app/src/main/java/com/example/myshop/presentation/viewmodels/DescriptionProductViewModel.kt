@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.domain.models.ProductsInCart
+import com.example.myshop.domain.use_case.AddProductsInCart
 import com.example.myshop.domain.use_case.CheckDescriptionsProduct
 import com.example.myshop.domain.use_case.ImageLoader
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DescriptionProductViewModel @Inject constructor(private val loader: ImageLoader, private val checkDescriptionsProduct: CheckDescriptionsProduct): ViewModel() {
+class DescriptionProductViewModel @Inject constructor(private val loader: ImageLoader, private val checkDescriptionsProduct: CheckDescriptionsProduct, private val addProductsInCart: AddProductsInCart): ViewModel() {
 
     private var _users = MutableLiveData<Any>()
 
@@ -26,6 +28,9 @@ class DescriptionProductViewModel @Inject constructor(private val loader: ImageL
 
     fun getUserMobile(usersId: String) = viewModelScope.launch {
         _users.postValue(checkDescriptionsProduct.invoke(usersId))
+    }
 
+    fun addProductInCart(productsInCart: ProductsInCart) = viewModelScope.launch {
+        addProductsInCart.invoke(productsInCart)
     }
 }

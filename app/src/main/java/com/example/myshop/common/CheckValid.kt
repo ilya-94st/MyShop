@@ -12,6 +12,8 @@ object CheckValid {
 
     private fun isEmptyFieldProduct(filed:String) = TextUtils.isEmpty(filed)
 
+    private fun isEmptyFieldAddress(filed:String) = TextUtils.isEmpty(filed)
+
     private fun checkEmail(filed: String) = !filed.contains("@")
 
     private fun passwordLength(field: String) = field.length <= 6
@@ -30,6 +32,29 @@ object CheckValid {
             }
             isEmptyFieldProduct(etQuality) -> {
                 EventClass.ErrorIn("enter field qality")
+            }
+            else -> {
+                EventClass.Success
+            }
+        }
+    }
+
+    fun validAddressUser(etName: String, etPhoneNumber: String, etAddress: String, etZipCode: String, etNotes: String): EventClass {
+        return when {
+            isEmptyFieldAddress(etName) -> {
+                EventClass.ErrorIn("enter filed name")
+            }
+            isEmptyFieldAddress(etPhoneNumber) -> {
+                EventClass.ErrorIn("enter field phone number")
+            }
+            isEmptyFieldAddress(etAddress) -> {
+                EventClass.ErrorIn("enter field address")
+            }
+            isEmptyFieldAddress(etZipCode) -> {
+                EventClass.ErrorIn("enter field zipCode")
+            }
+            isEmptyFieldAddress(etNotes) -> {
+                EventClass.ErrorIn("enter field notes")
             }
             else -> {
                 EventClass.Success

@@ -3,9 +3,11 @@ package com.example.myshop.data
 import android.net.Uri
 import android.util.Log
 import com.example.myshop.common.Constants
+import com.example.myshop.domain.models.AddressUser
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.Users
+import com.example.myshop.presentation.adapters.AddressAdapter
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +26,7 @@ class FireStore {
     private val fireStore = FirebaseFirestore.getInstance()
     private lateinit var listProducts: ArrayList<Products>
     private lateinit var listAllProducts: ArrayList<Products>
+    private lateinit var listItemsAddress: ArrayList<AddressUser>
 
 
 
@@ -76,7 +79,17 @@ class FireStore {
             fireStore.collection(constants).add(products).await()
 
         } catch (e: IOException) {
-            Log.e("addProducts", "error addProducts")
+            Log.e("addProducts", "error addProductsInCart")
+        }
+    }
+
+    suspend fun addAddressItems(addressUser: AddressUser) {
+        try {
+
+            fireStore.collection(Constants.ADDRESS_USER).add(addressUser).await()
+
+        } catch (e: IOException) {
+            Log.e("address", "error addAddressItems")
         }
     }
 
@@ -93,6 +106,23 @@ class FireStore {
              }
          }
         return priceAll
+    }
+
+     fun getItemsAddress(addressAdapter: AddressAdapter, userId: String) {
+        listItemsAddress = arrayListOf()
+        fireStore.collection(Constants.ADDRESS_USER).whereEqualTo("id", userId)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+
+                for (dc: DocumentChange in value?.documentChanges!!) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        listItemsAddress.add(dc.document.toObject(AddressUser::class.java))
+                        addressAdapter.submitList(listItemsAddress)
+                    }
+                }
+            }
     }
 
     fun getProducts(productsAdapter: ProductsAdapter, userID: String, constants: String) {

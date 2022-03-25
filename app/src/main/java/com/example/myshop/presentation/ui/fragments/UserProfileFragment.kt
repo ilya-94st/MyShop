@@ -64,8 +64,6 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         }
 
-
-
         viewModel.result.observe(viewLifecycleOwner) { event ->
             when(event) {
                 is EventClass.ErrorIn -> {

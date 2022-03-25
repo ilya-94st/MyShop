@@ -35,5 +35,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAddressUserRepository(): AddressUserRepository = AddressUserRepositoryImp()
+
+    @Provides
+    @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+
 }

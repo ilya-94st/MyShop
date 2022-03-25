@@ -154,5 +154,44 @@
         <action
             android:id="@+id/action_myCartFragment_to_productsFragment"
             app:destination="@id/productsFragment" />
+        <action
+            android:id="@+id/action_myCartFragment_to_selectAddressFragment"
+            app:destination="@id/selectAddressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectAddressFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.SelectAddressFragment"
+        android:label="fragment_address"
+        tools:layout="@layout/fragment_select_address" >
+        <action
+            android:id="@+id/action_selectAddressFragment_to_myCartFragment"
+            app:destination="@id/myCartFragment" />
+        <action
+            android:id="@+id/action_selectAddressFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment" />
+        <action
+            android:id="@+id/action_selectAddressFragment_to_checkoutOrderFragment"
+            app:destination="@id/checkoutOrderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.AddAddressFragment"
+        android:label="fragment_add_address"
+        tools:layout="@layout/fragment_add_address" >
+        <action
+            android:id="@+id/action_addAddressFragment_to_selectAddressFragment"
+            app:destination="@id/selectAddressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/checkoutOrderFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.CheckoutOrderFragment"
+        android:label="fragment_checkout_order"
+        tools:layout="@layout/fragment_checkout_order" >
+        <action
+            android:id="@+id/action_checkoutOrderFragment_to_dashBoardFragment"
+            app:destination="@id/dashBoardFragment" />
+        <argument
+            android:name="userAdres"
+            app:argType="com.example.myshop.domain.models.AddressUser" />
     </fragment>
 </navigation>

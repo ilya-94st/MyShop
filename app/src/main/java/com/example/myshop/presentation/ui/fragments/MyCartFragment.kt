@@ -1,10 +1,13 @@
 package com.example.myshop.presentation.ui.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.example.myshop.R
 import com.example.myshop.databinding.FragmentMyCartBinding
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.base.BaseFragment
@@ -22,8 +25,13 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
+
+        binding.btCheckout.setOnClickListener {
+           findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
@@ -32,7 +40,9 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             viewModel.getAllPrice(it.id)
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
-            binding.tvTotalSum.text = "$it"
+            binding.tvSubPrice.text = "$it"
+            binding.tvShippingPrice.text = "${10}"
+            binding.tvTotalSum.text = "${it + 10}"
         }
     }
 }

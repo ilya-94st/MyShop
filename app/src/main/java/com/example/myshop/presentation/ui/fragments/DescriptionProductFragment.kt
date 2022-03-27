@@ -22,6 +22,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     private val args: DescriptionProductFragmentArgs by navArgs()
     private val viewModel: DescriptionProductViewModel by viewModels()
+    private var userId = ""
 
 
 
@@ -30,14 +31,16 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         descriptionProduct()
 
         binding.btAddToCart.setOnClickListener {
-            val product = args.products
-            val userId = product.id
-            val imageProduct = product.image
-            val price = product.price
-            val title = product.title
-            val currency = product.currency
-            val productInCart = ProductsInCart(userId, title, price, imageProduct, currency)
-            viewModel.addProductInCart(productInCart)
+            viewModel.users.observe(viewLifecycleOwner){
+                userId = it.id
+            }
+                val product = args.products
+                val imageProduct = product.image
+                val price = product.price
+                val title = product.title
+                val currency = product.currency
+                val productInCart = ProductsInCart(userId, title, price, imageProduct, currency)
+                viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
         }
 
@@ -66,7 +69,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         viewModel.getUserMobile(products.id)
         binding.tvMobile.visibility = View.INVISIBLE
         showProgressDialog("please wait...")
-        viewModel.users.observe(viewLifecycleOwner){
+        viewModel.usersMobile.observe(viewLifecycleOwner){
             binding.tvMobile.text =  "$it"
             hideProgressDialog()
             binding.tvMobile.visibility = View.VISIBLE

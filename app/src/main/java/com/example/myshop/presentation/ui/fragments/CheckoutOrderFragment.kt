@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.databinding.FragmentCheckoutOrderBinding
+import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.viewmodels.CheckoutOrderViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private val savArgs: CheckoutOrderFragmentArgs by navArgs()
     private val viewModel: CheckoutOrderViewModel by viewModels()
+    private lateinit var productsAdapter: ProductsAdapter
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentCheckoutOrderBinding::inflate
@@ -24,6 +26,8 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getItemsOrder()
+        initAdapter()
+        observerProductsInCart()
     }
 
     @SuppressLint("SetTextI18n")
@@ -38,8 +42,20 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
             viewModel.getAllPrice(it.id)
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
-            binding.tvSubtotal.text = "$it"
-            binding.tvTotalAmount.text = "${it + 10F}"
+            binding.tvSubtotal.text = "Subtotal $it"
+            binding.tvShippingCharge.text = "Shipping Charge 10$"
+            binding.tvTotalAmount.text = "Total Amount ${it + 10F}"
+        }
+    }
+
+    private fun initAdapter() {
+        productsAdapter = ProductsAdapter()
+        binding.rvProducts.adapter = productsAdapter
+    }
+
+    private fun observerProductsInCart() {
+        viewModel.users.observe(viewLifecycleOwner){
+            viewModel.getProductInCart(productsAdapter, it.id)
         }
     }
 }

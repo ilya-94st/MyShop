@@ -33,6 +33,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
     @SuppressLint("SetTextI18n")
     private fun initAdapter() {
+        showProgressDialog("Please wait...")
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
         viewModel.users.observe(viewLifecycleOwner){
@@ -44,5 +45,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             binding.tvShippingPrice.text = "${10}"
             binding.tvTotalSum.text = "${it + 10}"
         }
+        hideProgressDialog()
     }
 }

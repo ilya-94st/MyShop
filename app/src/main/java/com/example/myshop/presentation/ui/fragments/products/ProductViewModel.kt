@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckUserDetails
 import com.example.myshop.domain.use_case.DeleteImageProduct
@@ -21,7 +22,7 @@ class ProductViewModel @Inject constructor(private val deleteProducts: DeletePro
     var users: LiveData<Users> = _users
 
     fun deleteProduct() = viewModelScope.launch {
-        deleteProducts.invoke()
+        deleteProducts.invoke(Constants.PRODUCTS)
     }
 
     fun deleteImage(userId: String) = viewModelScope.launch {

@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when(destination.id) {
-                    R.id.dashBoardFragment, R.id.productsFragment ->
+                    R.id.dashBoardFragment, R.id.productsFragment, R.id.ordersFragment ->
                         binding.btNavigation.visibility = View.VISIBLE
                     else -> binding.btNavigation.visibility = View.GONE
                 }

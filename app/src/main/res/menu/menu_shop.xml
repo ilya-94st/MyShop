@@ -8,4 +8,8 @@
             android:id="@+id/dashBoardFragment"
             android:icon="@drawable/ic_baseline_dashboard_24"
             />
+        <item android:title="Orders"
+            android:id="@+id/ordersFragment"
+            android:icon="@drawable/ic_baseline_shopping_bag_24"
+            />
 </menu>

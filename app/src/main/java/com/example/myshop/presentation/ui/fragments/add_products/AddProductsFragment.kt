@@ -1,5 +1,6 @@
 package com.example.myshop.presentation.ui.fragments.add_products
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -7,10 +8,12 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
 import com.example.myshop.R
 import com.example.myshop.common.Constants
 import com.example.myshop.common.EventClass
@@ -123,7 +126,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        viewModelAdd.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
+                        glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")
@@ -166,5 +169,15 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults ,this)
+    }
+
+  private  fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
+        try {
+            Glide.with(context).load(image)
+                .centerCrop()
+                .into(imageView)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }

@@ -149,6 +149,8 @@
         android:padding="8dp">
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvAddress"
+            android:background="@drawable/checked_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -159,9 +161,9 @@
 
         <ImageView
             android:id="@+id/ivBt"
-            android:layout_margin="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:src="@drawable/ic_baseline_chevron_left_24" />
 
     </LinearLayout>

@@ -1,7 +1,5 @@
 package com.example.myshop.presentation.ui.fragments.settings
 
-import android.content.Context
-import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,7 +38,4 @@ class SettingsViewModel @Inject constructor(private val loader: ImageLoader, pri
         getUserDetails()
     }
 
-    fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
-        loader.glideLoadUserPicture(image, imageView, context)
-    }
 }

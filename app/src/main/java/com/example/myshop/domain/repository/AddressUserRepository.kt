@@ -7,5 +7,5 @@ interface AddressUserRepository {
 
   suspend fun addAddressUser(addressUser: AddressUser)
 
-  fun getItemsAddressUser(addressAdapter: AddressAdapter, userId: String)
+  suspend fun getItemsAddressUser(userId: String): List<AddressUser>
 }

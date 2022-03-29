@@ -6,7 +6,6 @@ import javax.inject.Inject
 
 class GetItemsAddress @Inject constructor(private val addressUserRepository: AddressUserRepository) {
 
-   operator fun invoke(addressAdapter: AddressAdapter, idUser: String) {
-       addressUserRepository.getItemsAddressUser(addressAdapter, idUser)
-   }
+suspend operator fun invoke(idUser: String) = addressUserRepository.getItemsAddressUser(idUser)
+
 }

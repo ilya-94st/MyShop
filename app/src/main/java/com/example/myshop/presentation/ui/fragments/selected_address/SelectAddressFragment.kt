@@ -27,24 +27,25 @@ class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
             findNavController().navigate(R.id.action_selectAddressFragment_to_addAddressFragment)
         }
         initAdapter()
-        getAddressUser()
+
     }
 
     private fun initAdapter() {
         addressAdapter = AddressAdapter()
         binding.rvAddress.adapter = addressAdapter
 
+        viewModel.user.observe(viewLifecycleOwner){
+            viewModel.getItemsAddressUser(it.id)
+        }
+        viewModel.addressUser.observe(viewLifecycleOwner){
+            addressAdapter.submitList(it)
+
+        }
         addressAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("userAdres", it)
             }
             findNavController().navigate(R.id.action_selectAddressFragment_to_checkoutOrderFragment, bundle)
-        }
-    }
-
-    private fun getAddressUser() {
-        viewModel.user.observe(viewLifecycleOwner){
-            viewModel.getItemsAddressUser(addressAdapter, it.id)
         }
     }
 }

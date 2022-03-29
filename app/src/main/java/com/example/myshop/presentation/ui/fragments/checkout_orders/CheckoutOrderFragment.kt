@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import com.example.myshop.R
 import com.example.myshop.databinding.FragmentCheckoutOrderBinding
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.base.BaseFragment
@@ -27,6 +29,12 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         getItemsOrder()
         initAdapter()
         observerProductsInCart()
+
+        binding.btPlaceOder.setOnClickListener {
+            deleteProductsInCart()
+            findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
+            toast("You order was placed successfully")
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -44,6 +52,12 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
             binding.tvSubtotal.text = "Subtotal $it"
             binding.tvShippingCharge.text = "Shipping Charge 10$"
             binding.tvTotalAmount.text = "Total Amount ${it + 10F}"
+        }
+    }
+
+    private fun deleteProductsInCart() {
+        viewModel.users.observe(viewLifecycleOwner){
+            viewModel.deleteProducts(it.id)
         }
     }
 

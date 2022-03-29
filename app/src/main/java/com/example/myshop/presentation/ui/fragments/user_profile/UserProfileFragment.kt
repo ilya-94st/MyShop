@@ -1,6 +1,7 @@
 package com.example.myshop.presentation.ui.fragments.user_profile
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -8,14 +9,14 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
-import android.webkit.MimeTypeMap
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
 import com.example.myshop.R
 import com.example.myshop.common.Constants
 import com.example.myshop.common.EventClass
@@ -49,18 +50,11 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         binding.btSave.setOnClickListener {
             showProgressDialog("please wait ")
-            viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
-                binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
-            )
-            getFileExtension(this, mSelectedImageFileUri)?.let {
-                viewModel.loadImageToFirestore(it, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE).addOnSuccessListener { taskSnapshot->
+                viewModel.loadImageToFirestore("", mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE).addOnSuccessListener { taskSnapshot->
                     taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri->
-                        imageUploadSuccess(uri.toString())
-                        userProfileUpdateSuccess()
+                        updateUserDetails(uri.toString())
                     }
                 }
-            }
-
         }
 
         viewModel.result.observe(viewLifecycleOwner) { event ->
@@ -79,7 +73,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         }
     }
 
-  private fun imageUploadSuccess(imageURL: String) {
+  private fun updateUserDetails(imageURL: String) {
       //  hideProgressDialog()
        mUserProfileImageURL = imageURL
         viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
@@ -112,7 +106,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         } else {
             binding.tvTitle.text = requireContext().getString(R.string.exit_profile)
-            viewModel.glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
+            glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
 
             binding.etEmailID.isEnabled = false
             binding.etEmailID.setText(users.email)
@@ -142,7 +136,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
                     try {
                         mSelectedImageFileUri = data.data!!
 
-                        viewModel.glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
+                        glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
 
                     } catch (e: IOException) {
                         toast("image selected failed")
@@ -203,8 +197,13 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         }
     }
 
-    private fun getFileExtension(fragment: Fragment, uri: Uri?): String? {
-
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(fragment.activity?.contentResolver?.getType(uri!!))
+  private  fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
+        try {
+            Glide.with(context).load(image)
+                .centerCrop()
+                .into(imageView)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 }

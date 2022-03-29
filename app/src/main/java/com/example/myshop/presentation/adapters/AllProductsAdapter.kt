@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.AllProductsItemsBinding
 import com.example.myshop.domain.models.Products
 
@@ -43,7 +44,8 @@ class AllProductsAdapter: RecyclerView.Adapter<AllProductsAdapter.ProductsViewHo
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
         val products = differ.currentList[position]
         holder.itemView.apply {
-            Glide.with(this).load(products.image).into(holder.binding.ivProduct)
+            Glide.with(this).load(products.image).placeholder(ProgressCircleGlide.progressBar(context)).
+            into(holder.binding.ivProduct)
         }
         holder.binding.tvPrice.text = "${products.price} ${products.currency}"
         holder.binding.tvTitle.text = products.title

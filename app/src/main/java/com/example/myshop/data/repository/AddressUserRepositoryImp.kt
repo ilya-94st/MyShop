@@ -12,7 +12,7 @@ class AddressUserRepositoryImp @Inject constructor(): AddressUserRepository {
         FireStore().addAddressItems(addressUser)
     }
 
-    override fun getItemsAddressUser(addressAdapter: AddressAdapter, userId: String) {
-        FireStore().getItemsAddress(addressAdapter, userId)
-    }
+    override suspend fun getItemsAddressUser(userId: String) =
+        FireStore().getItemsAddress(userId)
+
 }

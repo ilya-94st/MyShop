@@ -98,6 +98,9 @@
         <action
             android:id="@+id/action_ordersFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_ordersFragment_to_ordersDetailsFragment"
+            app:destination="@id/ordersDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -114,6 +117,9 @@
             app:destination="@id/userProfileFragment"
             app:popUpTo="@id/settingsFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_settingsFragment_to_selectAddressFragment"
+            app:destination="@id/selectAddressFragment" />
     </fragment>
     <fragment
         android:id="@+id/addProductsFragment"
@@ -194,4 +200,9 @@
             android:name="userAdres"
             app:argType="com.example.myshop.domain.models.AddressUser" />
     </fragment>
+    <fragment
+        android:id="@+id/ordersDetailsFragment"
+        android:name="com.example.myshop.presentation.ui.fragments.orders_details.OrdersDetailsFragment"
+        android:label="fragment_orders_details"
+        tools:layout="@layout/fragment_orders_details" />
 </navigation>

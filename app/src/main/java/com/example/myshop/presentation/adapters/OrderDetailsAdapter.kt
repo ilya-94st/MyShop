@@ -7,31 +7,31 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myshop.common.ProgressCircleGlide
-import com.example.myshop.databinding.ProductsItemsBinding
-import com.example.myshop.domain.models.Products
+import com.example.myshop.databinding.ItemsOrderDetailsBinding
+import com.example.myshop.domain.models.ProductsInOrder
 
-class ProductsAdapter:  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>() {
+class OrderDetailsAdapter:  RecyclerView.Adapter<OrderDetailsAdapter.ProductsViewHolder>() {
 
-    inner class ProductsViewHolder(var binding: ProductsItemsBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ProductsViewHolder(var binding: ItemsOrderDetailsBinding) : RecyclerView.ViewHolder(binding.root)
 
 
 
-    private val diffCallback = object : DiffUtil.ItemCallback<Products>() {
-        override fun areItemsTheSame(oldItem: Products, newItem: Products): Boolean {
+    private val diffCallback = object : DiffUtil.ItemCallback<ProductsInOrder>() {
+        override fun areItemsTheSame(oldItem: ProductsInOrder, newItem: ProductsInOrder): Boolean {
             return oldItem.id== newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Products, newItem: Products): Boolean {
+        override fun areContentsTheSame(oldItem: ProductsInOrder, newItem: ProductsInOrder): Boolean {
             return oldItem.hashCode() == newItem.hashCode()
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
 
-    fun submitList(list: List<Products>) = differ.submitList(list)
+    fun submitList(list: List<ProductsInOrder>) = differ.submitList(list)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductsViewHolder {
-        val binding = ProductsItemsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemsOrderDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ProductsViewHolder(binding)
     }
 
@@ -47,16 +47,5 @@ class ProductsAdapter:  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>
         }
         holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title
-        holder.binding.ivDeleteProduct.setOnClickListener {
-           onItemClickListener.let {
-               it(holder)
-           }
-        }
-    }
-
-    private var onItemClickListener: (ProductsViewHolder)->Unit = { products: ProductsViewHolder -> Unit }
-
-    fun setOnItemClickListener(listener: (ProductsViewHolder) ->Unit) {
-        onItemClickListener = listener
     }
 }

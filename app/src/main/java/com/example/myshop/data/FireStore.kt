@@ -3,13 +3,8 @@ package com.example.myshop.data
 import android.net.Uri
 import android.util.Log
 import com.example.myshop.common.Constants
-import com.example.myshop.domain.models.AddressUser
-import com.example.myshop.domain.models.Products
-import com.example.myshop.domain.models.ProductsInCart
-import com.example.myshop.domain.models.Users
-import com.example.myshop.presentation.adapters.AddressAdapter
-import com.example.myshop.presentation.adapters.AllProductsAdapter
-import com.example.myshop.presentation.adapters.ProductsAdapter
+import com.example.myshop.domain.models.*
+import com.example.myshop.presentation.adapters.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
@@ -27,6 +22,8 @@ class FireStore {
     private lateinit var listProducts: ArrayList<Products>
     private lateinit var listAllProducts: ArrayList<Products>
     private lateinit var listItemsAddress: ArrayList<AddressUser>
+    private lateinit var listOrdersProducts: ArrayList<ProductsInOrder>
+    private lateinit var listOrderDetails: ArrayList<ProductsInOrder>
 
 
 
@@ -83,6 +80,16 @@ class FireStore {
         }
     }
 
+    suspend  fun addProductsInOrders(products: ProductsInOrder) {
+        try {
+
+            fireStore.collection(Constants.PRODUCTS_IN_ORDERS).add(products).await()
+
+        } catch (e: IOException) {
+            Log.e("addProducts", "error addProductsInCart")
+        }
+    }
+
     suspend fun addAddressItems(addressUser: AddressUser) {
         try {
 
@@ -108,9 +115,39 @@ class FireStore {
         return priceAll
     }
 
-     fun getItemsAddress(addressAdapter: AddressAdapter, userId: String) {
+    suspend fun getAllPriceInOrders(userId: String): Float? {
+        var priceAll: Float? = 0F
+        val querySnapshot = fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId).get().await()
+        for(document in querySnapshot.documents) {
+            val product = document.toObject<ProductsInOrder>()
+            val price = product?.price
+            if (priceAll != null) {
+                if (price != null) {
+                    priceAll += price
+                }
+            }
+        }
+        return priceAll
+    }
+
+
+   suspend  fun getItemsAddress(userId: String): ArrayList<AddressUser> {
         listItemsAddress = arrayListOf()
-        fireStore.collection(Constants.ADDRESS_USER).whereEqualTo("id", userId)
+        val querySnapshot =  fireStore.collection(Constants.ADDRESS_USER).whereEqualTo("id", userId).get().await()
+
+                for (document in querySnapshot) {
+                        val addressUser = document.toObject<AddressUser>()
+                        listItemsAddress.add(addressUser)
+                }
+
+         return listItemsAddress
+    }
+
+
+
+    fun getOrders(ordersAdapter: OrdersAdapter, userId: String) {
+        listOrdersProducts = arrayListOf()
+        fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     return@addSnapshotListener
@@ -118,8 +155,25 @@ class FireStore {
 
                 for (dc: DocumentChange in value?.documentChanges!!) {
                     if (dc.type == DocumentChange.Type.ADDED) {
-                        listItemsAddress.add(dc.document.toObject(AddressUser::class.java))
-                        addressAdapter.submitList(listItemsAddress)
+                        listOrdersProducts.add(dc.document.toObject(ProductsInOrder::class.java))
+                        ordersAdapter.submitList(listOrdersProducts)
+                    }
+                }
+            }
+    }
+
+    fun getOrderDetails(orderDetailsAdapter: OrderDetailsAdapter, userId: String){
+        listOrderDetails = arrayListOf()
+        fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+
+                for (dc: DocumentChange in value?.documentChanges!!) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        listOrderDetails.add(dc.document.toObject(ProductsInOrder::class.java))
+                        orderDetailsAdapter.submitList(listOrderDetails)
                     }
                 }
             }
@@ -161,20 +215,35 @@ class FireStore {
     }
 
 
-        suspend fun deleteProducts() {
-           val productsQuery =  fireStore.collection(Constants.PRODUCTS)
+        suspend fun deleteProducts(constants: String) {
+           val productsQuery =  fireStore.collection(constants)
                  .get()
                  .await()
              if (productsQuery.documents.isNotEmpty()) {
                  for (document in productsQuery) {
                      try {
-                         fireStore.collection(Constants.PRODUCTS).document(document.id).delete().await()
+                         fireStore.collection(constants).document(document.id).delete().await()
                      } catch (e: IOException) {
                          Log.e("deleteProducts", "$e")
                      }
                  }
              }
          }
+
+    suspend fun deleteProductsInCart(constants: String, userId: String) {
+        val productsQuery =  fireStore.collection(constants).whereEqualTo("id", userId)
+            .get()
+            .await()
+        if (productsQuery.documents.isNotEmpty()) {
+            for (document in productsQuery) {
+                try {
+                    fireStore.collection(constants).document(document.id).delete().await()
+                } catch (e: IOException) {
+                    Log.e("deleteProducts", "$e")
+                }
+            }
+        }
+    }
 
     fun upLoadImageToCloudStorage(userId: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
@@ -201,5 +270,10 @@ class FireStore {
         return querySnapshot.documents[0].data?.get("mobile")
     }
 
+    suspend fun getIdProductsInCart(): String {
 
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).get().await()
+
+        return querySnapshot.documents[0].data?.get("id").toString()
+    }
 }

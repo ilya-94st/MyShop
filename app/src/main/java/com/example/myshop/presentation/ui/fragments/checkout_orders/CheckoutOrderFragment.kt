@@ -10,7 +10,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentCheckoutOrderBinding
-import com.example.myshop.presentation.adapters.ProductsAdapter
+import com.example.myshop.domain.models.ProductsInOrder
+import com.example.myshop.presentation.adapters.ProductsAddInOrder
 import com.example.myshop.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,19 +20,24 @@ import dagger.hilt.android.AndroidEntryPoint
 class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private val savArgs: CheckoutOrderFragmentArgs by navArgs()
     private val viewModel: CheckoutOrderViewModel by viewModels()
-    private lateinit var productsAdapter: ProductsAdapter
+    private lateinit var productsAddInOrder: ProductsAddInOrder
+    private var time = ""
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentCheckoutOrderBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getItemsOrder()
+        viewModel.time.observe(viewLifecycleOwner){
+            time = it
+        }
+
         initAdapter()
-      
+        getItemsOrder()
 
         binding.btPlaceOder.setOnClickListener {
-            deleteProductsInCart()
+            addProductsInOrder()
+            delete()
             findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
             toast("You order was placed successfully")
         }
@@ -55,20 +61,52 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         }
     }
 
-    private fun deleteProductsInCart() {
+    private fun delete() {
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.deleteProducts(it.id)
+            viewModel.deleteAddress(it.id)
         }
     }
 
     private fun initAdapter() {
-        productsAdapter = ProductsAdapter()
-        binding.rvProducts.adapter = productsAdapter
+        productsAddInOrder = ProductsAddInOrder()
+        binding.rvProducts.adapter = productsAddInOrder
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
         }
-        viewModel.products.observe(viewLifecycleOwner){
-            productsAdapter.submitList(it)
+        viewModel.products.observe(viewLifecycleOwner){ products->
+            productsAddInOrder.submitList(products)
+        }
+    }
+
+    private fun addProductsInOrder() {
+        viewModel.products.observe(viewLifecycleOwner){ products->
+            products.forEach {
+                val addressItems = savArgs.userAdres
+                val notes = addressItems.notes
+                val phoneNumber = "${addressItems.phoneNumber}"
+                val nameAddress = addressItems.address
+                val addressZip = addressItems.zipCode
+                val fullName= addressItems.name
+                val chooseAddress = addressItems.chooseAddress
+                viewModel.users.observe(viewLifecycleOwner){ userId->
+                    val productInOrder = ProductsInOrder(userId.id,
+                        it.idOrder,
+                        it.title,
+                        it.price,
+                        it.image,
+                        it.currency,
+                        fullName,
+                        nameAddress,
+                        phoneNumber.toLong(),
+                        addressZip,
+                        notes,
+                        chooseAddress,
+                        time
+                    )
+                    viewModel.addProductInOrder(productInOrder)
+                }
+            }
         }
     }
 }

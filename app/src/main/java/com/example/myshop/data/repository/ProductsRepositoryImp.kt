@@ -31,8 +31,12 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
         FireStore().deleteImage(fileExtension)
     }
 
+    override suspend fun deleteAddress(userId: String) {
+        FireStore().deleteToId(Constants.ADDRESS_USER, userId)
+    }
+
     override suspend fun deleteProductsInCart(userId: String) {
-        FireStore().deleteProductsInCart(Constants.PRODUCT_IN_CART, userId)
+        FireStore().deleteToId(Constants.PRODUCT_IN_CART, userId)
     }
 
     override suspend fun getProduct(userId: String, constants: String) =
@@ -41,7 +45,7 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
 
     override suspend fun getAllProducts() = FireStore().getAllProducts()
 
-    override suspend fun getProductInCart(userId: String) = FireStore().getProducts(userId, Constants.PRODUCT_IN_CART)
+    override suspend fun getProductInCart(userId: String) = FireStore().getProductsInCart(userId)
 
 
     override suspend fun getProductInOrders(userId: String) = FireStore().getOrders(userId)
@@ -49,9 +53,5 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
 
     override suspend fun getAllPrice(userId: String): Float? =
         FireStore().getAllPrice(userId, Constants.PRODUCT_IN_CART)
-
-    override suspend fun getAllPriceInOrders(userId: String) = FireStore().getAllPriceInOrders(userId)
-
-    override suspend fun checkoutIdProductsInCart() = FireStore().getIdProductsInCart()
 
 }

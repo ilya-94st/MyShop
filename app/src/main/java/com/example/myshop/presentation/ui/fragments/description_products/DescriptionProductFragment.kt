@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentDescriptionProductBinding
 import com.example.myshop.domain.models.ProductsInCart
-import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
@@ -47,10 +46,8 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
                 val price = product.price
                 val title = product.title
                 val currency = product.currency
-                val productInCart = ProductsInCart(userId, title, price, imageProduct, currency)
-                val productInOrder = ProductsInOrder(userId,idOrders, title, price, imageProduct, currency)
+                val productInCart = ProductsInCart(userId, idOrders, title, price, imageProduct, currency)
                 viewModel.addProductInCart(productInCart)
-                viewModel.addProductInOrders(productInOrder)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
         }
 

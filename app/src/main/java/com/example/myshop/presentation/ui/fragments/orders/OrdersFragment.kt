@@ -22,13 +22,7 @@ class OrdersFragment : BaseFragment<FragmentOrdersBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getIdProductInCart()
-
-        viewModel.response.observe(viewLifecycleOwner){
-            if (it == true) {
                 initAdapter()
-            }
-        }
     }
 
     private fun initAdapter() {

@@ -9,14 +9,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentMyCartBinding
-import com.example.myshop.presentation.adapters.ProductsAdapter
+import com.example.myshop.presentation.adapters.ProductsInCartAdapter
 import com.example.myshop.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private val viewModel: MyCartViewModel by viewModels()
-    private lateinit var productsAdapter: ProductsAdapter
+    private lateinit var productsInCartAdapter: ProductsInCartAdapter
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMyCartBinding::inflate
@@ -33,14 +33,14 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     @SuppressLint("SetTextI18n")
     private fun initAdapter() {
         showProgressDialog("Please wait...")
-        productsAdapter = ProductsAdapter()
-        binding.rvProducts.adapter = productsAdapter
+        productsInCartAdapter = ProductsInCartAdapter()
+        binding.rvProducts.adapter = productsInCartAdapter
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
             viewModel.getAllPrice(it.id)
         }
         viewModel.productsInCart.observe(viewLifecycleOwner){
-            productsAdapter.submitList(it)
+            productsInCartAdapter.submitList(it)
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"

@@ -5,6 +5,5 @@ import javax.inject.Inject
 
 class GetProductInCart @Inject constructor(private val productsRepository: ProductsRepository) {
 
-  suspend operator fun invoke(userId: String) =
-        productsRepository.getProductInCart(userId)
+  suspend operator fun invoke(userId: String) = productsRepository.getProductInCart(userId)
 }

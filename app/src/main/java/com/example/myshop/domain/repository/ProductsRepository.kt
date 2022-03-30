@@ -18,20 +18,18 @@ interface ProductsRepository {
 
    suspend fun deleteImageProduct(fileExtension: String)
 
+   suspend fun deleteAddress(userId: String)
+
    suspend fun deleteProductsInCart(userId: String)
 
    suspend fun getProduct(userId: String, constants: String): ArrayList<Products>
 
    suspend fun getAllProducts(): ArrayList<Products>
 
-   suspend fun getProductInCart(userId: String): ArrayList<Products>
+   suspend fun getProductInCart(userId: String): ArrayList<ProductsInCart>
 
    suspend fun getProductInOrders(userId: String): ArrayList<ProductsInOrder>
 
-
   suspend  fun getAllPrice(userId: String): Float?
 
-  suspend  fun getAllPriceInOrders(userId: String): Float?
-
-  suspend fun checkoutIdProductsInCart(): String
 }

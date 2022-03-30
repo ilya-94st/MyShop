@@ -22,6 +22,7 @@ class FireStore {
     private lateinit var listAllProducts: ArrayList<Products>
     private lateinit var listItemsAddress: ArrayList<AddressUser>
     private lateinit var listOrdersProducts: ArrayList<ProductsInOrder>
+    private lateinit var listProductInCart: ArrayList<ProductsInCart>
 
 
 
@@ -114,21 +115,6 @@ class FireStore {
         return priceAll
     }
 
-    suspend fun getAllPriceInOrders(userId: String): Float? {
-        var priceAll: Float? = 0F
-        val querySnapshot = fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId).get().await()
-        for(document in querySnapshot.documents) {
-            val product = document.toObject<ProductsInOrder>()
-            val price = product?.price
-            if (priceAll != null) {
-                if (price != null) {
-                    priceAll += price
-                }
-            }
-        }
-        return priceAll
-    }
-
 
    suspend  fun getItemsAddress(userId: String): ArrayList<AddressUser> {
         listItemsAddress = arrayListOf()
@@ -166,6 +152,15 @@ class FireStore {
             }
 
 
+    suspend fun getProductsInCart(userID: String): ArrayList<ProductsInCart> {
+        listProductInCart = arrayListOf()
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("id", userID).get().await()
+        for (document in querySnapshot) {
+            val product = document.toObject<ProductsInCart>()
+            listProductInCart.add(product)
+        }
+        return listProductInCart
+    }
 
    suspend fun getAllProducts(): ArrayList<Products> {
         listAllProducts = arrayListOf()
@@ -193,7 +188,7 @@ class FireStore {
              }
          }
 
-    suspend fun deleteProductsInCart(constants: String, userId: String) {
+    suspend fun deleteToId(constants: String, userId: String) {
         val productsQuery =  fireStore.collection(constants).whereEqualTo("id", userId)
             .get()
             .await()
@@ -233,10 +228,4 @@ class FireStore {
         return querySnapshot.documents[0].data?.get("mobile")
     }
 
-    suspend fun getIdProductsInCart(): String {
-
-        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).get().await()
-
-        return querySnapshot.documents[0].data?.get("id").toString()
-    }
-}
+ }

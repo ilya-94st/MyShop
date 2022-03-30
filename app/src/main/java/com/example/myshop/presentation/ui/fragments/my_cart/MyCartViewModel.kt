@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myshop.domain.models.Products
+import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckUserDetails
 import com.example.myshop.domain.use_case.GetAllPrice
@@ -15,9 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyCartViewModel @Inject constructor(private val getProductInCart: GetProductInCart, private val checkUserDetails: CheckUserDetails, private val getAllPrice: GetAllPrice): ViewModel() {
-    private var _productsInCart = MutableLiveData<List<Products>>()
+    private var _productsInCart = MutableLiveData<List<ProductsInCart>>()
 
-    var productsInCart: LiveData<List<Products>> = _productsInCart
+    var productsInCart: LiveData<List<ProductsInCart>> = _productsInCart
 
     private var _users = MutableLiveData<Users>()
 
@@ -34,8 +34,6 @@ class MyCartViewModel @Inject constructor(private val getProductInCart: GetProdu
     fun getAllPrice(userId: String) = viewModelScope.launch {
        _allPrice.postValue(getAllPrice.invoke(userId))
    }
-
-
 
     init {
         getUser()

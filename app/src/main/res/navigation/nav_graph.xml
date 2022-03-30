@@ -195,7 +195,9 @@
         tools:layout="@layout/fragment_checkout_order" >
         <action
             android:id="@+id/action_checkoutOrderFragment_to_dashBoardFragment"
-            app:destination="@id/dashBoardFragment" />
+            app:destination="@id/dashBoardFragment"
+            app:popUpTo="@id/checkoutOrderFragment"
+            app:popUpToInclusive="true" />
         <argument
             android:name="userAdres"
             app:argType="com.example.myshop.domain.models.AddressUser" />

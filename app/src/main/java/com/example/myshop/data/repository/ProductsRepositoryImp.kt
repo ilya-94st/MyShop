@@ -7,8 +7,6 @@ import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.domain.repository.ProductsRepository
 import com.example.myshop.presentation.adapters.AllProductsAdapter
-import com.example.myshop.presentation.adapters.OrderDetailsAdapter
-import com.example.myshop.presentation.adapters.OrdersAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import javax.inject.Inject
 
@@ -37,31 +35,16 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
         FireStore().deleteProductsInCart(Constants.PRODUCT_IN_CART, userId)
     }
 
-    override fun getProduct(productsAdapter: ProductsAdapter, userId: String, constants: String) {
-        FireStore().getProducts(productsAdapter, userId, Constants.PRODUCTS)
-    }
+    override suspend fun getProduct(userId: String, constants: String) =
+        FireStore().getProducts(userId, Constants.PRODUCTS)
 
-    override fun getAllProducts(allProductsAdapter: AllProductsAdapter) {
-        FireStore().getAllProducts(allProductsAdapter)
-    }
 
-    override fun getProductInCart(
-        productsAdapter: ProductsAdapter,
-        userId: String
-    ) {
-        FireStore().getProducts(productsAdapter, userId, Constants.PRODUCT_IN_CART)
-    }
+    override suspend fun getAllProducts() = FireStore().getAllProducts()
 
-    override fun getProductInOrders(orderAdapter: OrdersAdapter, userId: String) {
-        FireStore().getOrders(orderAdapter, userId)
-    }
+    override suspend fun getProductInCart(userId: String) = FireStore().getProducts(userId, Constants.PRODUCT_IN_CART)
 
-    override fun getProductInOrdersDetails(
-        orderDetailsAdapter: OrderDetailsAdapter,
-        userId: String
-    ) {
-        FireStore().getOrderDetails(orderDetailsAdapter, userId)
-    }
+
+    override suspend fun getProductInOrders(userId: String) = FireStore().getOrders(userId)
 
 
     override suspend fun getAllPrice(userId: String): Float? =

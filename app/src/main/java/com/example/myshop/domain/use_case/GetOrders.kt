@@ -6,7 +6,6 @@ import javax.inject.Inject
 
 class GetOrders @Inject constructor(private val productsRepository: ProductsRepository) {
 
-    operator fun invoke(ordersAdapter: OrdersAdapter, userId: String) {
-        productsRepository.getProductInOrders(ordersAdapter, userId)
-    }
+   suspend  operator fun invoke(userId: String) = productsRepository.getProductInOrders(userId)
+
 }

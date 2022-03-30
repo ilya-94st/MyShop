@@ -37,6 +37,12 @@ class DashBoardFragment : BaseFragment<FragmentDashBoardBinding>() {
     private fun initAdapter() {
         allProductsAdapter = AllProductsAdapter()
         binding.rvProducts.adapter = allProductsAdapter
-        viewModel.getAllProducts(allProductsAdapter)
+        showProgressDialog("Please wait...")
+        viewModel.getAllProducts()
+        viewModel.products.observe(viewLifecycleOwner){
+            allProductsAdapter.submitList(it)
+            hideProgressDialog()
+        }
+
     }
 }

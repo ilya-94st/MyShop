@@ -4,8 +4,6 @@ import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.presentation.adapters.AllProductsAdapter
-import com.example.myshop.presentation.adapters.OrderDetailsAdapter
-import com.example.myshop.presentation.adapters.OrdersAdapter
 import com.example.myshop.presentation.adapters.ProductsAdapter
 
 interface ProductsRepository {
@@ -22,15 +20,14 @@ interface ProductsRepository {
 
    suspend fun deleteProductsInCart(userId: String)
 
-    fun getProduct(productsAdapter: ProductsAdapter, userId: String, constants: String)
+   suspend fun getProduct(userId: String, constants: String): ArrayList<Products>
 
-    fun getAllProducts(allProductsAdapter: AllProductsAdapter)
+   suspend fun getAllProducts(): ArrayList<Products>
 
-    fun getProductInCart(productsAdapter: ProductsAdapter, userId: String)
+   suspend fun getProductInCart(userId: String): ArrayList<Products>
 
-    fun getProductInOrders(orderAdapter: OrdersAdapter, userId: String)
+   suspend fun getProductInOrders(userId: String): ArrayList<ProductsInOrder>
 
-    fun getProductInOrdersDetails(orderDetailsAdapter: OrderDetailsAdapter, userId: String)
 
   suspend  fun getAllPrice(userId: String): Float?
 

@@ -4,7 +4,6 @@ import android.net.Uri
 import android.util.Log
 import com.example.myshop.common.Constants
 import com.example.myshop.domain.models.*
-import com.example.myshop.presentation.adapters.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.toObject
@@ -23,7 +22,7 @@ class FireStore {
     private lateinit var listAllProducts: ArrayList<Products>
     private lateinit var listItemsAddress: ArrayList<AddressUser>
     private lateinit var listOrdersProducts: ArrayList<ProductsInOrder>
-    private lateinit var listOrderDetails: ArrayList<ProductsInOrder>
+
 
 
 
@@ -145,73 +144,37 @@ class FireStore {
 
 
 
-    fun getOrders(ordersAdapter: OrdersAdapter, userId: String) {
+   suspend fun getOrders(userId: String): ArrayList<ProductsInOrder> {
         listOrdersProducts = arrayListOf()
-        fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    return@addSnapshotListener
-                }
+        val querySnapshot = fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId).get().await()
+       for (document in querySnapshot) {
+           val productInOrder = document.toObject<ProductsInOrder>()
+           listOrdersProducts.add(productInOrder)
+       }
 
-                for (dc: DocumentChange in value?.documentChanges!!) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        listOrdersProducts.add(dc.document.toObject(ProductsInOrder::class.java))
-                        ordersAdapter.submitList(listOrdersProducts)
-                    }
-                }
-            }
+       return listOrdersProducts
     }
 
-    fun getOrderDetails(orderDetailsAdapter: OrderDetailsAdapter, userId: String){
-        listOrderDetails = arrayListOf()
-        fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("id", userId)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    return@addSnapshotListener
-                }
-
-                for (dc: DocumentChange in value?.documentChanges!!) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        listOrderDetails.add(dc.document.toObject(ProductsInOrder::class.java))
-                        orderDetailsAdapter.submitList(listOrderDetails)
-                    }
-                }
-            }
-    }
-
-    fun getProducts(productsAdapter: ProductsAdapter, userID: String, constants: String) {
+   suspend fun getProducts(userID: String, constants: String): ArrayList<Products> {
         listProducts = arrayListOf()
-        fireStore.collection(constants).whereEqualTo("id", userID)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    return@addSnapshotListener
+        val querySnapshot = fireStore.collection(constants).whereEqualTo("id", userID).get().await()
+                for (document in querySnapshot) {
+                        val product = document.toObject<Products>()
+                        listProducts.add(product)
                 }
-
-                for (dc: DocumentChange in value?.documentChanges!!) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        listProducts.add(dc.document.toObject(Products::class.java))
-                        productsAdapter.submitList(listProducts)
-                    }
-                }
+       return listProducts
             }
-    }
 
 
-    fun getAllProducts(allProductsAdapter: AllProductsAdapter) {
+
+   suspend fun getAllProducts(): ArrayList<Products> {
         listAllProducts = arrayListOf()
-        fireStore.collection(Constants.PRODUCTS)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    return@addSnapshotListener
-                }
-
-                for (dc: DocumentChange in value?.documentChanges!!) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        listAllProducts.add(dc.document.toObject(Products::class.java))
-                        allProductsAdapter.submitList(listAllProducts)
-                    }
-                }
-            }
+       val querySnapshot = fireStore.collection(Constants.PRODUCTS).get().await()
+       for (document in querySnapshot) {
+           val product = document.toObject<Products>()
+           listAllProducts.add(product)
+       }
+       return listAllProducts
     }
 
 

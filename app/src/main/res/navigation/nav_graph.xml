@@ -204,5 +204,9 @@
         android:id="@+id/ordersDetailsFragment"
         android:name="com.example.myshop.presentation.ui.fragments.orders_details.OrdersDetailsFragment"
         android:label="fragment_orders_details"
-        tools:layout="@layout/fragment_orders_details" />
+        tools:layout="@layout/fragment_orders_details" >
+        <argument
+            android:name="order"
+            app:argType="com.example.myshop.domain.models.ProductsInOrder" />
+    </fragment>
 </navigation>

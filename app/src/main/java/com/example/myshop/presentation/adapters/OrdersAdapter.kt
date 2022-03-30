@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ItemsOrdersBinding
+import com.example.myshop.domain.models.Products
 
 import com.example.myshop.domain.models.ProductsInOrder
 
@@ -50,14 +51,14 @@ class OrdersAdapter :  RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
         holder.binding.tvTitle.text = products.title + "${products.idOrder}"
         holder.itemView.setOnClickListener {
             onItemClickListener.let {
-                it(holder)
+                it(products)
             }
         }
     }
 
-    private var onItemClickListener: (OrdersViewHolder)->Unit = { products: OrdersViewHolder -> Unit }
+    private var onItemClickListener: (ProductsInOrder)->Unit = { products: ProductsInOrder -> Unit }
 
-    fun setOnItemClickListener(listener: (OrdersViewHolder) ->Unit) {
+    fun setOnItemClickListener(listener: (ProductsInOrder) ->Unit) {
         onItemClickListener = listener
     }
 }

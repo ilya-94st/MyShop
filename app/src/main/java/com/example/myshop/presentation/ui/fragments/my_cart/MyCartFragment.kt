@@ -36,8 +36,11 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
         viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getProductInCart(productsAdapter, it.id)
+            viewModel.getProductInCart(it.id)
             viewModel.getAllPrice(it.id)
+        }
+        viewModel.productsInCart.observe(viewLifecycleOwner){
+            productsAdapter.submitList(it)
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"

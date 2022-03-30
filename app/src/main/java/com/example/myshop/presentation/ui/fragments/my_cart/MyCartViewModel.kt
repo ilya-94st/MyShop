@@ -4,17 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckUserDetails
 import com.example.myshop.domain.use_case.GetAllPrice
 import com.example.myshop.domain.use_case.GetProductInCart
-import com.example.myshop.presentation.adapters.ProductsAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyCartViewModel @Inject constructor(private val getProductInCart: GetProductInCart, private val checkUserDetails: CheckUserDetails, private val getAllPrice: GetAllPrice): ViewModel() {
+    private var _productsInCart = MutableLiveData<List<Products>>()
+
+    var productsInCart: LiveData<List<Products>> = _productsInCart
+
     private var _users = MutableLiveData<Users>()
 
     var users: LiveData<Users> = _users
@@ -23,8 +27,8 @@ class MyCartViewModel @Inject constructor(private val getProductInCart: GetProdu
 
     var allPrice: LiveData<Float> = _allPrice
 
-    fun getProductInCart(productsAdapter: ProductsAdapter, userId: String) {
-        getProductInCart.invoke(productsAdapter, userId)
+    fun getProductInCart(userId: String) = viewModelScope.launch {
+        _productsInCart.postValue(getProductInCart.invoke(userId))
     }
 
     fun getAllPrice(userId: String) = viewModelScope.launch {

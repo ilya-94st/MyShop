@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.*
-import com.example.myshop.presentation.adapters.ProductsAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,15 +17,19 @@ class CheckoutOrderViewModel @Inject constructor(private val getProductInCart: G
 
     var users: LiveData<Users> = _users
 
+    private var _products = MutableLiveData<List<Products>>()
+
+    var products: LiveData<List<Products>> = _products
 
 
     private var _allPrice = MutableLiveData<Float>()
 
     var allPrice: LiveData<Float> = _allPrice
 
-    fun getProductInCart(productsAdapter: ProductsAdapter, userId: String) {
-        getProductInCart.invoke(productsAdapter, userId)
+    fun getProductInCart(userId: String) = viewModelScope.launch {
+       _products.postValue(getProductInCart.invoke(userId))
     }
+
 
     fun getAllPrice(userId: String) = viewModelScope.launch {
         _allPrice.postValue(getAllPrice.invoke(userId))

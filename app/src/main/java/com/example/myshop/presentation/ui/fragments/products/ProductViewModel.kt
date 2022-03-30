@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.common.Constants
+import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckUserDetails
 import com.example.myshop.domain.use_case.DeleteImageProduct
@@ -17,6 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(private val deleteProducts: DeleteProducts, private val deleteImageProduct: DeleteImageProduct, private val getProducts: GetProducts, private val checkUserDetails: CheckUserDetails): ViewModel() {
+    private var _products = MutableLiveData<List<Products>>()
+
+    var products: LiveData<List<Products>> = _products
+
     private var _users = MutableLiveData<Users>()
 
     var users: LiveData<Users> = _users
@@ -29,9 +34,11 @@ class ProductViewModel @Inject constructor(private val deleteProducts: DeletePro
         deleteImageProduct.invoke(userId)
     }
 
-    fun getProduct(productsAdapter: ProductsAdapter, userId: String) {
-        getProducts.invoke(productsAdapter, userId)
+    fun getProduct(userId: String) = viewModelScope.launch {
+        _products.postValue(getProducts.invoke(userId))
     }
+
+
 
     private fun getUsers() = viewModelScope.launch {
         _users.postValue(checkUserDetails.invoke())

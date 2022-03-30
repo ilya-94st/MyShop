@@ -23,10 +23,10 @@ class OrdersFragment : BaseFragment<FragmentOrdersBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getIdProductInCart()
+
         viewModel.response.observe(viewLifecycleOwner){
             if (it == true) {
                 initAdapter()
-                getOrders()
             }
         }
     }
@@ -34,14 +34,17 @@ class OrdersFragment : BaseFragment<FragmentOrdersBinding>() {
     private fun initAdapter() {
         ordersAdapter = OrdersAdapter()
         binding.rvProducts.adapter = ordersAdapter
-        ordersAdapter.setOnItemClickListener {
-            findNavController().navigate(R.id.action_ordersFragment_to_ordersDetailsFragment)
-        }
-    }
-
-    private fun getOrders() {
         viewModel.user.observe(viewLifecycleOwner){
-            viewModel.getOrders(ordersAdapter, it.id)
+            viewModel.getOrders(it.id)
+        }
+        viewModel.order.observe(viewLifecycleOwner){ order->
+            ordersAdapter.submitList(order)
+            ordersAdapter.setOnItemClickListener {
+                val bundle = Bundle().apply {
+                   putSerializable("order", it)
+                }
+                findNavController().navigate(R.id.action_ordersFragment_to_ordersDetailsFragment, bundle)
+            }
         }
     }
 }

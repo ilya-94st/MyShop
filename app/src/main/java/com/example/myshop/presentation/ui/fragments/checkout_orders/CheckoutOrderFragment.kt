@@ -28,7 +28,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         super.onViewCreated(view, savedInstanceState)
         getItemsOrder()
         initAdapter()
-        observerProductsInCart()
+      
 
         binding.btPlaceOder.setOnClickListener {
             deleteProductsInCart()
@@ -64,11 +64,11 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
-    }
-
-    private fun observerProductsInCart() {
         viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getProductInCart(productsAdapter, it.id)
+            viewModel.getProductInCart(it.id)
+        }
+        viewModel.products.observe(viewLifecycleOwner){
+            productsAdapter.submitList(it)
         }
     }
 }

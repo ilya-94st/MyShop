@@ -7,7 +7,5 @@ import javax.inject.Inject
 
 class GetProducts @Inject constructor(private val productsRepository: ProductsRepository) {
 
-    operator fun invoke(productsAdapter: ProductsAdapter, userId: String) {
-        productsRepository.getProduct(productsAdapter, userId, Constants.PRODUCTS)
-    }
+   suspend operator fun invoke(userId: String) = productsRepository.getProduct(userId, Constants.PRODUCTS)
 }

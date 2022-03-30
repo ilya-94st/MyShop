@@ -1,6 +1,5 @@
 package com.example.myshop.presentation.ui.fragments.products
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +37,7 @@ private var userId = ""
         }
 
         initAdapter()
-        userDetailsSuccessful()
+
 
 
         productsAdapter.setOnItemClickListener {
@@ -47,17 +46,17 @@ private var userId = ""
         }
     }
 
-    @SuppressLint("SetTextI18n")
-  private fun userDetailsSuccessful() {
-                viewModel.users.observe(viewLifecycleOwner){
-                    mUserDetails = it
-                    userId =  mUserDetails.id
-                    viewModel.getProduct(productsAdapter, userId)
-                }
-    }
 
     private fun initAdapter() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.adapter = productsAdapter
+        viewModel.users.observe(viewLifecycleOwner){
+            mUserDetails = it
+            userId =  mUserDetails.id
+            viewModel.getProduct(userId)
+        }
+        viewModel.products.observe(viewLifecycleOwner){
+            productsAdapter.submitList(it)
+        }
     }
 }

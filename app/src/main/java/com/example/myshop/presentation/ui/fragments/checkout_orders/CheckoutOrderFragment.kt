@@ -13,6 +13,7 @@ import com.example.myshop.databinding.FragmentCheckoutOrderBinding
 import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.presentation.adapters.ProductsAddInOrder
 import com.example.myshop.presentation.base.BaseFragment
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -68,15 +69,19 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun initAdapter() {
         productsAddInOrder = ProductsAddInOrder()
-        binding.rvProducts.adapter = productsAddInOrder
+        binding.vpProducts.adapter = productsAddInOrder
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
         }
         viewModel.products.observe(viewLifecycleOwner){ products->
             productsAddInOrder.submitList(products)
         }
+        TabLayoutMediator(binding.table, binding.vpProducts) {
+                _, _ ->
+        }.attach()
     }
 
     private fun addProductsInOrder() {
@@ -109,4 +114,6 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
             }
         }
     }
+
+
 }

@@ -8,5 +8,5 @@ class ImageLoader @Inject constructor(private val loadImageToCloudStorageReposit
 
 
 
-    fun loadImageToFirestore(userId: String, imageFileUri: Uri?, constantsImages: String) = loadImageToCloudStorageRepository.upLoadImageToCloudStorage(userId, imageFileUri, constantsImages)
+   suspend operator fun invoke(userId: String, imageFileUri: Uri?, constantsImages: String) = loadImageToCloudStorageRepository.upLoadImageToCloudStorage(userId, imageFileUri, constantsImages)
 }

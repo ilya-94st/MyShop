@@ -4,16 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckSettings
 import com.example.myshop.domain.use_case.CheckUserDetails
-import com.example.myshop.domain.use_case.ImageLoader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val loader: ImageLoader, private val userDetails: CheckUserDetails, private val checkSettings: CheckSettings): ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val userDetails: CheckUserDetails,
+    private val checkSettings: CheckSettings
+): ViewModel() {
+    private var _result = MutableLiveData<EventClass>()
+
+    var result: LiveData<EventClass> = _result
 
     private var _users = MutableLiveData<Users>()
 
@@ -30,7 +36,7 @@ class SettingsViewModel @Inject constructor(private val loader: ImageLoader, pri
     }
 
     fun logout() {
-        checkSettings.invoke()
+        _result.postValue(checkSettings.invoke())
     }
 
 

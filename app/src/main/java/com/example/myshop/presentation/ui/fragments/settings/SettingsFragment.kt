@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentSettingsBinding
 import com.example.myshop.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +46,17 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         binding.btLogout.setOnClickListener {
             // log out of the current account
             viewModel.logout()
-            findNavController().navigate(R.id.action_settingsFragment_to_loginFragment)
+        }
+
+        viewModel.result.observe(viewLifecycleOwner){ event ->
+            when(event) {
+                is EventClass.Success -> {
+                    findNavController().navigate(R.id.action_settingsFragment_to_loginFragment)
+                }
+                is EventClass.ErrorIn -> {
+                    errorSnackBar(event.error, true)
+                }
+            }
         }
     }
 

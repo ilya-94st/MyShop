@@ -50,11 +50,10 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         binding.btSave.setOnClickListener {
             showProgressDialog("please wait ")
-                viewModel.loadImageToFirestore("", mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE).addOnSuccessListener { taskSnapshot->
-                    taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri->
-                        updateUserDetails(uri.toString())
-                    }
-                }
+                viewModel.loadImageToFirestore(args.users.firstName, mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
+                viewModel.image.observe(viewLifecycleOwner){
+                updateUserDetails(it)
+            }
         }
 
         viewModel.result.observe(viewLifecycleOwner) { event ->

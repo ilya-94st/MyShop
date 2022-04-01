@@ -33,10 +33,14 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     private var mSelectedImageFileUri: Uri? = null
     private var mUserProductImageURL: String = ""
     private var currency: String = ""
+    private var userId: String = ""
     private  val  viewModelAdd: AddProductViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModelAdd.users.observe(viewLifecycleOwner){
+               userId = it.id
+        }
 
         binding.ivGetPhoto.setOnClickListener {
             getPhotoPermission()
@@ -103,12 +107,9 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
 
     private fun loadImageToFireStore() {
         if (mSelectedImageFileUri != null) {
-            viewModelAdd.users.observe(viewLifecycleOwner){
-                viewModelAdd.loadImageToFirestore(it.id, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES).addOnSuccessListener { taskSnapshot ->
-                    taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
-                        observeUsers(uri.toString())
-                    }
-                }
+                viewModelAdd.loadImageToFirestore(userId, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
+            viewModelAdd.image.observe(viewLifecycleOwner){
+                observeUsers(it)
             }
         }
     }

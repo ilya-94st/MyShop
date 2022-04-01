@@ -10,7 +10,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
@@ -23,9 +22,6 @@ class FireStore {
     private lateinit var listItemsAddress: ArrayList<AddressUser>
     private lateinit var listOrdersProducts: ArrayList<ProductsInOrder>
     private lateinit var listProductInCart: ArrayList<ProductsInCart>
-
-
-
 
     fun registerUser(userInfo: Users) {
 
@@ -203,12 +199,18 @@ class FireStore {
         }
     }
 
-    fun upLoadImageToCloudStorage(userId: String, imageFileUri: Uri?, constantsImages: String): UploadTask {
+    suspend fun upLoadImageToCloudStorage(
+        userId: String,
+        imageFileUri: Uri?,
+        constantsImages: String
+    ): String {
+
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-            constantsImages
-                    + "." + userId
+            "${constantsImages}/${userId}"
         )
-        return sRef.putFile(imageFileUri!!)
+        sRef.putFile(imageFileUri!!).await()
+        val url = sRef.downloadUrl.await()
+        return url.toString()
     }
 
   suspend  fun deleteImage(userId: String)  {

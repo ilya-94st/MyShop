@@ -14,6 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddProductViewModel @Inject constructor(private val addProducts: AddProducts, private val imageLoader: ImageLoader, private val checkUserDetails: CheckUserDetails) : ViewModel() {
+    private var _image = MutableLiveData<String>()
+
+    var image: LiveData<String> = _image
 
     private var _users = MutableLiveData<Users>()
 
@@ -28,8 +31,10 @@ class AddProductViewModel @Inject constructor(private val addProducts: AddProduc
             etQuality = etQuality))
     }
 
-    fun loadImageToFirestore(userId: String, imageFileUri: Uri?, constantsImages: String) =
-        imageLoader.loadImageToFirestore(userId, imageFileUri, constantsImages)
+    fun loadImageToFirestore(userId: String, imageFileUri: Uri?, constantsImages: String) = viewModelScope.launch {
+        _image.postValue(imageLoader.invoke(userId, imageFileUri, constantsImages))
+    }
+
 
     private fun getUsers() = viewModelScope.launch {
        _users.postValue(checkUserDetails.invoke())

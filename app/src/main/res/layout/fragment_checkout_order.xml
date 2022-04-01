@@ -70,20 +70,32 @@
 
     </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvProducts"
+                <LinearLayout
+                    android:id="@+id/linerViewPager"
+                    android:orientation="vertical"
+                    android:layout_below="@+id/linearLayout1"
                     android:layout_width="match_parent"
-                    android:layout_height="132dp"
-                    android:layout_marginBottom="16dp"
-                    android:layout_below="@id/linearLayout1"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                    android:layout_height="wrap_content">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/vpProducts"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="16dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/table"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#B6B6B6"
-                    android:layout_below="@+id/rvProducts"
+                    android:layout_below="@+id/linerViewPager"
                     android:orientation="horizontal"
                     android:padding="16dp"
                     app:layout_constraintEnd_toEndOf="parent"

@@ -6,7 +6,7 @@ import com.example.myshop.domain.repository.LoadImageToCloudStorageRepository
 import javax.inject.Inject
 
 class LoadImageToCloudStorageRepositoryImp @Inject constructor(): LoadImageToCloudStorageRepository {
-    override fun upLoadImageToCloudStorage(
+    override suspend fun upLoadImageToCloudStorage(
         userId: String,
         imageFileUri: Uri?,
         constantsImages: String

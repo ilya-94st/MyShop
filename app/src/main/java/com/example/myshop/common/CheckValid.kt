@@ -132,6 +132,15 @@ object CheckValid {
         }
     }
 
+    fun valid(): EventClass {
+        return when {
+            else -> {
+                EventClass.Success
+            }
+        }
+    }
+
+
     fun validEmailDetails(etEmail: String): EventClass {
         return when {
             isEmptyField(etEmail) -> {

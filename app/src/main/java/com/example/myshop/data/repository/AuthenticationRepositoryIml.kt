@@ -20,29 +20,32 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
         etPassword: String,
         etFirstName: String,
         etLastName: String
-    ) {
+    ): EventClass? {
+        var registerResult: EventClass? = null
+        try {
+            firebaseAuth.createUserWithEmailAndPassword(etEmailID, etPassword)
+                .addOnCompleteListener { task ->
 
+                  if (task.isSuccessful) {
+              registerResult = EventClass.Success
+                        val firebaseUser: FirebaseUser = task.result!!.user!!
 
-        firebaseAuth.createUserWithEmailAndPassword(etEmailID, etPassword)
-            .addOnCompleteListener { task ->
-
-                if (task.isSuccessful) {
-
-                    val firebaseUser: FirebaseUser = task.result!!.user!!
-
-                    val user = Users(
-                        firebaseUser.uid,
-                        etFirstName,
-                        etLastName,
-                        etEmailID,
+                        val user = Users(
+                            firebaseUser.uid,
+                            etFirstName,
+                            etLastName,
+                            etEmailID,
                         )
 
-                    FireStore().registerUser(user)
-                } else {
-                    Log.e("AuthenticationRepository", task.exception!!.message.toString())
-                }
-            }.await()
-
+                        FireStore().registerUser(user)
+                    } else {
+                        EventClass.ErrorIn("${task.exception?.message}")
+                    }
+                }.await()
+        } catch (e: Exception) {
+            registerResult =  EventClass.ErrorIn("${e.message}")
+        }
+        return registerResult
     }
 
     override suspend fun logInUser(etEmail: String, etPassword: String): EventClass? {
@@ -64,12 +67,26 @@ class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: 
        return registerResult
     }
 
-    override suspend fun checkForgotPassword(etEmail: String) {
+    override suspend fun checkForgotPassword(etEmail: String): EventClass? {
+        var registerResult: EventClass? = null
+        try {
+            registerResult = EventClass.Success
             firebaseAuth.sendPasswordResetEmail(etEmail).await()
+        } catch (e: Exception){
+            registerResult =  EventClass.ErrorIn("${e.message}")
+        }
+        return registerResult
     }
 
-    override fun logout() {
-        FirebaseAuth.getInstance().signOut()
+    override fun logout(): EventClass? {
+        var registerResult: EventClass? = null
+        try {
+            registerResult = EventClass.Success
+            FirebaseAuth.getInstance().signOut()
+        } catch (e: Exception){
+            registerResult =  EventClass.ErrorIn("${e.message}")
+        }
+        return registerResult
     }
 
 }

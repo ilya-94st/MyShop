@@ -5,5 +5,5 @@ import com.google.firebase.storage.UploadTask
 
 interface LoadImageToCloudStorageRepository {
 
-    fun upLoadImageToCloudStorage(userId: String, imageFileUri: Uri?, constantsImages: String): UploadTask
+  suspend fun upLoadImageToCloudStorage(userId: String, imageFileUri: Uri?, constantsImages: String): String
 }

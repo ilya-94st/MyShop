@@ -18,4 +18,8 @@ class UpdateRepositoryImp @Inject constructor(): UpdateRepository {
         }
     return registerResult
     }
+
+    override fun upDataProducts(products: HashMap<String, Any>) {
+        FireStore().updateProductsData(products)
+    }
 }

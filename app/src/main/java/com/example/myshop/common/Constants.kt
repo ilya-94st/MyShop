@@ -30,4 +30,10 @@ object Constants {
     const val USER_PROFILE_IMAGE = "User_Profile_Image"
     const val USER_PRODUCTS_IMAGES = "USER_Products_Images"
 
+   const val ID: String = "id"
+   const val TITLE: String = "title"
+   const val PRICE: String = "price"
+   const val DESCRIPTION: String = "description"
+   const val QUALITY: String = "quality"
+  const  val CURRENCY: String = "currency"
 }

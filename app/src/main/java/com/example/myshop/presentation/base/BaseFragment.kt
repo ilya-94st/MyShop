@@ -64,6 +64,8 @@ abstract class BaseFragment<out T : ViewBinding> : Fragment() {
         mProgressDialog.show()
     }
 
+
+
     fun hideProgressDialog() {
         mProgressDialog.dismiss()
     }

@@ -7,4 +7,5 @@ interface UpdateRepository {
 
     fun updateUserProfileData(userHashMap: HashMap<String, Any>): EventClass?
 
+    fun upDataProducts(products: HashMap<String, Any>)
 }

@@ -90,7 +90,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
            val title = binding.etTitle.text.toString()
            val price = binding.etPrice.text.toString()
            val description = binding.etDescription.text.toString()
-           val quality = binding.etQuality.text.toString()
+           val quality = binding.etQuantity.text.toString()
            val userId = users.id
            val products = Products(
                id = userId,
@@ -101,7 +101,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                image = mUserProductImageURL,
                currency = currency)
            viewModelAdd.addProducts(products, binding.etTitle.text.toString(), binding.etPrice.text.toString(),
-               binding.etDescription.text.toString(), binding.etQuality.text.toString())
+               binding.etDescription.text.toString(), binding.etQuantity.text.toString())
        }
    }
 

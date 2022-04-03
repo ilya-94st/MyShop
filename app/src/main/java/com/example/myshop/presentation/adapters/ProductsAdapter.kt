@@ -10,7 +10,7 @@ import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ProductsItemsBinding
 import com.example.myshop.domain.models.Products
 
-class ProductsAdapter:  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>() {
+class ProductsAdapter(val removeItemPosition: (position: Int) -> Unit):  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ProductsItemsBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -45,18 +45,21 @@ class ProductsAdapter:  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>
             Glide.with(this).load(products.image).placeholder(ProgressCircleGlide.progressBar(context)).
             into(holder.binding.ivProduct)
         }
+
+        removeItemPosition(position)
+
         holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title
         holder.binding.ivDeleteProduct.setOnClickListener {
            onItemClickListener.let {
-               it(holder)
+               it(products)
            }
         }
     }
 
-    private var onItemClickListener: (ProductsViewHolder)->Unit = { products: ProductsViewHolder -> Unit }
+    private var onItemClickListener: (Products)->Unit = { products: Products -> Unit }
 
-    fun setOnItemClickListener(listener: (ProductsViewHolder) ->Unit) {
+    fun setOnItemClickListener(listener: (Products) ->Unit) {
         onItemClickListener = listener
     }
 }

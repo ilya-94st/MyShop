@@ -56,6 +56,12 @@ class FireStore {
             .update(userHashMap)
     }
 
+    fun updateProductsData(products: HashMap<String, Any>) {
+        fireStore.collection(Constants.PRODUCTS)
+            .document()
+            .update(products)
+    }
+
   suspend  fun addProducts(products: Products, constants: String) {
             try {
 

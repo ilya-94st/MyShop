@@ -33,14 +33,14 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         descriptionProduct()
+        viewModel.users.observe(viewLifecycleOwner){
+            userId = it.id
+        }
+        viewModel.idOrders.observe(viewLifecycleOwner){
+            idOrders = it
+        }
 
         binding.btAddToCart.setOnClickListener {
-            viewModel.users.observe(viewLifecycleOwner){
-                userId = it.id
-            }
-            viewModel.idOrders.observe(viewLifecycleOwner){
-                idOrders = it
-            }
                 val product = args.products
                 val imageProduct = product.image
                 val price = product.price

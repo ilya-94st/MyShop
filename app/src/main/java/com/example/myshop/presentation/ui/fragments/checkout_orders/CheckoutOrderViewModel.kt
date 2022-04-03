@@ -49,7 +49,7 @@ class CheckoutOrderViewModel @Inject constructor(
         _allPrice.postValue(getAllPrice.invoke(userId))
     }
 
-    fun deleteProducts(userId: String) = viewModelScope.launch {
+    fun deleteProducts(userId: String) {
         deleteProductsInCart.invoke(userId)
     }
 
@@ -57,7 +57,7 @@ class CheckoutOrderViewModel @Inject constructor(
         addProductInOrder.invoke(productsInOrder)
     }
 
-    fun deleteAddress(userId: String) = viewModelScope.launch {
+    fun deleteAddress(userId: String)  {
         deleteAddress.invoke(userId)
     }
 

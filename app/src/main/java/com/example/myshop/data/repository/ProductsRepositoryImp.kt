@@ -23,19 +23,19 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
         FireStore().addProductsInOrders(productsInOrder)
     }
 
-    override suspend fun deleteProduct(constants: String) {
-        FireStore().deleteProducts(constants)
+    override  fun deleteProduct(userId: String) {
+        FireStore().deleteToId(Constants.PRODUCTS, userId)
     }
 
     override suspend fun deleteImageProduct(fileExtension: String) {
         FireStore().deleteImage(fileExtension)
     }
 
-    override suspend fun deleteAddress(userId: String) {
+    override  fun deleteAddress(userId: String) {
         FireStore().deleteToId(Constants.ADDRESS_USER, userId)
     }
 
-    override suspend fun deleteProductsInCart(userId: String) {
+    override  fun deleteProductsInCart(userId: String) {
         FireStore().deleteToId(Constants.PRODUCT_IN_CART, userId)
     }
 

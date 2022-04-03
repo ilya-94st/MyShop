@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private val viewModel: MyCartViewModel by viewModels()
     private lateinit var productsInCartAdapter: ProductsInCartAdapter
+    private var userID = ""
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMyCartBinding::inflate
@@ -32,10 +33,10 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
     @SuppressLint("SetTextI18n")
     private fun initAdapter() {
-        showProgressDialog("Please wait...")
         productsInCartAdapter = ProductsInCartAdapter()
         binding.rvProducts.adapter = productsInCartAdapter
         viewModel.users.observe(viewLifecycleOwner){
+            showProgressDialog("Please wait ...")
             viewModel.getProductInCart(it.id)
             viewModel.getAllPrice(it.id)
         }
@@ -46,7 +47,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             binding.tvSubPrice.text = "$it"
             binding.tvShippingPrice.text = "${10}"
             binding.tvTotalSum.text = "${it + 10}"
+            hideProgressDialog()
         }
-        hideProgressDialog()
     }
 }

@@ -26,8 +26,8 @@ class ProductViewModel @Inject constructor(private val deleteProducts: DeletePro
 
     var users: LiveData<Users> = _users
 
-    fun deleteProduct() = viewModelScope.launch {
-        deleteProducts.invoke(Constants.PRODUCTS)
+    fun deleteProduct(userId: String) = viewModelScope.launch {
+        deleteProducts.invoke(userId)
     }
 
     fun deleteImage(userId: String) = viewModelScope.launch {

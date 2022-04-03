@@ -14,13 +14,13 @@ interface ProductsRepository {
 
    suspend fun addProductInOrders(productsInOrder: ProductsInOrder)
 
-   suspend fun deleteProduct(constants: String)
+    fun deleteProduct(userId: String)
 
    suspend fun deleteImageProduct(fileExtension: String)
 
-   suspend fun deleteAddress(userId: String)
+    fun deleteAddress(userId: String)
 
-   suspend fun deleteProductsInCart(userId: String)
+    fun deleteProductsInCart(userId: String)
 
    suspend fun getProduct(userId: String, constants: String): ArrayList<Products>
 

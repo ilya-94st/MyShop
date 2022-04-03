@@ -11,7 +11,7 @@ import javax.inject.Inject
 class GetUserProfile @Inject constructor(private val updateRepository: UpdateRepository) {
 
 
-   operator fun invoke(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String): EventClass {
+   operator fun invoke(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String): EventClass? {
 
         val userHashMap = HashMap<String, Any>()
 
@@ -53,9 +53,11 @@ class GetUserProfile @Inject constructor(private val updateRepository: UpdateRep
            is EventClass.ErrorIn -> {
                result
            }
-           else -> {
+           is EventClass.Success -> {
                updateRepository.updateUserProfileData(userHashMap)
-               EventClass.Success
+           }
+           else -> {
+              result
            }
        }
     }

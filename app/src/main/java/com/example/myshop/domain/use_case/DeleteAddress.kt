@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class DeleteAddress @Inject constructor(private val productsRepository: ProductsRepository) {
 
-    suspend operator fun invoke(userId: String) {
+     operator fun invoke(userId: String) {
         productsRepository.deleteAddress(userId)
     }
 }

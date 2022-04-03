@@ -32,13 +32,13 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         viewModel.time.observe(viewLifecycleOwner){
             time = it
         }
-
         initAdapter()
         getItemsOrder()
 
         binding.btPlaceOder.setOnClickListener {
             addProductsInOrder()
             delete()
+            hideProgressDialog()
             findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
             toast("You order was placed successfully")
         }
@@ -64,8 +64,9 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
 
     private fun delete() {
         viewModel.users.observe(viewLifecycleOwner){
-            viewModel.deleteProducts(it.id)
-            viewModel.deleteAddress(it.id)
+            val userId = it.id
+            viewModel.deleteProducts(userId)
+            viewModel.deleteAddress(userId)
         }
     }
 
@@ -85,6 +86,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     }
 
     private fun addProductsInOrder() {
+        showProgressDialog("Please wait ...")
         viewModel.products.observe(viewLifecycleOwner){ products->
             products.forEach {
                 val addressItems = savArgs.userAdres

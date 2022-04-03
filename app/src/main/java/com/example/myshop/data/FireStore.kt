@@ -169,32 +169,13 @@ class FireStore {
     }
 
 
-        suspend fun deleteProducts(constants: String) {
-           val productsQuery =  fireStore.collection(constants)
-                 .get()
-                 .await()
-             if (productsQuery.documents.isNotEmpty()) {
-                 for (document in productsQuery) {
-                     try {
-                         fireStore.collection(constants).document(document.id).delete().await()
-                     } catch (e: IOException) {
-                         Log.e("deleteProducts", "$e")
-                     }
-                 }
-             }
-         }
 
-    suspend fun deleteToId(constants: String, userId: String) {
+     fun deleteToId(constants: String, userId: String) {
         val productsQuery =  fireStore.collection(constants).whereEqualTo("id", userId)
             .get()
-            .await()
-        if (productsQuery.documents.isNotEmpty()) {
-            for (document in productsQuery) {
-                try {
-                    fireStore.collection(constants).document(document.id).delete().await()
-                } catch (e: IOException) {
-                    Log.e("deleteProducts", "$e")
-                }
+        productsQuery.addOnSuccessListener {
+            for (document in it){
+                fireStore.collection(constants).document(document.id).delete()
             }
         }
     }
@@ -216,8 +197,9 @@ class FireStore {
   suspend  fun deleteImage(userId: String)  {
         try {
             val imageDelete = Firebase.storage.reference
-            imageDelete.child(Constants.USER_PRODUCTS_IMAGES + "."
-                    + userId).delete().await()
+            imageDelete.child(
+                "${Constants.USER_PRODUCTS_IMAGES}/${userId}"
+            ).delete().await()
         } catch (e: IOException) {
             Log.e("deleteImage", "$e")
         }

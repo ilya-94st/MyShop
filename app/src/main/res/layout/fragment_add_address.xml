@@ -222,13 +222,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/containerDescription"
-                    android:text="submit"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="16sp"
-                    android:background="@drawable/oval_button"/>
+                    android:layout_marginBottom="64dp"
+                    android:background="@drawable/oval_button"
+                    android:text="submit"
+                    android:textSize="16sp" />
             </RelativeLayout>
 
         </androidx.core.widget.NestedScrollView>

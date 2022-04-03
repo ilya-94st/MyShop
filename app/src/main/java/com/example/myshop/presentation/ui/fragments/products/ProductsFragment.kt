@@ -41,7 +41,7 @@ private var userId = ""
 
 
         productsAdapter.setOnItemClickListener {
-           viewModel.deleteProduct()
+           viewModel.deleteProduct(userId)
            viewModel.deleteImage(userId)
         }
     }

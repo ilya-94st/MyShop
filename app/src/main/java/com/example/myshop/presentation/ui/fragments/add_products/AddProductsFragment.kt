@@ -34,6 +34,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     private var mUserProductImageURL: String = ""
     private var currency: String = ""
     private var userId: String = ""
+    private var idProducts: Long = 0L
     private  val  viewModelAdd: AddProductViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,6 +85,9 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
     }
 
    private fun observeUsers(imageUrl: String) {
+       viewModelAdd.idProducts.observe(viewLifecycleOwner){
+           idProducts = it
+       }
        viewModelAdd.users.observe(viewLifecycleOwner){
            mUserProductImageURL = imageUrl
            val users = it
@@ -93,7 +97,8 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
            val quality = binding.etQuantity.text.toString()
            val userId = users.id
            val products = Products(
-               id = userId,
+               idSeller = userId,
+               idProducts = idProducts,
                title = title,
                price = price.toFloat(),
                description = description,

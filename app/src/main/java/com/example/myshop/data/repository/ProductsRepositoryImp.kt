@@ -6,8 +6,6 @@ import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.domain.repository.ProductsRepository
-import com.example.myshop.presentation.adapters.AllProductsAdapter
-import com.example.myshop.presentation.adapters.ProductsAdapter
 import javax.inject.Inject
 
 class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
@@ -23,32 +21,37 @@ class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
         FireStore().addProductsInOrders(productsInOrder)
     }
 
-    override  fun deleteProduct(userId: String) {
-        FireStore().deleteToId(Constants.PRODUCTS, userId)
+    override  fun deleteProduct(idProduct: Long) {
+        FireStore().deleteProduct(idProduct)
     }
 
     override suspend fun deleteImageProduct(fileExtension: String) {
         FireStore().deleteImage(fileExtension)
     }
 
-    override  fun deleteAddress(userId: String) {
-        FireStore().deleteToId(Constants.ADDRESS_USER, userId)
+    override  fun deleteAddress(idAddress: Long) {
+        FireStore().deleteAddress(idAddress)
     }
 
-    override  fun deleteProductsInCart(userId: String) {
-        FireStore().deleteToId(Constants.PRODUCT_IN_CART, userId)
+    override  fun deleteAllProductsInCart(idBuyer: String) {
+        FireStore().deleteAllProductInCart(idBuyer)
     }
 
-    override suspend fun getProduct(userId: String, constants: String) =
-        FireStore().getProducts(userId, Constants.PRODUCTS)
+    override fun deleteProductInCart(idBuyer: String, idProduct: Long) {
+        FireStore().deleteProductInCart(idBuyer, idProduct)
+    }
+
+
+    override suspend fun getProduct(idSeller: String, constants: String) =
+        FireStore().getProducts(idSeller, Constants.PRODUCTS)
 
 
     override suspend fun getAllProducts() = FireStore().getAllProducts()
 
-    override suspend fun getProductInCart(userId: String) = FireStore().getProductsInCart(userId)
+    override suspend fun getProductInCart(idBuyer: String) = FireStore().getProductsInCart(idBuyer)
 
 
-    override suspend fun getProductInOrders(userId: String) = FireStore().getOrders(userId)
+    override suspend fun getProductInOrders(idBuyer: String) = FireStore().getOrders(idBuyer)
 
 
     override suspend fun getAllPrice(userId: String): Float? =

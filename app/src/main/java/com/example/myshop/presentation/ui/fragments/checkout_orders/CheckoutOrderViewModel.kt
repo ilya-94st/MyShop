@@ -19,10 +19,13 @@ class CheckoutOrderViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
     private val getAllPrice: GetAllPrice,
     private val checkUserDetails: CheckUserDetails,
-    private val deleteProductsInCart: DeleteProductsInCart,
-    private val addProductInOrder: AddProductInOrder,
-    private val deleteAddress: DeleteAddress
+    private val deleteAllProductsInCart: DeleteAllProductsInCart,
+    private val addProductInOrder: AddProductInOrder
     ): ViewModel() {
+    private var _idProduct = MutableLiveData<Long>()
+
+    var idProduct: LiveData<Long> = _idProduct
+
     private var _time = MutableLiveData<String>()
 
     var time: LiveData<String> = _time
@@ -40,8 +43,8 @@ class CheckoutOrderViewModel @Inject constructor(
 
     var allPrice: LiveData<Float> = _allPrice
 
-    fun getProductInCart(userId: String) = viewModelScope.launch {
-       _products.postValue(getProductInCart.invoke(userId))
+    fun getProductInCart(idBuyer: String) = viewModelScope.launch {
+       _products.postValue(getProductInCart.invoke(idBuyer))
     }
 
 
@@ -49,17 +52,15 @@ class CheckoutOrderViewModel @Inject constructor(
         _allPrice.postValue(getAllPrice.invoke(userId))
     }
 
-    fun deleteProducts(userId: String) {
-        deleteProductsInCart.invoke(userId)
+    fun deleteProducts(idBuyer: String) {
+        deleteAllProductsInCart.invoke(idBuyer)
     }
 
     fun addProductInOrder(productsInOrder: ProductsInOrder) = viewModelScope.launch {
         addProductInOrder.invoke(productsInOrder)
     }
 
-    fun deleteAddress(userId: String)  {
-        deleteAddress.invoke(userId)
-    }
+
 
     init {
         getUser()

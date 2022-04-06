@@ -21,12 +21,9 @@ var user: LiveData<Users> = _user
 
     var order: LiveData<List<ProductsInOrder>> = _orders
 
-
     fun getOrders(userId: String) = viewModelScope.launch {
         _orders.postValue(getOrders.invoke(userId))
     }
-
-
 
     private fun getUser() = viewModelScope.launch {
         _user.postValue(getUserDetails.invoke())

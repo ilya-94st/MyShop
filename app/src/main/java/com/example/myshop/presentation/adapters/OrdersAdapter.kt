@@ -20,7 +20,7 @@ class OrdersAdapter :  RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<ProductsInOrder>() {
         override fun areItemsTheSame(oldItem: ProductsInOrder, newItem: ProductsInOrder): Boolean {
-            return oldItem.id== newItem.id
+            return oldItem.idOrder== newItem.idOrder
         }
 
         override fun areContentsTheSame(oldItem:ProductsInOrder, newItem: ProductsInOrder): Boolean {

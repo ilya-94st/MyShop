@@ -3,8 +3,6 @@ package com.example.myshop.domain.repository
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
-import com.example.myshop.presentation.adapters.AllProductsAdapter
-import com.example.myshop.presentation.adapters.ProductsAdapter
 
 interface ProductsRepository {
 
@@ -14,22 +12,23 @@ interface ProductsRepository {
 
    suspend fun addProductInOrders(productsInOrder: ProductsInOrder)
 
-    fun deleteProduct(userId: String)
+    fun deleteProduct(idProduct: Long)
 
    suspend fun deleteImageProduct(fileExtension: String)
 
-    fun deleteAddress(userId: String)
+    fun deleteAddress(idAddress: Long)
 
-    fun deleteProductsInCart(userId: String)
+    fun deleteAllProductsInCart(idBuyer: String)
 
-   suspend fun getProduct(userId: String, constants: String): ArrayList<Products>
+    fun deleteProductInCart(idBuyer: String, idProduct: Long)
+
+   suspend fun getProduct(idSeller: String, constants: String): ArrayList<Products>
 
    suspend fun getAllProducts(): ArrayList<Products>
 
-   suspend fun getProductInCart(userId: String): ArrayList<ProductsInCart>
+   suspend fun getProductInCart(idBuyer: String): ArrayList<ProductsInCart>
 
-   suspend fun getProductInOrders(userId: String): ArrayList<ProductsInOrder>
+   suspend fun getProductInOrders(idBuyer: String): ArrayList<ProductsInOrder>
 
   suspend  fun getAllPrice(userId: String): Float?
-
 }

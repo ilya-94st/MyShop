@@ -18,61 +18,82 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
+@SuppressLint("SetTextI18n")
 class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private val savArgs: CheckoutOrderFragmentArgs by navArgs()
     private val viewModel: CheckoutOrderViewModel by viewModels()
     private lateinit var productsAddInOrder: ProductsAddInOrder
     private var time = ""
+    private var itemQuantity = 0
+
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentCheckoutOrderBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.time.observe(viewLifecycleOwner){
-            time = it
-        }
+        getTime()
+        getQuantity()
         initAdapter()
-        getItemsOrder()
+        getItemsAddress()
+        getAllPrice()
+
 
         binding.btPlaceOder.setOnClickListener {
             addProductsInOrder()
-            delete()
-            hideProgressDialog()
+            deleteProductInCart()
             findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
             toast("You order was placed successfully")
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun getItemsOrder() {
+
+    private fun getItemsAddress() {
         val address = savArgs.userAdres
         binding.tvMyNote.text = address.notes
         binding.tvPhoneNumber.text = "${address.phoneNumber}"
         binding.tvMyAddressZip.text = address.address + "," + address.zipCode
         binding.tvFullName.text = address.name
         binding.tvNameAddress.text = address.chooseAddress
+    }
+
+    private fun getAllPrice() {
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getAllPrice(it.id)
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubtotal.text = "Subtotal $it"
             binding.tvShippingCharge.text = "Shipping Charge 10$"
-            binding.tvTotalAmount.text = "Total Amount ${it + 10F}"
+            binding.tvTotalAmount.text = "Total Amount ${(it + 10F)}"
         }
     }
 
-    private fun delete() {
+    private fun deleteProductInCart() {
         viewModel.users.observe(viewLifecycleOwner){
-            val userId = it.id
-            viewModel.deleteProducts(userId)
-            viewModel.deleteAddress(userId)
+            val idBuyer = it.id
+            viewModel.deleteProducts(idBuyer)
+        }
+    }
+
+    private fun getQuantity() {
+        viewModel.products.observe(viewLifecycleOwner){ listProducts ->
+            listProducts.forEach {
+                itemQuantity = it.quantity
+            }
+        }
+    }
+
+    private fun getTime() {
+        viewModel.time.observe(viewLifecycleOwner){
+            time = it
         }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initAdapter() {
-        productsAddInOrder = ProductsAddInOrder()
+        productsAddInOrder = ProductsAddInOrder(
+            itemsQuantity = itemQuantity
+        )
         binding.vpProducts.adapter = productsAddInOrder
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
@@ -86,9 +107,8 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     }
 
     private fun addProductsInOrder() {
-        showProgressDialog("Please wait ...")
-        viewModel.products.observe(viewLifecycleOwner){ products->
-            products.forEach {
+        viewModel.products.observe(viewLifecycleOwner){ productsList->
+            productsList.forEach { product->
                 val addressItems = savArgs.userAdres
                 val notes = addressItems.notes
                 val phoneNumber = "${addressItems.phoneNumber}"
@@ -96,13 +116,13 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                 val addressZip = addressItems.zipCode
                 val fullName= addressItems.name
                 val chooseAddress = addressItems.chooseAddress
-                viewModel.users.observe(viewLifecycleOwner){ userId->
-                    val productInOrder = ProductsInOrder(userId.id,
-                        it.idOrder,
-                        it.title,
-                        it.price,
-                        it.image,
-                        it.currency,
+                    val productInOrder = ProductsInOrder(product.idSeller,
+                        product.idBuyer,
+                        product.idOrder,
+                        product.title,
+                        product.price,
+                        product.image,
+                        product.currency,
                         fullName,
                         nameAddress,
                         phoneNumber.toLong(),
@@ -112,7 +132,6 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                         time
                     )
                     viewModel.addProductInOrder(productInOrder)
-                }
             }
         }
     }

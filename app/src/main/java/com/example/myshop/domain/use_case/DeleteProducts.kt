@@ -5,8 +5,8 @@ import javax.inject.Inject
 
 class DeleteProducts @Inject constructor(private val productsRepository: ProductsRepository) {
 
-   operator fun invoke(userId: String) {
-       productsRepository.deleteProduct(userId)
+   operator fun invoke(idProduct: Long) {
+       productsRepository.deleteProduct(idProduct)
     }
 
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.models.AddressUser
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.CheckUserDetails
+import com.example.myshop.domain.use_case.DeleteAddress
 import com.example.myshop.domain.use_case.GetItemsAddress
 import com.example.myshop.presentation.adapters.AddressAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SelectAddressViewModel @Inject constructor(private val getItemsAddress: GetItemsAddress, private val getUserDetails: CheckUserDetails): ViewModel() {
+class SelectAddressViewModel @Inject constructor(
+    private val getItemsAddress: GetItemsAddress,
+    private val getUserDetails: CheckUserDetails,
+    private val deleteAddress: DeleteAddress
+    ): ViewModel() {
     private var _addressUser = MutableLiveData<List<AddressUser>>()
 
     var addressUser: LiveData<List<AddressUser>> = _addressUser
@@ -27,7 +32,9 @@ class SelectAddressViewModel @Inject constructor(private val getItemsAddress: Ge
         _addressUser.postValue(getItemsAddress.invoke(idUser))
     }
 
-
+    fun deleteAddress(idAddress: Long)  {
+        deleteAddress.invoke(idAddress)
+    }
 
     init {
         getUser()

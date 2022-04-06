@@ -10,7 +10,7 @@ import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ProductsItemsBinding
 import com.example.myshop.domain.models.Products
 
-class ProductsAdapter(val removeItemPosition: (position: Int) -> Unit):  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>() {
+class ProductsAdapter():  RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ProductsItemsBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -18,7 +18,7 @@ class ProductsAdapter(val removeItemPosition: (position: Int) -> Unit):  Recycle
 
     private val diffCallback = object : DiffUtil.ItemCallback<Products>() {
         override fun areItemsTheSame(oldItem: Products, newItem: Products): Boolean {
-            return oldItem.id== newItem.id
+            return oldItem.idSeller == newItem.idSeller
         }
 
         override fun areContentsTheSame(oldItem: Products, newItem: Products): Boolean {
@@ -46,7 +46,7 @@ class ProductsAdapter(val removeItemPosition: (position: Int) -> Unit):  Recycle
             into(holder.binding.ivProduct)
         }
 
-        removeItemPosition(position)
+
 
         holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title

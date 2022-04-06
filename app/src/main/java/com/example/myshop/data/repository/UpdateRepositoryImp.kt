@@ -2,6 +2,7 @@ package com.example.myshop.data.repository
 
 import com.example.myshop.common.EventClass
 import com.example.myshop.data.FireStore
+import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.repository.UpdateRepository
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ class UpdateRepositoryImp @Inject constructor(): UpdateRepository {
     return registerResult
     }
 
-    override fun upDataProducts(products: HashMap<String, Any>) {
-        FireStore().updateProductsData(products)
+    override suspend fun upDataProducts(products: HashMap<String, Any>, oldProducts: Products) {
+          FireStore().updateProductsData(products, oldProducts)
     }
 }

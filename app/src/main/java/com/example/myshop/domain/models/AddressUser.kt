@@ -3,7 +3,8 @@ package com.example.myshop.domain.models
 import java.io.Serializable
 
 data class AddressUser(
-    val id: String = "",
+    val idUser: String = "",
+    val idAddress: Long = 0L,
     val name: String = "",
     val address: String = "",
     val phoneNumber: Long = 0,

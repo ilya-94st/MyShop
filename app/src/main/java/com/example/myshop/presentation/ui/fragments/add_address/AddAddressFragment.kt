@@ -18,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
     private val viewModel: AddAddressViewModel by viewModels()
     private var addressLocation = ""
+    private var idAddress = 0L
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentAddAddressBinding::inflate
@@ -45,6 +46,9 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
 
     private fun addUserAddress() {
         showProgressDialog("Please wait...")
+        viewModel.idAddress.observe(viewLifecycleOwner){
+            idAddress = it
+        }
         viewModel.user.observe(viewLifecycleOwner){
             val idUser = it.id
             val name = binding.etFullName.text.toString()
@@ -52,7 +56,7 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
             val addressName = binding.etAddress.text.toString()
             val zipCode = binding.etZipCode.text.toString()
             val notes = binding.etNotes.text.toString()
-            val addressUser = AddressUser(idUser, name, addressName, phoneNumber.toLong(), zipCode, notes, addressLocation)
+            val addressUser = AddressUser(idUser, idAddress, name, addressName, phoneNumber.toLong(), zipCode, notes, addressLocation)
             viewModel.addAddressUser(addressUser, name, phoneNumber, addressName, zipCode, notes)
         }
     }

@@ -12,7 +12,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductViewModel @Inject constructor(private val deleteProducts: DeleteProducts, private val deleteImageProduct: DeleteImageProduct, private val getProducts: GetProducts, private val checkUserDetails: CheckUserDetails): ViewModel() {
+class ProductViewModel @Inject constructor(
+    private val deleteProducts: DeleteProducts,
+    private val deleteImageProduct: DeleteImageProduct,
+    private val getProducts: GetProducts,
+    private val checkUserDetails: CheckUserDetails,
+       ): ViewModel() {
+    private var _idProducts = MutableLiveData<Long>()
+
+    var idProducts: LiveData<Long> = _idProducts
+
     private var _products = MutableLiveData<MutableList<Products>>()
 
     var products: LiveData<MutableList<Products>> = _products
@@ -21,8 +30,8 @@ class ProductViewModel @Inject constructor(private val deleteProducts: DeletePro
 
     var users: LiveData<Users> = _users
 
-    fun deleteProduct(userId: String) = viewModelScope.launch {
-        deleteProducts.invoke(userId)
+    fun deleteProduct(idProducts: Long) = viewModelScope.launch {
+        deleteProducts.invoke(idProducts)
     }
 
     fun deleteImage(userId: String) = viewModelScope.launch {
@@ -35,11 +44,6 @@ class ProductViewModel @Inject constructor(private val deleteProducts: DeletePro
 
     private fun getUsers() = viewModelScope.launch {
         _users.postValue(checkUserDetails.invoke())
-    }
-
-
-  fun removeItemPosition(position: Int) {
-     _products.value?.removeAt(position)
     }
 
     init {

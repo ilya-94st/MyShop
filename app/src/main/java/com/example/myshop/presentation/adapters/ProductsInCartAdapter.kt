@@ -8,9 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ItemsInCartBinding
+import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 
-class ProductsInCartAdapter: RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
+class ProductsInCartAdapter(private var itemsQuantity:  Int): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ItemsInCartBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -18,7 +19,7 @@ class ProductsInCartAdapter: RecyclerView.Adapter<ProductsInCartAdapter.Products
 
     private val diffCallback = object : DiffUtil.ItemCallback<ProductsInCart>() {
         override fun areItemsTheSame(oldItem: ProductsInCart, newItem: ProductsInCart): Boolean {
-            return oldItem.id== newItem.id
+            return oldItem.idBuyer== newItem.idBuyer
         }
 
         override fun areContentsTheSame(oldItem: ProductsInCart, newItem: ProductsInCart): Boolean {
@@ -47,7 +48,40 @@ class ProductsInCartAdapter: RecyclerView.Adapter<ProductsInCartAdapter.Products
         }
         holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title
-
+        itemsQuantity = products.quantity
+        holder.binding.tvQuantity.text = itemsQuantity.toString()
+        holder.binding.ibPlus.setOnClickListener {
+            onItemClickListenerPlus.let {
+                it(products)
+            }
+        }
+        holder.binding.ibMinus.setOnClickListener {
+            onItemClickListenerMinus.let {
+                it(products)
+            }
+        }
+        holder.binding.ivDeleteProduct.setOnClickListener {
+            onItemClickListenerDelete.let {
+                it(products)
+            }
+        }
     }
 
+    private var onItemClickListenerDelete: (ProductsInCart)->Unit = { products: ProductsInCart -> Unit }
+
+    fun setOnItemClickListenerDelete(listener: (ProductsInCart) ->Unit) {
+        onItemClickListenerDelete = listener
+    }
+
+    private var onItemClickListenerPlus: (ProductsInCart)->Unit = { products: ProductsInCart -> Unit }
+
+    fun setOnItemClickListenerPlus(listener: (ProductsInCart) ->Unit) {
+        onItemClickListenerPlus = listener
+    }
+
+    private var onItemClickListenerMinus: (ProductsInCart)->Unit = { products: ProductsInCart -> Unit }
+
+    fun setOnItemClickListenerMinus(listener: (ProductsInCart) ->Unit) {
+        onItemClickListenerMinus = listener
+    }
 }

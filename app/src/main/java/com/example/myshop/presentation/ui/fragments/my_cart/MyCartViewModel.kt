@@ -6,15 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.Users
-import com.example.myshop.domain.use_case.CheckUserDetails
-import com.example.myshop.domain.use_case.GetAllPrice
-import com.example.myshop.domain.use_case.GetProductInCart
+import com.example.myshop.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyCartViewModel @Inject constructor(private val getProductInCart: GetProductInCart, private val checkUserDetails: CheckUserDetails, private val getAllPrice: GetAllPrice): ViewModel() {
+class MyCartViewModel @Inject constructor(
+    private val getProductInCart: GetProductInCart,
+    private val checkUserDetails: CheckUserDetails,
+    private val getAllPrice: GetAllPrice,
+    private val updateProducts: UpdateProducts,
+    private val deleteProductInCart: DeleteProductInCart
+    ): ViewModel() {
     private var _productsInCart = MutableLiveData<List<ProductsInCart>>()
 
     var productsInCart: LiveData<List<ProductsInCart>> = _productsInCart
@@ -27,13 +31,19 @@ class MyCartViewModel @Inject constructor(private val getProductInCart: GetProdu
 
     var allPrice: LiveData<Float> = _allPrice
 
-    fun getProductInCart(userId: String) = viewModelScope.launch {
-        _productsInCart.postValue(getProductInCart.invoke(userId))
+    fun getProductInCart(idBuyer: String) = viewModelScope.launch {
+        _productsInCart.postValue(getProductInCart.invoke(idBuyer))
     }
 
     fun getAllPrice(userId: String) = viewModelScope.launch {
        _allPrice.postValue(getAllPrice.invoke(userId))
    }
+
+
+
+    fun deleteProductInCart(idBuyer: String, idProduct: Long) {
+        deleteProductInCart.invoke(idBuyer, idProduct)
+    }
 
     init {
         getUser()

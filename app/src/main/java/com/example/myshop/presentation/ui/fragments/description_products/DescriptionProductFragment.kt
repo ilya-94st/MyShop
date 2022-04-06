@@ -25,8 +25,10 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     private val args: DescriptionProductFragmentArgs by navArgs()
     private val viewModel: DescriptionProductViewModel by viewModels()
-    private var userId = ""
+    private var idBuyer = ""
     private var idOrders = 0L
+    private var quantity = 0
+
 
 
 
@@ -34,21 +36,22 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         super.onViewCreated(view, savedInstanceState)
         descriptionProduct()
         viewModel.users.observe(viewLifecycleOwner){
-            userId = it.id
+            idBuyer = it.id
         }
         viewModel.idOrders.observe(viewLifecycleOwner){
             idOrders = it
         }
 
+        binding.ibMinus.setOnClickListener {
+            viewModel.minusQuantity()
+        }
+
+        binding.ibPlus.setOnClickListener {
+            viewModel.plusQuantity()
+        }
+
         binding.btAddToCart.setOnClickListener {
-                val product = args.products
-                val imageProduct = product.image
-                val price = product.price
-                val title = product.title
-                val currency = product.currency
-                val productInCart = ProductsInCart(userId, idOrders, title, price, imageProduct, currency)
-                viewModel.addProductInCart(productInCart)
-            findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
+              addProductInCart()
         }
 
         binding.ibLeft.setOnClickListener {
@@ -65,15 +68,19 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
     private fun descriptionProduct() {
         val products = args.products
         glideLoadUserPicture(products.image, binding.ivProduct, requireContext())
+        viewModel.quantity.observe(viewLifecycleOwner) {
+            binding.tvQuantity.text = "$it"
+            quantity = it
+        }
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price} ${products.currency}"
-        binding.tvQuantity.text = "${products.quality}"
+
     }
 
     private fun getUserMobile() {
         val products = args.products
-        viewModel.getUserMobile(products.id)
+        viewModel.getUserMobile(products.idSeller)
         binding.tvMobile.visibility = View.INVISIBLE
         showProgressDialog("please wait...")
         viewModel.usersMobile.observe(viewLifecycleOwner){
@@ -82,6 +89,27 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
             binding.tvMobile.visibility = View.VISIBLE
         }
     }
+
+    private fun addProductInCart() {
+        val product = args.products
+        val idSeller = product.idSeller
+        val idProducts = product.idProducts
+        val imageProduct = product.image
+        val price = product.price
+        val title = product.title
+        val currency = product.currency
+        val quInProduct = product.quality
+        if (quInProduct < quantity || quantity < 0) {
+            errorSnackBar("not enough products", true)
+        } else {
+            val productInCart = ProductsInCart(idSeller, idProducts, idBuyer, idOrders, title, price, imageProduct, currency, quantity)
+            val result = quInProduct - quantity
+            viewModel.updateProducts(args.products, result)
+            viewModel.addProductInCart(productInCart)
+            findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
+        }
+    }
+
 
   private  fun glideLoadUserPicture(image: Any, imageView: ImageView, context: Context) {
         try {

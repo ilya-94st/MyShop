@@ -17,7 +17,7 @@ class AddressAdapter: RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<AddressUser>() {
         override fun areItemsTheSame(oldItem: AddressUser, newItem: AddressUser): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.idAddress == newItem.idAddress
         }
 
         override fun areContentsTheSame(oldItem: AddressUser, newItem: AddressUser): Boolean {
@@ -52,11 +52,22 @@ class AddressAdapter: RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
                 it(itemsAddress)
             }
         }
+        holder.binding.ivDeleteProduct.setOnClickListener {
+            onItemClickListenerDeleteItem.let {
+                it(itemsAddress)
+            }
+        }
     }
 
     private var onItemClickListener: (AddressUser)->Unit = { addressUser: AddressUser -> Unit }
 
     fun setOnItemClickListener(listener: (AddressUser) ->Unit) {
         onItemClickListener = listener
+    }
+
+    private var onItemClickListenerDeleteItem: (AddressUser)->Unit = { addressUser: AddressUser -> Unit }
+
+    fun setOnItemClickListenerDeleteItem(listener: (AddressUser) ->Unit) {
+        onItemClickListenerDeleteItem = listener
     }
 }

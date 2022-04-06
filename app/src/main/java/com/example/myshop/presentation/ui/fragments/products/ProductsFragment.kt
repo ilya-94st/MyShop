@@ -21,6 +21,7 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
     private lateinit var productsAdapter: ProductsAdapter
     private val viewModel: ProductViewModel by viewModels()
     private var userId = ""
+    private var idProducts = 0L
 
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -28,6 +29,11 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        productsAdapter = ProductsAdapter()
+        initAdapter()
+        getIdProduct()
+        deleteProductSwipe()
+        deleteProduct()
 
         binding.ibAddProducts.setOnClickListener {
             findNavController().navigate(R.id.action_productsFragment_to_addProductsFragment)
@@ -37,13 +43,11 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
            findNavController().navigate(R.id.action_productsFragment_to_myCartFragment)
         }
 
-        initAdapter()
+
     }
 
+
     private fun initAdapter() {
-        productsAdapter = ProductsAdapter(
-            removeItemPosition  = {viewModel.removeItemPosition(it)}
-            )
         binding.rvProducts.adapter = productsAdapter
         viewModel.users.observe(viewLifecycleOwner){
             userId = it.id
@@ -52,10 +56,14 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
         viewModel.products.observe(viewLifecycleOwner){ products ->
             productsAdapter.submitList(products)
         }
-        productsAdapter.setOnItemClickListener {
-            viewModel.deleteProduct(userId)
-            viewModel.deleteImage(userId)
-        }
+    }
+
+    private fun getIdProduct() {
+       viewModel.products.observe(viewLifecycleOwner){ products->
+           products.forEach {
+               idProducts = it.idProducts
+           }
+       }
     }
 
     private fun alertDialogDeleteProduct(message: String) {
@@ -64,15 +72,15 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
             .setPositiveButton(
                 "OK"
             ) { _, _ ->
-
-                initAdapter()
+                viewModel.deleteProduct(idProducts)
+                //viewModel.deleteImage(userId)
             }
             .setNegativeButton(
                 "No"
             ) {
                     dialog, _ ->
                 dialog.cancel()
-                initAdapter()
+             initAdapter()
             }
         builder.create().show()
     }
@@ -91,11 +99,18 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
 
             @SuppressLint("ShowToast")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-               alertDialogDeleteProduct("tsgsgsd")
+               alertDialogDeleteProduct("Do you want a delete product?")
             }
         }
         ItemTouchHelper(itemTouchHelperCallBack).apply {
             attachToRecyclerView(binding.rvProducts)
+        }
+    }
+
+    private fun deleteProduct() {
+        productsAdapter.setOnItemClickListener {
+            viewModel.deleteProduct(idProducts)
+            //viewModel.deleteImage(userId)
         }
     }
 }

@@ -18,9 +18,6 @@ class ProductViewModel @Inject constructor(
     private val getProducts: GetProducts,
     private val checkUserDetails: CheckUserDetails,
        ): ViewModel() {
-    private var _idProducts = MutableLiveData<Long>()
-
-    var idProducts: LiveData<Long> = _idProducts
 
     private var _products = MutableLiveData<MutableList<Products>>()
 

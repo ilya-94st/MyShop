@@ -27,10 +27,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
     private val viewModel: DescriptionProductViewModel by viewModels()
     private var idBuyer = ""
     private var idOrders = 0L
-    private var quantity = 0
-
-
-
+    private var quantity = 1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,14 +37,6 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         }
         viewModel.idOrders.observe(viewLifecycleOwner){
             idOrders = it
-        }
-
-        binding.ibMinus.setOnClickListener {
-            viewModel.minusQuantity()
-        }
-
-        binding.ibPlus.setOnClickListener {
-            viewModel.plusQuantity()
         }
 
         binding.btAddToCart.setOnClickListener {
@@ -68,10 +57,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
     private fun descriptionProduct() {
         val products = args.products
         glideLoadUserPicture(products.image, binding.ivProduct, requireContext())
-        viewModel.quantity.observe(viewLifecycleOwner) {
-            binding.tvQuantity.text = "$it"
-            quantity = it
-        }
+        binding.tvQuantity.text = "${products.quality}"
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price} ${products.currency}"
@@ -98,16 +84,9 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         val price = product.price
         val title = product.title
         val currency = product.currency
-        val quInProduct = product.quality
-        if (quInProduct < quantity || quantity < 0) {
-            errorSnackBar("not enough products", true)
-        } else {
             val productInCart = ProductsInCart(idSeller, idProducts, idBuyer, idOrders, title, price, imageProduct, currency, quantity)
-            val result = quInProduct - quantity
-            viewModel.updateProducts(args.products, result)
             viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
-        }
     }
 
 

@@ -23,6 +23,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private var quantity = 0
     private var userId = ""
     private var idProduct = 0L
+    private var quantityProduct = 0
 
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -30,25 +31,41 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        viewModel.quantity.observe(viewLifecycleOwner) {
+            quantity = it
+            binding.tvShippingPrice.text = "$quantity"
+        }
+
+        getAllPrice()
         initAdapter()
+        getProducts()
         deleteProductSwipe()
 
         binding.btCheckout.setOnClickListener {
-           findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
+            if (quantityProduct < quantity || quantity < 0) {
+                errorSnackBar("not enough products", true)
+            } else {
+                val result = quantityProduct - quantity
+                viewModel.products.observe(viewLifecycleOwner){ products ->
+                    products.forEach {
+                        viewModel.updateProducts(it, result)
+                    }
+                }
+                findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
+            }
+
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun initAdapter() {
         viewModel.users.observe(viewLifecycleOwner){
-            showProgressDialog("Please wait ...")
             viewModel.getProductInCart(it.id)
-            viewModel.getAllPrice(it.id)
-            userId = it.id
         }
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             products.forEach {
-             quantity = it.quantity
                 idProduct = it.idProduct
             }
             productsInCartAdapter = ProductsInCartAdapter(
@@ -56,19 +73,36 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             )
             binding.rvProducts.adapter = productsInCartAdapter
             productsInCartAdapter.submitList(products)
+            productsInCartAdapter.setOnItemClickListenerPlus {
+                viewModel.plusQuantity()
+            }
             productsInCartAdapter.setOnItemClickListenerMinus {
-                val quantityPlus = quantity - 1
-
+                viewModel.minusQuantity()
             }
             productsInCartAdapter.setOnItemClickListenerDelete {
                 viewModel.deleteProductInCart(userId, idProduct)
             }
         }
+
+    }
+
+   private fun getProducts() {
+       viewModel.users.observe(viewLifecycleOwner){
+           viewModel.getProduct(it.id)
+       }
+       viewModel.products.observe(viewLifecycleOwner){ products ->
+           products.forEach {
+               quantityProduct = it.quality
+           }
+       }
+   }
+
+    private fun getAllPrice() {
+        viewModel.getAllPrice(userId)
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"
-            binding.tvShippingPrice.text = "${10}"
+
             binding.tvTotalSum.text = "${(it + 10)}"
-            hideProgressDialog()
         }
     }
 

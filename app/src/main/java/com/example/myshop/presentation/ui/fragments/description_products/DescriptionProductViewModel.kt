@@ -16,13 +16,8 @@ import javax.inject.Inject
 class DescriptionProductViewModel @Inject constructor(
     private val getUserDetails: CheckUserDetails,
     private val checkDescriptionsProduct: CheckDescriptionsProduct,
-    private val addProductsInCart: AddProductsInCart,
-    private val updateProducts: UpdateProducts
+    private val addProductsInCart: AddProductsInCart
 ): ViewModel() {
-    private var number = 1
-    private var _quantity = MutableLiveData<Int>()
-
-    var quantity: LiveData<Int> = _quantity
 
     private var _idOrders = MutableLiveData<Long>()
 
@@ -36,9 +31,6 @@ class DescriptionProductViewModel @Inject constructor(
 
     var users: LiveData<Users> = _users
 
-    fun updateProducts(oldProduct: Products, quantity: Int) = viewModelScope.launch {
-        updateProducts.invoke(oldProduct, quantity)
-    }
 
     fun getUserMobile(usersId: String) = viewModelScope.launch {
         _usersMobile.postValue(checkDescriptionsProduct.invoke(usersId))
@@ -56,16 +48,8 @@ class DescriptionProductViewModel @Inject constructor(
         _idOrders.value = System.currentTimeMillis()
     }
 
-    fun plusQuantity() {
-        _quantity.value = ++ number
-    }
-
-    fun minusQuantity() {
-        _quantity.value = -- number
-    }
 
     init {
-        _quantity.value = 1
         getUsers()
         getOrdersId()
     }

@@ -6,17 +6,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.Resource
 import com.example.myshop.databinding.FragmentMyCartBinding
 import com.example.myshop.presentation.adapters.ProductsInCartAdapter
 import com.example.myshop.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
+@SuppressLint("SetTextI18n")
 class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private val viewModel: MyCartViewModel by viewModels()
     private lateinit var productsInCartAdapter: ProductsInCartAdapter
@@ -25,37 +29,53 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private var idProduct = 0L
     private var quantityProduct = 0
 
-
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMyCartBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        lifecycleScope.launchWhenCreated {
+            viewModel.itemsCurrency.collectLatest {
+                    response ->
+                when(response){
+                    is Resource.Success ->{
 
-        viewModel.quantity.observe(viewLifecycleOwner) {
-            quantity = it
-            binding.tvShippingPrice.text = "$quantity"
+                        response.data?.let {
+                                currencyResponse ->
+                          currencyResponse.forEach {
+                              binding.textViewZalupa.text = it.Date
+                          }
+                        }
+                    }
+                    is Resource.Error ->{
+                        response.message?.let {
+                                message->
+                            toast("Error${message}")
+                        }
+                    }
+                    is Resource.Loading ->{
+
+                    }
+                }
+            }
         }
 
         getAllPrice()
         initAdapter()
+        getQuantity()
         getProducts()
+        getErrorIfNotEnoughProducts()
         deleteProductSwipe()
 
         binding.btCheckout.setOnClickListener {
-            if (quantityProduct < quantity || quantity < 0) {
-                errorSnackBar("not enough products", true)
-            } else {
-                val result = quantityProduct - quantity
-                viewModel.products.observe(viewLifecycleOwner){ products ->
-                    products.forEach {
-                        viewModel.updateProducts(it, result)
-                    }
+            viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+                products.forEach {
+                    product ->
+                    viewModel.updateProductInCart(product, quantity)
                 }
-                findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
             }
-
+            findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
         }
     }
 
@@ -64,9 +84,10 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
         }
+
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-            products.forEach {
-                idProduct = it.idProduct
+            products.forEach { product ->
+                idProduct = product.idProduct
             }
             productsInCartAdapter = ProductsInCartAdapter(
                 itemsQuantity = quantity
@@ -75,6 +96,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             productsInCartAdapter.submitList(products)
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
+
             }
             productsInCartAdapter.setOnItemClickListenerMinus {
                 viewModel.minusQuantity()
@@ -83,7 +105,13 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
                 viewModel.deleteProductInCart(userId, idProduct)
             }
         }
+    }
 
+    private fun getQuantity() {
+        viewModel.quantity.observe(viewLifecycleOwner) {
+            quantity = it
+            binding.tvShippingPrice.text = "$quantity"
+        }
     }
 
    private fun getProducts() {
@@ -97,12 +125,21 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
        }
    }
 
+
+
     private fun getAllPrice() {
         viewModel.getAllPrice(userId)
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"
-
+           // binding.tvShippingPrice.text = "10"
             binding.tvTotalSum.text = "${(it + 10)}"
+        }
+    }
+
+    private fun getErrorIfNotEnoughProducts() {
+        if (quantityProduct < quantity || quantity < 0) {
+          binding.tvErrorProduct.visibility = View.VISIBLE
+          binding.tvErrorProduct.text = "not enough products"
         }
     }
 

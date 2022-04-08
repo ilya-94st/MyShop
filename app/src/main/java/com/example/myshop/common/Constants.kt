@@ -15,6 +15,7 @@ object Constants {
     const val PICK_IMAGE_REQUEST_CODE = 1
 
     fun hasPhotoPermission(context: Context) = EasyPermissions.hasPermissions(context, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    const val BASE_URL = "https://www.nbrb.by"
 
     const val MALE = "Male"
     const val FEMALE = "Female"
@@ -30,7 +31,8 @@ object Constants {
     const val USER_PROFILE_IMAGE = "User_Profile_Image"
     const val USER_PRODUCTS_IMAGES = "USER_Products_Images"
 
-
+    const val QUANTITIES_IN_PRODUCTS = "quality"
+    const val QUANTITIES_IN_PRODUCTS_IN_CART = "quantity"
 
 
     const val ID_PRODUCTS_RANDOM = 100000000000000

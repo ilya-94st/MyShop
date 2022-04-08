@@ -31,7 +31,9 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgressDialog("please wait...")
         descriptionProduct()
+        getUserMobile()
         viewModel.users.observe(viewLifecycleOwner){
             idBuyer = it.id
         }
@@ -48,11 +50,6 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        getUserMobile()
-    }
-
     @SuppressLint("SetTextI18n")
     private fun descriptionProduct() {
         val products = args.products
@@ -61,14 +58,19 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price} ${products.currency}"
-
     }
 
     private fun getUserMobile() {
         val products = args.products
+        viewModel.users.observe(viewLifecycleOwner){
+            if (it.id == products.idSeller) {
+                binding.btAddToCart.visibility = View.INVISIBLE
+            }else {
+                binding.btAddToCart.visibility = View.VISIBLE
+            }
+        }
         viewModel.getUserMobile(products.idSeller)
         binding.tvMobile.visibility = View.INVISIBLE
-        showProgressDialog("please wait...")
         viewModel.usersMobile.observe(viewLifecycleOwner){
             binding.tvMobile.text =  "$it"
             hideProgressDialog()

@@ -24,7 +24,9 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private val viewModel: CheckoutOrderViewModel by viewModels()
     private lateinit var productsAddInOrder: ProductsAddInOrder
     private var time = ""
-    private var itemQuantity = 0
+    private var quantityProductsInCart = 0
+    private var quantityProduct = 0
+
 
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -33,7 +35,9 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getTime()
-        getQuantity()
+        getProducts()
+        getQuantityProducts()
+        getQuantityProductsInCart()
         initAdapter()
         getItemsAddress()
         getAllPrice()
@@ -41,6 +45,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
 
         binding.btPlaceOder.setOnClickListener {
             addProductsInOrder()
+            updateProducts()
             deleteProductInCart()
             findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
             toast("You order was placed successfully")
@@ -68,6 +73,12 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         }
     }
 
+    private fun getProducts() {
+        viewModel.users.observe(viewLifecycleOwner){
+            viewModel.getProduct(it.id)
+        }
+    }
+
     private fun deleteProductInCart() {
         viewModel.users.observe(viewLifecycleOwner){
             val idBuyer = it.id
@@ -75,10 +86,10 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         }
     }
 
-    private fun getQuantity() {
+    private fun getQuantityProducts() {
         viewModel.products.observe(viewLifecycleOwner){ listProducts ->
             listProducts.forEach {
-                itemQuantity = it.quantity
+                quantityProduct = it.quality
             }
         }
     }
@@ -92,13 +103,13 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initAdapter() {
         productsAddInOrder = ProductsAddInOrder(
-            itemsQuantity = itemQuantity
+            itemsQuantity = quantityProductsInCart
         )
         binding.vpProducts.adapter = productsAddInOrder
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
         }
-        viewModel.products.observe(viewLifecycleOwner){ products->
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products->
             productsAddInOrder.submitList(products)
         }
         TabLayoutMediator(binding.table, binding.vpProducts) {
@@ -106,16 +117,36 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         }.attach()
     }
 
+    private fun getQuantityProductsInCart() {
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+            products.forEach {
+               quantityProductsInCart = it.quantity
+            }
+        }
+    }
+
+    private fun updateProducts() {
+        val result = quantityProduct - quantityProductsInCart
+        viewModel.products.observe(viewLifecycleOwner){ products ->
+            products.forEach {
+                viewModel.updateProducts(it, result)
+            }
+        }
+    }
+
     private fun addProductsInOrder() {
-        viewModel.products.observe(viewLifecycleOwner){ productsList->
-            productsList.forEach { product->
-                val addressItems = savArgs.userAdres
-                val notes = addressItems.notes
-                val phoneNumber = "${addressItems.phoneNumber}"
-                val nameAddress = addressItems.address
-                val addressZip = addressItems.zipCode
-                val fullName= addressItems.name
-                val chooseAddress = addressItems.chooseAddress
+        if (quantityProduct < quantityProductsInCart || quantityProductsInCart < 0) {
+            errorSnackBar("not enough products", true)
+        } else {
+            viewModel.productsInCart.observe(viewLifecycleOwner){ productsList->
+                productsList.forEach { product->
+                    val addressItems = savArgs.userAdres
+                    val notes = addressItems.notes
+                    val phoneNumber = "${addressItems.phoneNumber}"
+                    val nameAddress = addressItems.address
+                    val addressZip = addressItems.zipCode
+                    val fullName= addressItems.name
+                    val chooseAddress = addressItems.chooseAddress
                     val productInOrder = ProductsInOrder(product.idSeller,
                         product.idBuyer,
                         product.idOrder,
@@ -132,6 +163,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                         time
                     )
                     viewModel.addProductInOrder(productInOrder)
+                }
             }
         }
     }

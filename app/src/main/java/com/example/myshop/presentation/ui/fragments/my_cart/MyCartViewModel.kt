@@ -4,12 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.common.Resource
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.Users
+import com.example.myshop.domain.models.response.CurrencyRates
 import com.example.myshop.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,10 +23,15 @@ class MyCartViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
     private val checkUserDetails: CheckUserDetails,
     private val getAllPrice: GetAllPrice,
-    private val updateProducts: UpdateProducts,
     private val deleteProductInCart: DeleteProductInCart,
-    private val getProducts: GetProducts
+    private val updateProductsInCart: UpdateProductsInCart,
+    private val getProducts: GetProducts,
+    private val getCurrencyFromApi: GetCurrencyFromApi
     ): ViewModel() {
+    private val _itemsCurrency: MutableStateFlow<Resource<CurrencyRates>> = MutableStateFlow(Resource.Loading())
+
+    val itemsCurrency: StateFlow<Resource<CurrencyRates>> = _itemsCurrency.asStateFlow()
+
     private var _products = MutableLiveData<MutableList<Products>>()
 
     var products: LiveData<MutableList<Products>> = _products
@@ -55,8 +66,8 @@ class MyCartViewModel @Inject constructor(
        _allPrice.postValue(getAllPrice.invoke(userId))
    }
 
-    fun updateProducts(oldProduct: Products, quantity: Int) = viewModelScope.launch {
-        updateProducts.invoke(oldProduct, quantity)
+    fun updateProductInCart(oldProductsInCart: ProductsInCart, quantity: Int) = viewModelScope.launch {
+        updateProductsInCart.invoke(oldProductsInCart, quantity)
     }
 
     fun deleteProductInCart(idBuyer: String, idProduct: Long) {
@@ -71,10 +82,28 @@ class MyCartViewModel @Inject constructor(
         _quantity.value = -- number
     }
 
+    private fun getCurrency() = viewModelScope.launch {
+        safeBreakingNewsCall()
+    }
+
+    private suspend fun safeBreakingNewsCall() {
+        _itemsCurrency.value = Resource.Loading()
+        try {
+                val response = getCurrencyFromApi.invoke()
+                _itemsCurrency.value = response
+
+        } catch(t: Throwable) {
+            when(t) {
+                is IOException -> _itemsCurrency.value = Resource.Error("Network Failure")
+                else -> _itemsCurrency.value = Resource.Error("Conversion Error")
+            }
+        }
+    }
+
     init {
         _quantity.value = 1
         getUser()
-
+        getCurrency()
     }
 
    private fun getUser() = viewModelScope.launch {

@@ -22,7 +22,7 @@ class FireStore {
     private lateinit var listItemsAddress: ArrayList<AddressUser>
     private lateinit var listOrdersProducts: ArrayList<ProductsInOrder>
     private lateinit var listProductInCart: ArrayList<ProductsInCart>
-    private var productsInCart = Firebase.firestore.collection(Constants.PRODUCTS)
+    private var productsInCart = Firebase.firestore.collection(Constants.PRODUCT_IN_CART)
 
     fun registerUser(userInfo: Users) {
         fireStore.collection(Constants.USERS)
@@ -36,21 +36,35 @@ class FireStore {
             .update(userHashMap)
     }
 
-  suspend fun updateProductsData(products: HashMap<String, Any>, oldProducts: Products) {
-     val querySnapshot = productsInCart.whereEqualTo("quality", oldProducts.quality).get().await()
-     for (document in querySnapshot) {
-           try {
-              productsInCart.document(document.id).set(
-                  products, SetOptions.merge()
-              ).await()
-           } catch (e: Exception) {
-               Log.e("updateProductsData", "$e")
-           }
-     }
-
+  fun updateProductsData(products: Map<String, Any>, oldProducts: Products) {
+     val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("quality", oldProducts.quality).get()
+      querySnapshot.addOnSuccessListener {
+          try {
+          for (document in it) {
+              fireStore.collection(Constants.PRODUCTS).document(document.id).set(
+                      products, SetOptions.merge())
+          }
+          } catch (e: Exception) {
+              Log.e("updateProductsData", "$e")
+          }
+      }
     }
 
-  suspend  fun addProducts(products: Products, constants: String) {
+    suspend fun updateProductsInCart(products: Map<String, Any>, oldProductsInCart: ProductsInCart) {
+        val querySnapshot = productsInCart.whereEqualTo("quantity", oldProductsInCart.quantity).get().await()
+        for (document in querySnapshot) {
+            try {
+                productsInCart.document(document.id).set(
+                    products, SetOptions.merge()
+                ).await()
+            } catch (e: Exception) {
+                Log.e("updateProductsInCart", "$e")
+            }
+        }
+    }
+
+
+    suspend  fun addProducts(products: Products, constants: String) {
             try {
 
                 fireStore.collection(constants).add(products).await()

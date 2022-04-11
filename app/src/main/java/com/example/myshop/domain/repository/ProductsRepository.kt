@@ -6,6 +6,7 @@ import com.example.myshop.domain.models.ProductsInOrder
 
 interface ProductsRepository {
 
+
    suspend fun addProducts(products: Products)
 
    suspend fun addProductsInCart(products: ProductsInCart, constants: String)
@@ -14,7 +15,7 @@ interface ProductsRepository {
 
     fun deleteProduct(idProduct: Long)
 
-   suspend fun deleteImageProduct(fileExtension: String)
+   suspend fun deleteImageProduct(idUser: String)
 
     fun deleteAddress(idAddress: Long)
 
@@ -22,7 +23,7 @@ interface ProductsRepository {
 
     fun deleteProductInCart(idBuyer: String, idProduct: Long)
 
-   suspend fun getProduct(idSeller: String, constants: String): ArrayList<Products>
+   suspend fun getProduct(idSeller: String): ArrayList<Products>
 
    suspend fun getAllProducts(): ArrayList<Products>
 

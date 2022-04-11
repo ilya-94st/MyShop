@@ -1,5 +1,6 @@
 package com.example.myshop.presentation.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -11,25 +12,11 @@ import com.example.myshop.databinding.ItemsInCartBinding
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 
-class ProductsInCartAdapter(private var itemsQuantity:  Int): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
+class ProductsInCartAdapter(private var itemsQuantity:  Int, private val listProductsInCart: MutableList<ProductsInCart>): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ItemsInCartBinding) : RecyclerView.ViewHolder(binding.root)
 
 
-
-    private val diffCallback = object : DiffUtil.ItemCallback<ProductsInCart>() {
-        override fun areItemsTheSame(oldItem: ProductsInCart, newItem: ProductsInCart): Boolean {
-            return oldItem.idBuyer== newItem.idBuyer
-        }
-
-        override fun areContentsTheSame(oldItem: ProductsInCart, newItem: ProductsInCart): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
-        }
-    }
-
-    private val differ = AsyncListDiffer(this, diffCallback)
-
-    fun submitList(list: List<ProductsInCart>) = differ.submitList(list)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductsViewHolder {
         val binding = ItemsInCartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -37,11 +24,12 @@ class ProductsInCartAdapter(private var itemsQuantity:  Int): RecyclerView.Adapt
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return listProductsInCart.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
-        val products = differ.currentList[position]
+        val products = listProductsInCart[position]
               holder.itemView.apply {
             Glide.with(this).load(products.image).placeholder(ProgressCircleGlide.progressBar(context)).
             into(holder.binding.ivProduct)
@@ -63,6 +51,8 @@ class ProductsInCartAdapter(private var itemsQuantity:  Int): RecyclerView.Adapt
         holder.binding.ivDeleteProduct.setOnClickListener {
             onItemClickListenerDelete.let {
                 it(products)
+                listProductsInCart.removeAt(position)
+                notifyDataSetChanged()
             }
         }
     }

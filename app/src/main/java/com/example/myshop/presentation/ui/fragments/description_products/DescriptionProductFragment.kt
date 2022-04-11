@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.example.myshop.R
+import com.example.myshop.common.Constants
 import com.example.myshop.databinding.FragmentDescriptionProductBinding
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.presentation.base.BaseFragment
@@ -25,18 +26,14 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     private val args: DescriptionProductFragmentArgs by navArgs()
     private val viewModel: DescriptionProductViewModel by viewModels()
-    private var idBuyer = ""
     private var idOrders = 0L
-    private var quantity = 1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showProgressDialog("please wait...")
         descriptionProduct()
         getUserMobile()
-        viewModel.users.observe(viewLifecycleOwner){
-            idBuyer = it.id
-        }
+
         viewModel.idOrders.observe(viewLifecycleOwner){
             idOrders = it
         }
@@ -86,9 +83,11 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         val price = product.price
         val title = product.title
         val currency = product.currency
-            val productInCart = ProductsInCart(idSeller, idProducts, idBuyer, idOrders, title, price, imageProduct, currency, quantity)
+        viewModel.users.observe(viewLifecycleOwner){
+            val productInCart = ProductsInCart(idSeller, idProducts, it.id, idOrders, title, price, imageProduct, currency, Constants.QUANTITIES)
             viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
+        }
     }
 
 

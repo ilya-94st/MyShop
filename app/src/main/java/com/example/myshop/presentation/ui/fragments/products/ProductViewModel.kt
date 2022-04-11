@@ -16,7 +16,7 @@ class ProductViewModel @Inject constructor(
     private val deleteProducts: DeleteProducts,
     private val deleteImageProduct: DeleteImageProduct,
     private val getProducts: GetProducts,
-    private val checkUserDetails: CheckUserDetails,
+    private val checkUserDetails: CheckUserDetails
        ): ViewModel() {
 
     private var _products = MutableLiveData<MutableList<Products>>()
@@ -42,6 +42,7 @@ class ProductViewModel @Inject constructor(
     private fun getUsers() = viewModelScope.launch {
         _users.postValue(checkUserDetails.invoke())
     }
+
 
     init {
         getUsers()

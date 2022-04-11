@@ -1,9 +1,12 @@
 package com.example.myshop.common
 
 import android.content.Context
+import com.google.common.math.Quantiles
 import pub.devrel.easypermissions.EasyPermissions
 
 object Constants {
+
+    const val QUANTITIES = 1
     const val USERS = "users"
     const val PRODUCTS = "products"
     const val PRODUCT_IN_CART = "product_in_cart"

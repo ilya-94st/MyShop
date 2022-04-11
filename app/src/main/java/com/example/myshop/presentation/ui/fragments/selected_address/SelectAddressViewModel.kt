@@ -20,9 +20,9 @@ class SelectAddressViewModel @Inject constructor(
     private val getUserDetails: CheckUserDetails,
     private val deleteAddress: DeleteAddress
     ): ViewModel() {
-    private var _addressUser = MutableLiveData<List<AddressUser>>()
+    private var _addressUser = MutableLiveData<MutableList<AddressUser>>()
 
-    var addressUser: LiveData<List<AddressUser>> = _addressUser
+    var addressUser: LiveData<MutableList<AddressUser>> = _addressUser
 
     private val _user = MutableLiveData<Users>()
 

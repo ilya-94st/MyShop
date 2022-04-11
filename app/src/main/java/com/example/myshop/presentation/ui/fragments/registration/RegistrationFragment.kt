@@ -16,15 +16,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
     private val viewModel: RegistrationViewModel by viewModels()
 
-
-
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentRegistrationBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
 
         binding.tvLogin.setOnClickListener {
             findNavController().popBackStack()

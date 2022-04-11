@@ -5,6 +5,7 @@ import com.example.myshop.data.api.ApiCurrency
 import com.example.myshop.data.repository.*
 import com.example.myshop.domain.repository.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,15 +32,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideProductRepository(): ProductsRepository = ProductsRepositoryImp()
+    fun provideProductRepository(fireStore: FirebaseFirestore): ProductsRepository = ProductsRepositoryImp(fireStore)
 
     @Provides
     @Singleton
-    fun provideCheckRepository(): CheckUsersRepository = CheckUsersRepositoryImp()
+    fun provideCheckRepository(fireStore: FirebaseFirestore): CheckUsersRepository = CheckUsersRepositoryImp(fireStore)
 
     @Provides
     @Singleton
-    fun provideUpdateRepository(): UpdateRepository = UpdateRepositoryImp()
+    fun provideUpdateRepository(fireStore: FirebaseFirestore): UpdateRepository = UpdateRepositoryImp(fireStore)
 
     @Provides
     @Singleton
@@ -51,11 +52,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAddressUserRepository(): AddressUserRepository = AddressUserRepositoryImp()
+    fun provideAddressUserRepository(fireStore: FirebaseFirestore): AddressUserRepository = AddressUserRepositoryImp(fireStore)
 
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-
+    @Provides
+    @Singleton
+    fun provideFireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 }

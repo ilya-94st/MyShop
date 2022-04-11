@@ -20,20 +20,15 @@ import dagger.hilt.android.AndroidEntryPoint
 class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
     private lateinit var productsAdapter: ProductsAdapter
     private val viewModel: ProductViewModel by viewModels()
-    private var userId = ""
-    private var idProducts = 0L
-
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentProductsBinding::inflate
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        productsAdapter = ProductsAdapter()
         initAdapter()
-        getIdProduct()
         deleteProductSwipe()
-        deleteProduct()
+
 
         binding.ibAddProducts.setOnClickListener {
             findNavController().navigate(R.id.action_productsFragment_to_addProductsFragment)
@@ -42,28 +37,20 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
         binding.ibCart.setOnClickListener {
            findNavController().navigate(R.id.action_productsFragment_to_myCartFragment)
         }
-
-
     }
 
-
+    @SuppressLint("NotifyDataSetChanged")
     private fun initAdapter() {
-        binding.rvProducts.adapter = productsAdapter
         viewModel.users.observe(viewLifecycleOwner){
-            userId = it.id
-            viewModel.getProduct(userId)
+            viewModel.getProduct(it.id)
         }
         viewModel.products.observe(viewLifecycleOwner){ products ->
-            productsAdapter.submitList(products)
+            productsAdapter = ProductsAdapter(products)
+            binding.rvProducts.adapter = productsAdapter
+            productsAdapter.setOnItemClickListener {
+                viewModel.deleteProduct(it.idProducts)
+            }
         }
-    }
-
-    private fun getIdProduct() {
-       viewModel.products.observe(viewLifecycleOwner){ products->
-           products.forEach {
-               idProducts = it.idProducts
-           }
-       }
     }
 
     private fun alertDialogDeleteProduct(message: String) {
@@ -72,7 +59,11 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
             .setPositiveButton(
                 "OK"
             ) { _, _ ->
-                viewModel.deleteProduct(idProducts)
+                viewModel.products.observe(viewLifecycleOwner){ products->
+                    products.forEach {
+                        viewModel.deleteProduct(it.idProducts)
+                    }
+                }
                 //viewModel.deleteImage(userId)
             }
             .setNegativeButton(
@@ -107,10 +98,4 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
         }
     }
 
-    private fun deleteProduct() {
-        productsAdapter.setOnItemClickListener {
-            viewModel.deleteProduct(idProducts)
-            //viewModel.deleteImage(userId)
-        }
-    }
 }

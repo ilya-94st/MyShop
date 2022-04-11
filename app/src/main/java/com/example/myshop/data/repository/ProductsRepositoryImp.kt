@@ -1,60 +1,134 @@
 package com.example.myshop.data.repository
 
 import com.example.myshop.common.Constants
-import com.example.myshop.data.FireStore
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.domain.repository.ProductsRepository
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class ProductsRepositoryImp @Inject constructor(): ProductsRepository {
-    override suspend fun addProducts(products: Products) {
-        FireStore().addProducts(products, Constants.PRODUCTS)
+class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseFirestore): ProductsRepository {
+
+    override suspend fun getAllProducts() : ArrayList<Products> {
+        val listAllProducts: ArrayList<Products> = arrayListOf()
+        val querySnapshot = fireStore.collection(Constants.PRODUCTS).get().await()
+        for (document in querySnapshot) {
+            val product = document.toObject<Products>()
+            listAllProducts.add(product)
+        }
+        return listAllProducts
     }
 
-    override suspend fun addProductsInCart(products: ProductsInCart, constants: String) {
-       FireStore().addProductsInCart(products, Constants.PRODUCT_IN_CART)
+   override suspend  fun addProducts(products: Products) {
+            fireStore.collection(Constants.PRODUCTS).add(products).await()
+    }
+
+    override suspend  fun addProductsInCart(products: ProductsInCart, constants: String) {
+            fireStore.collection(constants).add(products).await()
     }
 
     override suspend fun addProductInOrders(productsInOrder: ProductsInOrder) {
-        FireStore().addProductsInOrders(productsInOrder)
+            fireStore.collection(Constants.PRODUCTS_IN_ORDERS).add(productsInOrder).await()
     }
 
-    override  fun deleteProduct(idProduct: Long) {
-        FireStore().deleteProduct(idProduct)
+    override fun deleteProduct(idProduct: Long) {
+        val productsQuery =  fireStore.collection(Constants.PRODUCTS).whereEqualTo("idProducts", idProduct)
+            .get()
+        productsQuery.addOnSuccessListener {
+            for (document in it){
+                fireStore.collection(Constants.PRODUCTS).document(document.id).delete()
+            }
+        }
     }
 
-    override suspend fun deleteImageProduct(fileExtension: String) {
-        FireStore().deleteImage(fileExtension)
+    override  suspend  fun deleteImageProduct(idUser: String)  {
+            val imageDelete = Firebase.storage.reference
+            imageDelete.child(
+                "${Constants.USER_PRODUCTS_IMAGES}/${idUser}"
+            ).delete().await()
     }
 
-    override  fun deleteAddress(idAddress: Long) {
-        FireStore().deleteAddress(idAddress)
+    override fun deleteAddress(idAddress: Long) {
+        val productsQuery =  fireStore.collection(Constants.ADDRESS_USER).whereEqualTo("idAddress", idAddress)
+            .get()
+        productsQuery.addOnSuccessListener {
+            for (document in it){
+                fireStore.collection(Constants.ADDRESS_USER).document(document.id).delete()
+            }
+        }
     }
 
-    override  fun deleteAllProductsInCart(idBuyer: String) {
-        FireStore().deleteAllProductInCart(idBuyer)
+    override fun deleteAllProductsInCart(idBuyer: String) {
+        val productsQuery =  fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", idBuyer)
+            .get()
+        productsQuery.addOnSuccessListener {
+            for (document in it){
+                fireStore.collection(Constants.PRODUCT_IN_CART).document(document.id).delete()
+            }
+        }
     }
-
     override fun deleteProductInCart(idBuyer: String, idProduct: Long) {
-        FireStore().deleteProductInCart(idBuyer, idProduct)
+        val productsQuery =  fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", idBuyer).whereEqualTo("idProduct", idProduct)
+            .get()
+        productsQuery.addOnSuccessListener {
+            for (document in it){
+                fireStore.collection(Constants.PRODUCT_IN_CART).document(document.id).delete()
+            }
+        }
     }
 
 
-    override suspend fun getProduct(idSeller: String, constants: String) =
-        FireStore().getProducts(idSeller, Constants.PRODUCTS)
+    override suspend fun getProduct(idSeller: String): ArrayList<Products>{
+            val listProducts: ArrayList<Products> = arrayListOf()
+            val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("idSeller", idSeller).get().await()
+            for (document in querySnapshot) {
+                val product = document.toObject<Products>()
+                listProducts.add(product)
+            }
+            return listProducts
+        }
+
+    override  suspend fun getProductInCart(idBuyer: String): ArrayList<ProductsInCart> {
+        val listProductInCart: ArrayList<ProductsInCart> = arrayListOf()
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", idBuyer).get().await()
+        for (document in querySnapshot) {
+            val product = document.toObject<ProductsInCart>()
+            listProductInCart.add(product)
+        }
+        return listProductInCart
+    }
 
 
-    override suspend fun getAllProducts() = FireStore().getAllProducts()
+    override suspend fun getProductInOrders(idBuyer: String): ArrayList<ProductsInOrder> {
+        val listOrdersProducts: ArrayList<ProductsInOrder> = arrayListOf()
+        val querySnapshot = fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("idBuyer", idBuyer).get().await()
+        for (document in querySnapshot) {
+            val productInOrder = document.toObject<ProductsInOrder>()
+            listOrdersProducts.add(productInOrder)
+        }
+        return listOrdersProducts
+    }
 
-    override suspend fun getProductInCart(idBuyer: String) = FireStore().getProductsInCart(idBuyer)
 
-
-    override suspend fun getProductInOrders(idBuyer: String) = FireStore().getOrders(idBuyer)
-
-
-    override suspend fun getAllPrice(userId: String): Float? =
-        FireStore().getAllPrice(userId, Constants.PRODUCT_IN_CART)
+    override suspend fun getAllPrice(userId: String): Float? {
+        var priceAll: Float? = 0F
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", userId).get().await()
+        for(document in querySnapshot.documents) {
+            val product = document.toObject<ProductsInCart>()
+            val price = product?.price
+            val quantity = product?.quantity
+            if (priceAll != null) {
+                if (price != null) {
+                    priceAll += price * quantity!!
+                }
+            }
+        }
+        return priceAll
+    }
 
 }

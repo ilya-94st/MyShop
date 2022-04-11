@@ -16,6 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddAddressViewModel @Inject constructor(private val addAddressUser: AddAddressUser, private val getUserDetails: CheckUserDetails): ViewModel() {
+   private var _addressLocation = MutableLiveData<String>()
+
+    var addressLocation: LiveData<String> = _addressLocation
+
     private var _idAddress = MutableLiveData<Long>()
 
     var idAddress: LiveData<Long> = _idAddress

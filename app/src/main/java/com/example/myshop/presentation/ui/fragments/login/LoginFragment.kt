@@ -62,6 +62,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     }
 
+
+
     private fun userLoggedInSuccessful() {
                 viewModel.users.observe(viewLifecycleOwner){ user ->
                     if(user.profileCompleted == 0) {

@@ -1,7 +1,6 @@
 package com.example.myshop.data.repository
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.example.myshop.common.EventClass
 import com.example.myshop.data.FireStore
 import com.example.myshop.domain.models.Users
@@ -12,7 +11,6 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthenticationRepositoryIml @Inject constructor(private val firebaseAuth: FirebaseAuth): AuthenticationRepository {
-
 
     @SuppressLint("LongLogTag")
     override suspend fun registration(

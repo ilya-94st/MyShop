@@ -31,7 +31,6 @@ import java.io.IOException
 class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPermissions.PermissionCallbacks  {
     private val args: UserProfileFragmentArgs by navArgs()
     private var mSelectedImageFileUri: Uri? = null
-    private var mUserProfileImageURL: String = ""
     private val viewModel: UserProfileViewModel by viewModels()
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -74,9 +73,8 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
   private fun updateUserDetails(imageURL: String) {
       //  hideProgressDialog()
-       mUserProfileImageURL = imageURL
         viewModel.updateProfileUserDetails(args.users, binding.etMobile.text.toString(),
-            binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, mUserProfileImageURL
+            binding.etFirstName.text.toString(), binding.etLastName.text.toString(), binding.rbMale.isChecked, imageURL
         )
     }
 

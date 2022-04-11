@@ -6,18 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
-import com.example.myshop.common.Resource
 import com.example.myshop.databinding.FragmentMyCartBinding
 import com.example.myshop.presentation.adapters.ProductsInCartAdapter
 import com.example.myshop.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 @SuppressLint("SetTextI18n")
@@ -35,31 +32,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.itemsCurrency.collectLatest {
-                    response ->
-                when(response){
-                    is Resource.Success ->{
 
-                        response.data?.let {
-                                currencyResponse ->
-                          currencyResponse.forEach {
-                              binding.textViewZalupa.text = it.Date
-                          }
-                        }
-                    }
-                    is Resource.Error ->{
-                        response.message?.let {
-                                message->
-                            toast("Error${message}")
-                        }
-                    }
-                    is Resource.Loading ->{
-
-                    }
-                }
-            }
-        }
 
         getAllPrice()
         initAdapter()
@@ -90,10 +63,11 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
                 idProduct = product.idProduct
             }
             productsInCartAdapter = ProductsInCartAdapter(
-                itemsQuantity = quantity
+                itemsQuantity = quantity,
+                listProductsInCart = products
             )
             binding.rvProducts.adapter = productsInCartAdapter
-            productsInCartAdapter.submitList(products)
+
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
 

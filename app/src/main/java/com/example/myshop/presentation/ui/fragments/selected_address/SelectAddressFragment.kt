@@ -37,15 +37,15 @@ class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
     }
 
     private fun initAdapter() {
-        addressAdapter = AddressAdapter()
-        binding.rvAddress.adapter = addressAdapter
+
 
         viewModel.user.observe(viewLifecycleOwner){
             viewModel.getItemsAddressUser(it.id)
             userId = it.id
         }
         viewModel.addressUser.observe(viewLifecycleOwner){ address ->
-            addressAdapter.submitList(address)
+            addressAdapter = AddressAdapter(address)
+            binding.rvAddress.adapter = addressAdapter
             address.forEach {
                 idAddress = it.idAddress
             }

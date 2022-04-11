@@ -36,9 +36,9 @@ class MyCartViewModel @Inject constructor(
 
     var products: LiveData<MutableList<Products>> = _products
 
-    private var _productsInCart = MutableLiveData<List<ProductsInCart>>()
+    private var _productsInCart = MutableLiveData<MutableList<ProductsInCart>>()
 
-    var productsInCart: LiveData<List<ProductsInCart>> = _productsInCart
+    var productsInCart: LiveData<MutableList<ProductsInCart>> = _productsInCart
 
     private var number = 1
 

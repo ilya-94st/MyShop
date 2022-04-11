@@ -10,24 +10,10 @@ import com.example.myshop.databinding.ItemsAddressBinding
 import com.example.myshop.domain.models.AddressUser
 
 
-class AddressAdapter: RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
+class AddressAdapter(private val listAddress: MutableList<AddressUser>): RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
 
     inner class AddressViewHolder(var binding: ItemsAddressBinding) : RecyclerView.ViewHolder(binding.root)
 
-
-    private val diffCallback = object : DiffUtil.ItemCallback<AddressUser>() {
-        override fun areItemsTheSame(oldItem: AddressUser, newItem: AddressUser): Boolean {
-            return oldItem.idAddress == newItem.idAddress
-        }
-
-        override fun areContentsTheSame(oldItem: AddressUser, newItem: AddressUser): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
-        }
-    }
-
-    private val differ = AsyncListDiffer(this, diffCallback)
-
-    fun submitList(list: List<AddressUser>) = differ.submitList(list)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressViewHolder {
         val binding = ItemsAddressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -35,12 +21,12 @@ class AddressAdapter: RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return listAddress.size
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onBindViewHolder(holder: AddressViewHolder, position: Int) {
-        val itemsAddress = differ.currentList[position]
+        val itemsAddress = listAddress[position]
         holder.binding.tvMyAddress.text = itemsAddress.address
         holder.binding.tvName.text = itemsAddress.name
         holder.binding.tvNameAddress.text = itemsAddress.chooseAddress
@@ -55,9 +41,13 @@ class AddressAdapter: RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
         holder.binding.ivDeleteProduct.setOnClickListener {
             onItemClickListenerDeleteItem.let {
                 it(itemsAddress)
+                listAddress.removeAt(position)
+                notifyDataSetChanged()
             }
         }
     }
+
+
 
     private var onItemClickListener: (AddressUser)->Unit = { addressUser: AddressUser -> Unit }
 

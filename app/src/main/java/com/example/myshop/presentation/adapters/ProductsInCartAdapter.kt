@@ -3,20 +3,16 @@ package com.example.myshop.presentation.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ItemsInCartBinding
-import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
+import com.example.myshop.presentation.ui.prefs
 
-class ProductsInCartAdapter(private var itemsQuantity:  Int, private val listProductsInCart: MutableList<ProductsInCart>): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
+class ProductsInCartAdapter(private var itemsQuantity: Int, private val listProductsInCart: MutableList<ProductsInCart>): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ItemsInCartBinding) : RecyclerView.ViewHolder(binding.root)
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductsViewHolder {
         val binding = ItemsInCartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,7 +23,9 @@ class ProductsInCartAdapter(private var itemsQuantity:  Int, private val listPro
         return listProductsInCart.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+
+
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
         val products = listProductsInCart[position]
               holder.itemView.apply {
@@ -36,17 +34,14 @@ class ProductsInCartAdapter(private var itemsQuantity:  Int, private val listPro
         }
         holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title
-        itemsQuantity = products.quantity
         holder.binding.tvQuantity.text = itemsQuantity.toString()
         holder.binding.ibPlus.setOnClickListener {
-            onItemClickListenerPlus.let {
-                it(products)
-            }
+            onItemClickListenerPlus(products)
+            holder.binding.tvQuantity.text = "${prefs.qunatity}"
         }
         holder.binding.ibMinus.setOnClickListener {
-            onItemClickListenerMinus.let {
-                it(products)
-            }
+            onItemClickListenerMinus(products)
+            holder.binding.tvQuantity.text = "${prefs.qunatity}"
         }
         holder.binding.ivDeleteProduct.setOnClickListener {
             onItemClickListenerDelete.let {
@@ -63,13 +58,13 @@ class ProductsInCartAdapter(private var itemsQuantity:  Int, private val listPro
         onItemClickListenerDelete = listener
     }
 
-    private var onItemClickListenerPlus: (ProductsInCart)->Unit = { products: ProductsInCart -> Unit }
+    private var onItemClickListenerPlus: (ProductsInCart)->Unit = { }
 
     fun setOnItemClickListenerPlus(listener: (ProductsInCart) ->Unit) {
         onItemClickListenerPlus = listener
     }
 
-    private var onItemClickListenerMinus: (ProductsInCart)->Unit = { products: ProductsInCart -> Unit }
+    private var onItemClickListenerMinus: (ProductsInCart)->Unit = { }
 
     fun setOnItemClickListenerMinus(listener: (ProductsInCart) ->Unit) {
         onItemClickListenerMinus = listener

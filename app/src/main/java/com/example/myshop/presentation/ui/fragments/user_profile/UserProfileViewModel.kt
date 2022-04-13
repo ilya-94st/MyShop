@@ -8,13 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.GetUserProfile
-import com.example.myshop.domain.use_case.ImageLoader
+import com.example.myshop.domain.use_case.ImageLoaderUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUserProfile, private val loader: ImageLoader): ViewModel() {
+class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUserProfile, private val loaderUsers: ImageLoaderUsers): ViewModel() {
     private var _image = MutableLiveData<String>()
 
     var image: LiveData<String> = _image
@@ -29,7 +29,7 @@ class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUs
 
 
     fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) = viewModelScope.launch {
-        _image.postValue(loader.invoke(fileExtension, imageFileUri, constantsImages))
+        _image.postValue(loaderUsers.invoke(fileExtension, imageFileUri, constantsImages))
     }
 
 

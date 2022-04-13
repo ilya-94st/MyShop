@@ -49,6 +49,7 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
             binding.rvProducts.adapter = productsAdapter
             productsAdapter.setOnItemClickListener {
                 viewModel.deleteProduct(it.idProducts)
+                viewModel.deleteImage(it.idProducts)
             }
         }
     }
@@ -62,9 +63,9 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
                 viewModel.products.observe(viewLifecycleOwner){ products->
                     products.forEach {
                         viewModel.deleteProduct(it.idProducts)
+                        viewModel.deleteImage(it.idProducts)
                     }
                 }
-                //viewModel.deleteImage(userId)
             }
             .setNegativeButton(
                 "No"

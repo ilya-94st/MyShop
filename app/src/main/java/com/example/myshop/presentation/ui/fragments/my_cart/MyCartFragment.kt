@@ -14,6 +14,7 @@ import com.example.myshop.R
 import com.example.myshop.databinding.FragmentMyCartBinding
 import com.example.myshop.presentation.adapters.ProductsInCartAdapter
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,26 +30,34 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMyCartBinding::inflate
 
+    @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        viewModel.users.observe(viewLifecycleOwner){
+            userId = it.id
+        }
 
         getAllPrice()
         initAdapter()
         getQuantity()
         getProducts()
-        getErrorIfNotEnoughProducts()
         deleteProductSwipe()
 
         binding.btCheckout.setOnClickListener {
-            viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-                products.forEach {
-                    product ->
-                    viewModel.updateProductInCart(product, quantity)
+            if (quantityProduct < quantity || quantity < 0) {
+                binding.tvErrorProduct.visibility = View.VISIBLE
+                binding.tvErrorProduct.text = "not enough products"
+            }else {
+                viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+                    products.forEach {
+                            product ->
+
+                        viewModel.updateProductInCart(product, quantity)
+                    }
                 }
+                prefs.preferences.edit().clear()
+                findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
             }
-            findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
         }
     }
 
@@ -70,10 +79,11 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
-
+                prefs.qunatity = quantity
             }
             productsInCartAdapter.setOnItemClickListenerMinus {
                 viewModel.minusQuantity()
+                prefs.qunatity = quantity
             }
             productsInCartAdapter.setOnItemClickListenerDelete {
                 viewModel.deleteProductInCart(userId, idProduct)
@@ -84,13 +94,14 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private fun getQuantity() {
         viewModel.quantity.observe(viewLifecycleOwner) {
             quantity = it
-            binding.tvShippingPrice.text = "$quantity"
         }
     }
 
    private fun getProducts() {
-       viewModel.users.observe(viewLifecycleOwner){
-           viewModel.getProduct(it.id)
+       viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+           products.forEach {
+               viewModel.getProduct(it.idSeller)
+           }
        }
        viewModel.products.observe(viewLifecycleOwner){ products ->
            products.forEach {
@@ -102,18 +113,13 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
 
     private fun getAllPrice() {
-        viewModel.getAllPrice(userId)
+        viewModel.users.observe(viewLifecycleOwner){
+            viewModel.getAllPrice(it.id)
+        }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"
-           // binding.tvShippingPrice.text = "10"
+            binding.tvShippingPrice.text = "10"
             binding.tvTotalSum.text = "${(it + 10)}"
-        }
-    }
-
-    private fun getErrorIfNotEnoughProducts() {
-        if (quantityProduct < quantity || quantity < 0) {
-          binding.tvErrorProduct.visibility = View.VISIBLE
-          binding.tvErrorProduct.text = "not enough products"
         }
     }
 
@@ -156,5 +162,11 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         ItemTouchHelper(itemTouchHelperCallBack).apply {
             attachToRecyclerView(binding.rvProducts)
         }
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    override fun onDestroyView() {
+        super.onDestroyView()
+        prefs.preferences.edit().clear()
     }
 }

@@ -31,8 +31,8 @@ class ProductViewModel @Inject constructor(
         deleteProducts.invoke(idProducts)
     }
 
-    fun deleteImage(userId: String) = viewModelScope.launch {
-        deleteImageProduct.invoke(userId)
+    fun deleteImage(idProducts: Long) = viewModelScope.launch {
+        deleteImageProduct.invoke(idProducts)
     }
 
     fun getProduct(userId: String) = viewModelScope.launch {

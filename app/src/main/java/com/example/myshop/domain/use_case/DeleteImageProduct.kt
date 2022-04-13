@@ -7,9 +7,9 @@ import javax.inject.Inject
 
 class DeleteImageProduct @Inject constructor(private val productsRepository: ProductsRepository) {
 
-    suspend operator fun invoke(fileExtension: String) {
+    suspend operator fun invoke(idProducts: Long) {
         try {
-        productsRepository.deleteImageProduct(fileExtension)
+        productsRepository.deleteImageProduct(idProducts)
     } catch (e: IOException) {
         Log.e("deleteImage", "$e")
     }

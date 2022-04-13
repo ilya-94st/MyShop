@@ -15,7 +15,7 @@ interface ProductsRepository {
 
     fun deleteProduct(idProduct: Long)
 
-   suspend fun deleteImageProduct(idUser: String)
+   suspend fun deleteImageProduct(idProducts: Long)
 
     fun deleteAddress(idAddress: Long)
 

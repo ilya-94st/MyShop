@@ -25,13 +25,9 @@ class CheckoutOrderViewModel @Inject constructor(
     private val updateProducts: UpdateProducts,
     private val getProducts: GetProducts,
     ): ViewModel() {
-    private var _products = MutableLiveData<MutableList<Products>>()
+    private var _products = MutableLiveData<List<Products>>()
 
-    var products: LiveData<MutableList<Products>> = _products
-
-    private var _idProduct = MutableLiveData<Long>()
-
-    var idProduct: LiveData<Long> = _idProduct
+    var products: LiveData<List<Products>> = _products
 
     private var _time = MutableLiveData<String>()
 

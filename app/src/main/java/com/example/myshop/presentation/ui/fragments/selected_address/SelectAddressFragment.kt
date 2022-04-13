@@ -37,8 +37,6 @@ class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
     }
 
     private fun initAdapter() {
-
-
         viewModel.user.observe(viewLifecycleOwner){
             viewModel.getItemsAddressUser(it.id)
             userId = it.id
@@ -49,15 +47,15 @@ class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
             address.forEach {
                 idAddress = it.idAddress
             }
-        }
-        addressAdapter.setOnItemClickListenerDeleteItem {
-            viewModel.deleteAddress(idAddress)
-        }
-        addressAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putSerializable("userAdres", it)
+            addressAdapter.setOnItemClickListenerDeleteItem {
+                viewModel.deleteAddress(idAddress)
             }
-            findNavController().navigate(R.id.action_selectAddressFragment_to_checkoutOrderFragment, bundle)
+            addressAdapter.setOnItemClickListener {
+                val bundle = Bundle().apply {
+                    putSerializable("userAdres", it)
+                }
+                findNavController().navigate(R.id.action_selectAddressFragment_to_checkoutOrderFragment, bundle)
+            }
         }
     }
 

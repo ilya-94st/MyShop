@@ -44,11 +44,15 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
 
 
         binding.btPlaceOder.setOnClickListener {
-            addProductsInOrder()
-            updateProducts()
-            deleteProductInCart()
-            findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
-            toast("You order was placed successfully")
+            if (quantityProduct< quantityProductsInCart || quantityProductsInCart < 0) {
+                errorSnackBar("not enough products", true)
+            } else {
+                addProductsInOrder()
+                updateProducts()
+                deleteProductInCart()
+                findNavController().navigate(R.id.action_checkoutOrderFragment_to_dashBoardFragment)
+                toast("You order was placed successfully")
+            }
         }
     }
 
@@ -68,14 +72,16 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubtotal.text = "Subtotal $it"
-            binding.tvShippingCharge.text = "Shipping Charge 10$"
+            binding.tvShippingCharge.text = "Shipping Charge ${quantityProduct}$"
             binding.tvTotalAmount.text = "Total Amount ${(it + 10F)}"
         }
     }
 
     private fun getProducts() {
-        viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getProduct(it.id)
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products->
+            products.forEach {
+                viewModel.getProduct(it.idSeller)
+            }
         }
     }
 
@@ -135,9 +141,6 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     }
 
     private fun addProductsInOrder() {
-        if (quantityProduct < quantityProductsInCart || quantityProductsInCart < 0) {
-            errorSnackBar("not enough products", true)
-        } else {
             viewModel.productsInCart.observe(viewLifecycleOwner){ productsList->
                 productsList.forEach { product->
                     val addressItems = savArgs.userAdres
@@ -165,7 +168,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                     viewModel.addProductInOrder(productInOrder)
                 }
             }
-        }
+
     }
 
 

@@ -10,13 +10,18 @@ import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.AddProducts
 import com.example.myshop.domain.use_case.CheckUserDetails
-import com.example.myshop.domain.use_case.ImageLoader
+import com.example.myshop.domain.use_case.ImageLoaderProducts
+import com.example.myshop.domain.use_case.ImageLoaderUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddProductViewModel @Inject constructor(private val addProducts: AddProducts, private val imageLoader: ImageLoader, private val checkUserDetails: CheckUserDetails) : ViewModel() {
+class AddProductViewModel @Inject constructor(
+    private val addProducts: AddProducts,
+    private val imageLoaderProducts: ImageLoaderProducts,
+    private val checkUserDetails: CheckUserDetails
+    ) : ViewModel() {
     private var _idProducts = MutableLiveData<Long>()
 
     var idProducts: LiveData<Long> = _idProducts
@@ -38,8 +43,8 @@ class AddProductViewModel @Inject constructor(private val addProducts: AddProduc
             etQuality = etQuality))
     }
 
-    fun loadImageToFirestore(userId: String, imageFileUri: Uri?, constantsImages: String) = viewModelScope.launch {
-        _image.postValue(imageLoader.invoke(userId, imageFileUri, constantsImages))
+    fun loadImageToFirestore(idProducts: Long, imageFileUri: Uri?, constantsImages: String) = viewModelScope.launch {
+        _image.postValue(imageLoaderProducts.invoke(idProducts, imageFileUri, constantsImages))
     }
 
 

@@ -55,17 +55,22 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price} ${products.currency}"
-    }
-
-    private fun getUserMobile() {
-        val products = args.products
         viewModel.users.observe(viewLifecycleOwner){
             if (it.id == products.idSeller) {
                 binding.btAddToCart.visibility = View.INVISIBLE
             }else {
-                binding.btAddToCart.visibility = View.VISIBLE
+                if (products.quality == 0) {
+                    binding.btAddToCart.visibility = View.INVISIBLE
+                    binding.tvErrorProduct.visibility = View.VISIBLE
+                }else {
+                    binding.btAddToCart.visibility = View.VISIBLE
+                }
             }
         }
+    }
+
+    private fun getUserMobile() {
+        val products = args.products
         viewModel.getUserMobile(products.idSeller)
         binding.tvMobile.visibility = View.INVISIBLE
         viewModel.usersMobile.observe(viewLifecycleOwner){

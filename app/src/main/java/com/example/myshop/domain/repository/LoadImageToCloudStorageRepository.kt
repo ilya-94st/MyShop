@@ -4,5 +4,7 @@ import android.net.Uri
 
 interface LoadImageToCloudStorageRepository {
 
-  suspend fun upLoadImageToCloudStorage(userId: String, imageFileUri: Uri?, constantsImages: String): String
+  suspend fun upLoadImageToCloudStorageUsers(userId: String, imageFileUri: Uri?, constantsImages: String): String
+
+  suspend fun upLoadImageToCloudStorageProducts(idProducts: Long, imageFileUri: Uri?, constantsImages: String): String
 }

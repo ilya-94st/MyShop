@@ -46,10 +46,10 @@ class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseF
         }
     }
 
-    override  suspend  fun deleteImageProduct(idUser: String)  {
+    override  suspend  fun deleteImageProduct(idProducts: Long)  {
             val imageDelete = Firebase.storage.reference
             imageDelete.child(
-                "${Constants.USER_PRODUCTS_IMAGES}/${idUser}"
+                "${Constants.USER_PRODUCTS_IMAGES}/${idProducts}"
             ).delete().await()
     }
 

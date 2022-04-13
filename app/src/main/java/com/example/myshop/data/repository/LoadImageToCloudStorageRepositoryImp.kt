@@ -8,13 +8,26 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class LoadImageToCloudStorageRepositoryImp @Inject constructor(): LoadImageToCloudStorageRepository {
-    override suspend fun upLoadImageToCloudStorage(
+    override suspend fun upLoadImageToCloudStorageUsers(
         userId: String,
         imageFileUri: Uri?,
         constantsImages: String
     ): String {
         val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
             "${constantsImages}/${userId}"
+        )
+        sRef.putFile(imageFileUri!!).await()
+        val url = sRef.downloadUrl.await()
+        return url.toString()
+    }
+
+    override suspend fun upLoadImageToCloudStorageProducts(
+        idProducts: Long,
+        imageFileUri: Uri?,
+        constantsImages: String
+    ): String {
+        val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+            "${constantsImages}/${idProducts}"
         )
         sRef.putFile(imageFileUri!!).await()
         val url = sRef.downloadUrl.await()

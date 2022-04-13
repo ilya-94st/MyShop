@@ -77,6 +77,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
                     findNavController().navigate(R.id.action_addProductsFragment_to_productsFragment)
                 }
                 is EventClass.ErrorIn -> {
+                    hideProgressDialog()
                     errorSnackBar(event.error, true)
                 }
                 else -> Unit
@@ -112,7 +113,9 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
 
     private fun loadImageToFireStore() {
         if (mSelectedImageFileUri != null) {
-                viewModelAdd.loadImageToFirestore(userId, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
+              viewModelAdd.idProducts.observe(viewLifecycleOwner){
+                  viewModelAdd.loadImageToFirestore(it, mSelectedImageFileUri, Constants.USER_PRODUCTS_IMAGES)
+              }
             viewModelAdd.image.observe(viewLifecycleOwner){
                 observeUsers(it)
             }

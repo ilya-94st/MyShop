@@ -14,6 +14,8 @@ class SharedPref(private val context: Context) {
 
     private val KEY_NAME = "name"
 
+    private val QUANTITY = "quantity"
+
     val preferences: SharedPreferences = context.getSharedPreferences("Shared", Context.MODE_PRIVATE)
 
     var login: String
@@ -31,5 +33,9 @@ class SharedPref(private val context: Context) {
     var save: Boolean
         get() = preferences.getBoolean(KEY_SAVE, false)
         set(value) = preferences.edit().putBoolean(KEY_SAVE, value).apply()
+
+    var qunatity: Int
+        get() = preferences.getInt(QUANTITY, 1)
+        set(value) = preferences.edit().putInt(QUANTITY, value).apply()
 
 }

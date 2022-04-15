@@ -51,7 +51,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
     private fun descriptionProduct() {
         val products = args.products
         glideLoadUserPicture(products.image, binding.ivProduct, requireContext())
-        binding.tvQuantity.text = "${products.quality}"
+        binding.tvQuantity.text = "${products.quantity}"
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price} ${products.currency}"
@@ -59,7 +59,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
             if (it.id == products.idSeller) {
                 binding.btAddToCart.visibility = View.INVISIBLE
             }else {
-                if (products.quality == 0) {
+                if (products.quantity == 0) {
                     binding.btAddToCart.visibility = View.INVISIBLE
                     binding.tvErrorProduct.visibility = View.VISIBLE
                 }else {
@@ -89,7 +89,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         val title = product.title
         val currency = product.currency
         viewModel.users.observe(viewLifecycleOwner){
-            val productInCart = ProductsInCart(idSeller, idProducts, it.id, idOrders, title, price, imageProduct, currency, Constants.QUANTITIES)
+            val productInCart = ProductsInCart(idSeller, idProducts, it.id, idOrders, title, price!!, imageProduct, currency, Constants.QUANTITIES)
             viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
         }

@@ -1,6 +1,5 @@
 package com.example.myshop.data.repository
 
-import android.util.Log
 import com.example.myshop.common.Constants
 import com.example.myshop.common.EventClass
 import com.example.myshop.data.FireStore
@@ -27,7 +26,7 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
     }
 
     override  fun upDataProducts(products: Map<String, Any>, oldProducts: Products) {
-        val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("quality", oldProducts.quality).get()
+        val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("quality", oldProducts.quantity).get()
         querySnapshot.addOnSuccessListener {
 
                 for (document in it) {
@@ -43,7 +42,6 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
     ) {
         val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("quantity", oldProductsInCart.quantity).get().await()
         for (document in querySnapshot) {
-
                 fireStore.collection(Constants.PRODUCT_IN_CART).document(document.id).set(
                     products, SetOptions.merge()
                 ).await()

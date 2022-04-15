@@ -10,6 +10,8 @@ object CheckValid {
 
     private fun isEmptyField(filed:String) = TextUtils.isEmpty(filed.trim { it <= ' ' })
 
+ //   private fun isFieldContainInValidDate(filed: String) = !filed.contains(".*[a-z].*".toRegex())
+
     private fun isEmptyFieldProduct(filed:String) = TextUtils.isEmpty(filed)
 
     private fun isEmptyFieldAddress(filed:String) = TextUtils.isEmpty(filed)
@@ -123,6 +125,9 @@ object CheckValid {
 
     fun validMobileDetails(etMobile: String): EventClass {
         return when {
+      //      isFieldContainInValidDate(etMobile) -> {
+     //          EventClass.ErrorIn("enter correct value")
+    //        }
             isEmptyField(etMobile) -> {
                 EventClass.ErrorIn("enter mobile number")
             }

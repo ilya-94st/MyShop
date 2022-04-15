@@ -12,7 +12,7 @@ class UpdateProducts @Inject constructor(private val updateRepository: UpdateRep
      try {
        val productHashMap = mutableMapOf<String, Any>()
 
-       if (oldProduct.quality != quantity) {
+       if (oldProduct.quantity != quantity) {
            productHashMap[Constants.QUANTITIES_IN_PRODUCTS] = quantity
        }
 

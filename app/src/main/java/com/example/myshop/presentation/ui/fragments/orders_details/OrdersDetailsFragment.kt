@@ -23,17 +23,19 @@ class OrdersDetailsFragment : BaseFragment<FragmentOrdersDetailsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAdapter()
+        getDetailsOrder()
     }
 
 
     @SuppressLint("SetTextI18n")
-    private fun initAdapter() {
+    private fun getDetailsOrder() {
         showProgressDialog("Please wait...")
         val product = args.order
+
         binding.tvPrice.text = "${product.price} + ${product.currency}"
         glideLoadUserPicture(product.image, binding.ivProduct, requireContext())
         binding.tvTitle.text = product.title + product.idOrder
+        binding.tvQuantity.text = "${product.quantity}"
 
         binding.tvOrderId.text = "${product.idOrder}"
         binding.tvOrderStatus.text = "wait"

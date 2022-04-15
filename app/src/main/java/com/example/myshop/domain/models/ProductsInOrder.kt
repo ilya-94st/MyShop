@@ -16,5 +16,6 @@ data class ProductsInOrder(
     val zipCode: String = "",
     val notes: String = "",
     val chooseAddress: String = "",
-    val time: String = ""
+    val time: String = "",
+    val quantity: Int = 0
 ): Serializable

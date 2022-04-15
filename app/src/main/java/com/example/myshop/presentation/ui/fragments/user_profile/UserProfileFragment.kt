@@ -30,8 +30,8 @@ import java.io.IOException
 @AndroidEntryPoint
 class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPermissions.PermissionCallbacks  {
     private val args: UserProfileFragmentArgs by navArgs()
-    private var mSelectedImageFileUri: Uri? = null
     private val viewModel: UserProfileViewModel by viewModels()
+    private var mSelectedImageFileUri: Uri? = null
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentUserProfileBinding::inflate
@@ -40,6 +40,8 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        getPhoto()
         changeColorRadioGroup()
         getUsers()
 
@@ -49,7 +51,12 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
         binding.btSave.setOnClickListener {
             showProgressDialog("please wait ")
-                viewModel.loadImageToFirestore("${args.users.firstName}.${args.users.id}", mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
+               if (mSelectedImageFileUri == null) {
+                   hideProgressDialog()
+                   errorSnackBar("you do not select photo", true)
+               } else {
+                   viewModel.loadImageToFirestore("${args.users.firstName}.${args.users.id}", mSelectedImageFileUri, Constants.USER_PROFILE_IMAGE)
+               }
                 viewModel.image.observe(viewLifecycleOwner){
                 updateUserDetails(it)
             }
@@ -58,6 +65,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
         viewModel.result.observe(viewLifecycleOwner) { event ->
             when(event) {
                 is EventClass.ErrorIn -> {
+                    hideProgressDialog()
                     errorSnackBar(event.error, true)
                     if (event.error == requireContext().getString(R.string.checkedMobile)) {
                         binding.etMobile.error = event.error
@@ -100,7 +108,6 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
 
             binding.etLastName.isEnabled = false
 
-
         } else {
             binding.tvTitle.text = requireContext().getString(R.string.exit_profile)
             glideLoadUserPicture(users.image, binding.ivUserPhoto, requireContext())
@@ -131,9 +138,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
             if(requestCode == Constants.PICK_IMAGE_REQUEST_CODE) {
                 if (data != null) {
                     try {
-                        mSelectedImageFileUri = data.data!!
-
-                        glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivUserPhoto, requireContext())
+                        viewModel.getUri(data.data!!)
 
                     } catch (e: IOException) {
                         toast("image selected failed")
@@ -142,6 +147,13 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>(), EasyPerm
             }
         } else if( requestCode == AppCompatActivity.RESULT_CANCELED) {
             toast("image result canceled")
+        }
+    }
+
+    private fun getPhoto() {
+        viewModel.mUserProfileImageURL.observe(viewLifecycleOwner){
+            glideLoadUserPicture(it, binding.ivUserPhoto, requireContext())
+            mSelectedImageFileUri = it
         }
     }
 

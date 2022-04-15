@@ -15,6 +15,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUserProfile, private val loaderUsers: ImageLoaderUsers): ViewModel() {
+    private var _mSelectedImageFileUri = MutableLiveData<Uri>()
+
+    var mUserProfileImageURL: LiveData<Uri> = _mSelectedImageFileUri
+
     private var _image = MutableLiveData<String>()
 
     var image: LiveData<String> = _image
@@ -23,13 +27,17 @@ class UserProfileViewModel @Inject constructor(private val getUserProfile: GetUs
 
     var result: LiveData<EventClass> = _result
 
+    fun getUri(uri: Uri) {
+        _mSelectedImageFileUri.value = uri
+    }
+
     fun updateProfileUserDetails(users: Users, etMobile: String, etFirstName: String, etLastName: String, rbMale: Boolean, mUserProfileImageURL: String) {
         _result.postValue(getUserProfile.invoke(users, etMobile, etFirstName, etLastName, rbMale, mUserProfileImageURL))
     }
 
 
     fun loadImageToFirestore(fileExtension: String, imageFileUri: Uri?, constantsImages: String) = viewModelScope.launch {
-        _image.postValue(loaderUsers.invoke(fileExtension, imageFileUri, constantsImages))
+            _image.postValue(loaderUsers.invoke(fileExtension, imageFileUri, constantsImages))
     }
 
 

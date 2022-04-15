@@ -11,7 +11,6 @@ import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.AddProducts
 import com.example.myshop.domain.use_case.CheckUserDetails
 import com.example.myshop.domain.use_case.ImageLoaderProducts
-import com.example.myshop.domain.use_case.ImageLoaderUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,6 +21,10 @@ class AddProductViewModel @Inject constructor(
     private val imageLoaderProducts: ImageLoaderProducts,
     private val checkUserDetails: CheckUserDetails
     ) : ViewModel() {
+    private var _mSelectedImageFileUri = MutableLiveData<Uri>()
+
+    var mUserProfileImageURL: LiveData<Uri> = _mSelectedImageFileUri
+
     private var _idProducts = MutableLiveData<Long>()
 
     var idProducts: LiveData<Long> = _idProducts
@@ -38,9 +41,12 @@ class AddProductViewModel @Inject constructor(
 
     var result: LiveData<EventClass> = _result
 
-    fun addProducts(products: Products, etTitle: String, etPrice: String, etDescription: String, etQuality: String) = viewModelScope.launch {
-        _result.postValue(addProducts.invoke(products, etTitle = etTitle, etPrice = etPrice, etDescription = etDescription,
-            etQuality = etQuality))
+    fun addProducts(products: Products) = viewModelScope.launch {
+        _result.postValue(addProducts.invoke(products))
+    }
+
+    fun getUri(uri: Uri) {
+        _mSelectedImageFileUri.value = uri
     }
 
     fun loadImageToFirestore(idProducts: Long, imageFileUri: Uri?, constantsImages: String) = viewModelScope.launch {

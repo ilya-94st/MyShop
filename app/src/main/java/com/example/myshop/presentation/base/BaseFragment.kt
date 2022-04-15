@@ -16,10 +16,8 @@ import com.example.myshop.presentation.tools.showErrorSnackBar
 import com.example.myshop.presentation.tools.toast
 
 abstract class BaseFragment<out T : ViewBinding> : Fragment() {
-
     private var _binding: ViewBinding? = null
     private lateinit var mProgressDialog: Dialog
-
 
     @Suppress("UNCHECKED_CAST")
     protected val binding: T

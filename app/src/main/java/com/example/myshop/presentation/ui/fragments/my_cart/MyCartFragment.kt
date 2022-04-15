@@ -23,7 +23,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private val viewModel: MyCartViewModel by viewModels()
     private lateinit var productsInCartAdapter: ProductsInCartAdapter
     private var quantity = 0
-    private var userId = ""
     private var idProduct = 0L
     private var quantityProduct = 0
 
@@ -33,9 +32,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.users.observe(viewLifecycleOwner){
-            userId = it.id
-        }
 
         getAllPrice()
         initAdapter()
@@ -86,7 +82,9 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
                 prefs.qunatity = quantity
             }
             productsInCartAdapter.setOnItemClickListenerDelete {
-                viewModel.deleteProductInCart(userId, idProduct)
+                viewModel.users.observe(viewLifecycleOwner){
+                    viewModel.deleteProductInCart(it.id, idProduct)
+                }
             }
         }
     }
@@ -105,12 +103,10 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
        }
        viewModel.products.observe(viewLifecycleOwner){ products ->
            products.forEach {
-               quantityProduct = it.quality
+               quantityProduct = it.quantity!!
            }
        }
    }
-
-
 
     private fun getAllPrice() {
         viewModel.users.observe(viewLifecycleOwner){
@@ -129,7 +125,9 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             .setPositiveButton(
                 "OK"
             ) { _, _ ->
-                viewModel.deleteProductInCart(userId, idProduct)
+                viewModel.users.observe(viewLifecycleOwner){
+                    viewModel.deleteProductInCart(it.id, idProduct)
+                }
             }
             .setNegativeButton(
                 "No"

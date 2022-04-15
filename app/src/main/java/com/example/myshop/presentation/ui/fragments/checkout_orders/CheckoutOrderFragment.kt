@@ -95,7 +95,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private fun getQuantityProducts() {
         viewModel.products.observe(viewLifecycleOwner){ listProducts ->
             listProducts.forEach {
-                quantityProduct = it.quality
+                quantityProduct = it.quantity!!
             }
         }
     }
@@ -163,7 +163,8 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                         addressZip,
                         notes,
                         chooseAddress,
-                        time
+                        time,
+                        quantityProductsInCart
                     )
                     viewModel.addProductInOrder(productInOrder)
                 }

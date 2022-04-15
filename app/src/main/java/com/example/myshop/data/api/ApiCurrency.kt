@@ -1,6 +1,5 @@
 package com.example.myshop.data.api
 
-import com.example.myshop.domain.models.response.CurrencyItem
 import com.example.myshop.domain.models.response.CurrencyRates
 import retrofit2.Response
 import retrofit2.http.GET

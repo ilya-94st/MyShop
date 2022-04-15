@@ -31,7 +31,6 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
         get() = FragmentAddProductsBinding::inflate
 
     private var mSelectedImageFileUri: Uri? = null
-    private var mUserProductImageURL: String = ""
     private var currency: String = ""
     private var userId: String = ""
     private var idProducts: Long = 0L
@@ -39,10 +38,8 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelAdd.users.observe(viewLifecycleOwner){
-               userId = it.id
-        }
 
+         getPhoto()
         binding.ivGetPhoto.setOnClickListener {
             getPhotoPermission()
         }
@@ -89,26 +86,23 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
        viewModelAdd.idProducts.observe(viewLifecycleOwner){
            idProducts = it
        }
-       viewModelAdd.users.observe(viewLifecycleOwner){
-           mUserProductImageURL = imageUrl
-           val users = it
+       viewModelAdd.users.observe(viewLifecycleOwner) {
+           userId = it.id
+       }
            val title = binding.etTitle.text.toString()
            val price = binding.etPrice.text.toString()
            val description = binding.etDescription.text.toString()
-           val quality = binding.etQuantity.text.toString()
-           val userId = users.id
+           val quantity = binding.etQuantity.text.toString()
            val products = Products(
                idSeller = userId,
                idProducts = idProducts,
                title = title,
-               price = price.toFloat(),
+               price = price.toFloatOrNull(),
                description = description,
-               quality = quality.toInt(),
-               image = mUserProductImageURL,
+               quantity = quantity.toIntOrNull(),
+               image = imageUrl,
                currency = currency)
-           viewModelAdd.addProducts(products, binding.etTitle.text.toString(), binding.etPrice.text.toString(),
-               binding.etDescription.text.toString(), binding.etQuantity.text.toString())
-       }
+           viewModelAdd.addProducts(products)
    }
 
     private fun loadImageToFireStore() {
@@ -119,6 +113,9 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
             viewModelAdd.image.observe(viewLifecycleOwner){
                 observeUsers(it)
             }
+        } else {
+            hideProgressDialog()
+            errorSnackBar("you do not select photo", true)
         }
     }
 
@@ -133,9 +130,7 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
             if(requestCode == Constants.PICK_IMAGE_REQUEST_CODE) {
                 if (data != null) {
                     try {
-                        mSelectedImageFileUri = data.data!!
-
-                        glideLoadUserPicture(mSelectedImageFileUri!!, binding.ivPhoto, requireContext())
+                        viewModelAdd.getUri(data.data!!)
 
                     } catch (e: IOException) {
                         toast("image selected failed")
@@ -144,6 +139,13 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
             }
         } else if( requestCode == AppCompatActivity.RESULT_CANCELED) {
             toast("image result canceled")
+        }
+    }
+
+    private fun getPhoto() {
+        viewModelAdd.mUserProfileImageURL.observe(viewLifecycleOwner){
+            glideLoadUserPicture(it, binding.ivPhoto, requireContext())
+            mSelectedImageFileUri = it
         }
     }
 

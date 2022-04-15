@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class UpdateProductsInCart @Inject constructor(private val updateRepository: UpdateRepository) {
 
-    suspend operator fun invoke(oldProductsInCart: ProductsInCart, quantity: Int) {
+  suspend operator fun invoke(oldProductsInCart: ProductsInCart, quantity: Int) {
         try {
         val productHashMap = mutableMapOf<String, Any>()
 

@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class AddProducts @Inject constructor(private val productsRepository: ProductsRepository) {
 
-   suspend operator fun invoke(products: Products, etTitle: String, etPrice: String, etDescription: String, etQuality: String): EventClass {
-       return when(val result = CheckValid.validProduct(etTitle = etTitle, etPrice = etPrice, etDescription = etDescription,
-       etQuality = etQuality
+   suspend operator fun invoke(products: Products): EventClass {
+       return when(val result = CheckValid.validProduct(etTitle = products.title, etPrice = products.price.toString(), etDescription = products.description,
+       etQuality = products.quantity.toString()
            )) {
            is EventClass.ErrorIn -> {
                result

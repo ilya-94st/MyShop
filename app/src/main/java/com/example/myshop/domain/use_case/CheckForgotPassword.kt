@@ -15,7 +15,14 @@ suspend operator fun invoke(etEmail: String): EventClass? {
             result
         }
         is EventClass.Success -> {
-            authenticationRepository.checkForgotPassword(email)
+            var registerResult: EventClass? = null
+            try {
+                registerResult = EventClass.Success
+                authenticationRepository.checkForgotPassword(etEmail)
+            } catch (e: Exception){
+                registerResult =  EventClass.ErrorIn("${e.message}")
+            }
+            return registerResult
         }
         else -> {
             result

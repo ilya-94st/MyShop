@@ -44,7 +44,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthentication(firebaseAuth: FirebaseAuth): AuthenticationRepository = AuthenticationRepositoryIml(firebaseAuth)
+    fun provideAuthentication(firebaseAuth: FirebaseAuth, fireStore: FirebaseFirestore): AuthenticationRepository = AuthenticationRepositoryIml(firebaseAuth, fireStore)
 
     @Provides
     @Singleton

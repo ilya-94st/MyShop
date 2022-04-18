@@ -13,7 +13,14 @@ class CheckSettings @Inject constructor(private val authenticationRepository: Au
                 result
             }
             is EventClass.Success -> {
-                authenticationRepository.logout()
+                var registerResult: EventClass? = null
+                try {
+                    registerResult = EventClass.Success
+                   authenticationRepository.logout()
+                } catch (e: Exception){
+                    registerResult =  EventClass.ErrorIn("${e.message}")
+                }
+                return registerResult
             }
             else -> {
                 result

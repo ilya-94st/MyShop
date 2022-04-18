@@ -16,6 +16,7 @@ class UpdateProductsInCart @Inject constructor(private val updateRepository: Upd
             productHashMap[Constants.QUANTITIES_IN_PRODUCTS_IN_CART] = quantity
         }
 
+
         updateRepository.upDataProductsInCart(productHashMap, oldProductsInCart)
         } catch (e: Exception) {
             Log.e("updateProductsInCart", "$e")

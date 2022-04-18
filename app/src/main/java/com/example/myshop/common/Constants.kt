@@ -1,7 +1,6 @@
 package com.example.myshop.common
 
 import android.content.Context
-import com.google.common.math.Quantiles
 import pub.devrel.easypermissions.EasyPermissions
 
 object Constants {
@@ -36,7 +35,6 @@ object Constants {
 
     const val QUANTITIES_IN_PRODUCTS = "quality"
     const val QUANTITIES_IN_PRODUCTS_IN_CART = "quantity"
-
 
     const val ID_PRODUCTS_RANDOM = 100000000000000
     const val ID_ADDRESS_RANDOM = 100000000000000

@@ -33,27 +33,26 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getAllPrice()
+
         initAdapter()
+        getAllPrice()
         getQuantity()
         getProducts()
         deleteProductSwipe()
 
         binding.btCheckout.setOnClickListener {
-            if (quantityProduct < quantity || quantity < 0) {
-                binding.tvErrorProduct.visibility = View.VISIBLE
-                binding.tvErrorProduct.text = "not enough products"
-            }else {
-                viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-                    products.forEach {
-                            product ->
+            checkProductInCart()
+        }
+    }
 
-                        viewModel.updateProductInCart(product, quantity)
-                    }
-                }
-                prefs.preferences.edit().clear()
-                findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
-            }
+    @SuppressLint("CommitPrefEdits")
+    private fun checkProductInCart() {
+        if (quantityProduct < quantity || quantity < 0) {
+            binding.tvErrorProduct.visibility = View.VISIBLE
+            binding.tvErrorProduct.text = "not enough products"
+        }else {
+            prefs.preferences.edit().clear()
+            findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
         }
     }
 
@@ -75,12 +74,34 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
+                viewModel.users.observe(viewLifecycleOwner){
+                    viewModel.getProductInCart(it.id)
+                }
+                viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+                    products.forEach {
+                            product ->
+                        viewModel.updateProductInCart(product, quantity)
+                        getAllPrice()
+                    }
+                }
                 prefs.qunatity = quantity
             }
             productsInCartAdapter.setOnItemClickListenerMinus {
                 viewModel.minusQuantity()
+                viewModel.users.observe(viewLifecycleOwner){
+                    viewModel.getProductInCart(it.id)
+                }
+                viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+                    products.forEach {
+                            product ->
+                        viewModel.updateProductInCart(product, quantity)
+                        getAllPrice()
+                    }
+                }
                 prefs.qunatity = quantity
             }
+
+
             productsInCartAdapter.setOnItemClickListenerDelete {
                 viewModel.users.observe(viewLifecycleOwner){
                     viewModel.deleteProductInCart(it.id, idProduct)

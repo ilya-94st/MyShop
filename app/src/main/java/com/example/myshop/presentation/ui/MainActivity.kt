@@ -73,7 +73,9 @@ class MainActivity : AppCompatActivity(), NetworkFound.ConnectivityReceiverListe
     @SuppressLint("ShowToast")
     private fun showNetworkMessage(isConnected: Boolean) {
         if (!isConnected) {
-            snackBar = Snackbar.make(binding.root, "You are offline", Snackbar.LENGTH_LONG)
+            snackBar = Snackbar.make(binding.root, "You are offline", Snackbar.LENGTH_LONG).setAction("dismiss"){
+                snackBar?.dismiss()
+            }
             snackBar?.duration = BaseTransientBottomBar.LENGTH_INDEFINITE
             snackBar?.show()
         } else {

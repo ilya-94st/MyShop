@@ -169,7 +169,6 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                     viewModel.addProductInOrder(productInOrder)
                 }
             }
-
     }
 
 

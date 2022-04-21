@@ -4,7 +4,6 @@ import com.example.myshop.common.Constants
 import com.example.myshop.common.EventClass
 import com.example.myshop.data.FireStore
 import com.example.myshop.domain.models.Products
-import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.repository.UpdateRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -38,9 +37,10 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
 
     override suspend fun upDataProductsInCart(
         products: Map<String, Any>,
-        oldProductsInCart: ProductsInCart
+        oldQuantity: Int,
+        idProduct: Long
     ) {
-        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("quantity", oldProductsInCart.quantity).get().await()
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("quantity", oldQuantity).whereEqualTo("idProduct", idProduct).get().await()
         for (document in querySnapshot) {
                 fireStore.collection(Constants.PRODUCT_IN_CART).document(document.id).set(
                     products, SetOptions.merge()

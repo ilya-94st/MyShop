@@ -2,7 +2,6 @@ package com.example.myshop.domain.repository
 
 import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.Products
-import com.example.myshop.domain.models.ProductsInCart
 
 
 interface UpdateRepository {
@@ -11,5 +10,5 @@ interface UpdateRepository {
 
    fun upDataProducts(products: Map<String, Any>, oldProducts: Products)
 
-  suspend fun upDataProductsInCart(products: Map<String, Any>, oldProductsInCart: ProductsInCart)
+  suspend fun upDataProductsInCart(products: Map<String, Any>, oldQuantity: Int, idProduct: Long)
 }

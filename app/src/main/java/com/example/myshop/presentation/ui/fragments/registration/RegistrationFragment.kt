@@ -21,6 +21,8 @@ class RegistrationFragment : BaseFragment<FragmentRegistrationBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgressDialog("Please wait...")
+        hideProgressDialog()
 
         binding.tvLogin.setOnClickListener {
             findNavController().popBackStack()

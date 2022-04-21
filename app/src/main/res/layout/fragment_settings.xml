@@ -173,13 +173,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ll_liner"
-        android:text="logout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:background="@drawable/oval_button"
         android:paddingBottom="16dp"
-        android:textSize="16sp"
-        android:background="@drawable/oval_button"/>
+        android:text="logout"
+        android:textSize="16sp" />
 </RelativeLayout>
 
 </ScrollView>

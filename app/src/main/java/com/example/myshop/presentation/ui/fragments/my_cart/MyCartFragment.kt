@@ -1,14 +1,11 @@
 package com.example.myshop.presentation.ui.fragments.my_cart
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentMyCartBinding
@@ -23,7 +20,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private val viewModel: MyCartViewModel by viewModels()
     private lateinit var productsInCartAdapter: ProductsInCartAdapter
     private var quantity = 0
-    private var idProduct = 0L
     private var quantityProduct = 0
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -34,11 +30,12 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
 
+
+
         initAdapter()
         getAllPrice()
         getQuantity()
-        getProducts()
-        deleteProductSwipe()
+        getQuantityInProducts()
 
         binding.btCheckout.setOnClickListener {
             checkProductInCart()
@@ -61,11 +58,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         viewModel.users.observe(viewLifecycleOwner){
             viewModel.getProductInCart(it.id)
         }
-
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-            products.forEach { product ->
-                idProduct = product.idProduct
-            }
             productsInCartAdapter = ProductsInCartAdapter(
                 itemsQuantity = quantity,
                 listProductsInCart = products
@@ -74,37 +67,30 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
-                viewModel.users.observe(viewLifecycleOwner){
-                    viewModel.getProductInCart(it.id)
-                }
-                viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-                    products.forEach {
-                            product ->
-                        viewModel.updateProductInCart(product, quantity)
-                        getAllPrice()
-                    }
-                }
-                prefs.qunatity = quantity
+                updateQuantity(it.idBuyer, it.idProduct)
+                viewModel.getAllPrice(it.idBuyer)
             }
             productsInCartAdapter.setOnItemClickListenerMinus {
                 viewModel.minusQuantity()
-                viewModel.users.observe(viewLifecycleOwner){
-                    viewModel.getProductInCart(it.id)
-                }
-                viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-                    products.forEach {
-                            product ->
-                        viewModel.updateProductInCart(product, quantity)
-                        getAllPrice()
-                    }
-                }
-                prefs.qunatity = quantity
+                updateQuantity(it.idBuyer, it.idProduct)
+                viewModel.getAllPrice(it.idBuyer)
             }
 
 
-            productsInCartAdapter.setOnItemClickListenerDelete {
-                viewModel.users.observe(viewLifecycleOwner){
-                    viewModel.deleteProductInCart(it.id, idProduct)
+            productsInCartAdapter.setOnItemClickListenerDelete { productInCart ->
+                    viewModel.deleteProductInCart(productInCart.idBuyer, productInCart.idProduct)
+            }
+        }
+    }
+
+    private fun updateQuantity(idBuyer: String, idProduct: Long) {
+            viewModel.getProductInCart(idBuyer)
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+            products.forEach {
+                    product ->
+                viewModel.quantity.observe(viewLifecycleOwner){
+                    viewModel.updateProductInCart(product.quantity, it, idProduct)
+                    prefs.qunatity = it
                 }
             }
         }
@@ -116,7 +102,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         }
     }
 
-   private fun getProducts() {
+   private fun getQuantityInProducts() {
        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
            products.forEach {
                viewModel.getProduct(it.idSeller)
@@ -140,48 +126,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         }
     }
 
-    private fun alertDialogDeleteProduct(message: String) {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-        builder.setMessage(message)
-            .setPositiveButton(
-                "OK"
-            ) { _, _ ->
-                viewModel.users.observe(viewLifecycleOwner){
-                    viewModel.deleteProductInCart(it.id, idProduct)
-                }
-            }
-            .setNegativeButton(
-                "No"
-            ) {
-                    dialog, _ ->
-                dialog.cancel()
-                initAdapter()
-            }
-        builder.create().show()
-    }
-
-    private fun deleteProductSwipe() {
-        val itemTouchHelperCallBack = object: ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN
-            , ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        ){
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return true
-            }
-
-            @SuppressLint("ShowToast")
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                alertDialogDeleteProduct("Do you want a delete product?")
-            }
-        }
-        ItemTouchHelper(itemTouchHelperCallBack).apply {
-            attachToRecyclerView(binding.rvProducts)
-        }
-    }
 
     @SuppressLint("CommitPrefEdits")
     override fun onDestroyView() {

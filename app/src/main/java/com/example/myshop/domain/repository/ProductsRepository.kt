@@ -32,4 +32,5 @@ interface ProductsRepository {
    suspend fun getProductInOrders(idBuyer: String): ArrayList<ProductsInOrder>
 
   suspend  fun getAllPrice(userId: String): Float?
+
 }

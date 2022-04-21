@@ -27,12 +27,12 @@
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_address.xml" value="0.264" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_checkout_order.xml" value="0.264" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_dash_board.xml" value="0.22826086956521738" />
-        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_description_product.xml" value="0.4" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_description_product.xml" value="0.2" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_forgot_password.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_home.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_login.xml" value="0.176" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_main.xml" value="0.22826086956521738" />
-        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_my_cart.xml" value="0.4" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_my_cart.xml" value="0.264" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_notification.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_orders.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/fragment_orders_details.xml" value="0.264" />
@@ -45,7 +45,7 @@
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/item_address.xml" value="0.4" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/items_add_in_order.xml" value="0.24139492753623187" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/items_address.xml" value="0.4" />
-        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/items_in_cart.xml" value="0.4" />
+        <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/items_in_cart.xml" value="0.8800000000000001" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/items_order_details.xml" value="0.2427536231884058" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/items_orders.xml" value="0.2427536231884058" />
         <entry key="..\:/Users/lenovo/AndroidStudioProjects/MyShop/app/src/main/res/layout/products_items.xml" value="0.16" />

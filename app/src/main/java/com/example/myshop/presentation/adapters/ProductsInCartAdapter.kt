@@ -23,8 +23,6 @@ class ProductsInCartAdapter(private var itemsQuantity: Int, private val listProd
         return listProductsInCart.size
     }
 
-
-
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
         val products = listProductsInCart[position]
@@ -32,7 +30,7 @@ class ProductsInCartAdapter(private var itemsQuantity: Int, private val listProd
             Glide.with(this).load(products.image).placeholder(ProgressCircleGlide.progressBar(context)).
             into(holder.binding.ivProduct)
         }
-        holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
+        holder.binding.tvPrice.text = "${products.price} ${products.currency}"
         holder.binding.tvTitle.text = products.title
         holder.binding.tvQuantity.text = itemsQuantity.toString()
         holder.binding.ibPlus.setOnClickListener {

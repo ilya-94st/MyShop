@@ -14,10 +14,14 @@ class ProductsInCartAdapter(private var itemsQuantity: Int, private val listProd
 
     inner class ProductsViewHolder(var binding: ItemsInCartBinding) : RecyclerView.ViewHolder(binding.root)
 
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductsViewHolder {
         val binding = ItemsInCartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ProductsViewHolder(binding)
     }
+
+
 
     override fun getItemCount(): Int {
         return listProductsInCart.size

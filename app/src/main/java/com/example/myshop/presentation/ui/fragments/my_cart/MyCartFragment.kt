@@ -52,7 +52,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     @SuppressLint("SetTextI18n")
     private fun initAdapter() {
 
-            viewModel.getProductInCart(prefs.idUser)
+        viewModel.getProductInCart(prefs.idUser)
 
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             productsInCartAdapter = ProductsInCartAdapter(
@@ -63,18 +63,17 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
-                updateQuantity(it.idBuyer, it.idProduct)
+                updateQuantity(it.idBuyer, it.idOrder)
                 viewModel.getAllPriceInCart(it.idBuyer,quantity)
             }
             productsInCartAdapter.setOnItemClickListenerMinus {
                 viewModel.minusQuantity()
-                updateQuantity(it.idBuyer, it.idProduct)
+                updateQuantity(it.idBuyer, it.idOrder)
                 viewModel.getAllPriceInCart(it.idBuyer,quantity)
             }
 
-
             productsInCartAdapter.setOnItemClickListenerDelete { productInCart ->
-                viewModel.deleteProductInCart(productInCart.idBuyer, productInCart.idProduct)
+                viewModel.deleteProductInCart(productInCart.idOrder)
             }
         }
     }
@@ -84,10 +83,8 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             products.forEach {
                     product ->
-                viewModel.quantity.observe(viewLifecycleOwner){
-                    viewModel.updateProductInCart(product.quantity, it, idProduct)
-                    prefs.qunatity = it
-                }
+                    viewModel.updateProductInCart(product.quantity, quantity, idProduct)
+                    prefs.qunatity = quantity
             }
         }
     }
@@ -114,7 +111,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     private fun getAllPrice() {
         viewModel.quantity.observe(viewLifecycleOwner) {
             viewModel.getAllPriceInCart(prefs.idUser, it)
-        }
+       }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"
             binding.tvShippingPrice.text = "10"

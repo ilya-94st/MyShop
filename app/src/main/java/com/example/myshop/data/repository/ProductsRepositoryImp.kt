@@ -72,8 +72,8 @@ class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseF
             }
         }
     }
-    override fun deleteProductInCart(idBuyer: String, idProduct: Long) {
-        val productsQuery =  fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", idBuyer).whereEqualTo("idProduct", idProduct)
+    override fun deleteProductInCart(idOrder: Long) {
+        val productsQuery =  fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idOrder", idOrder)
             .get()
         productsQuery.addOnSuccessListener {
             for (document in it){
@@ -135,6 +135,7 @@ class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseF
     override suspend fun getAllPriceInCart(userId: String, quantity: Int): Float? {
         var priceAll: Float? = 0F
         val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", userId).get().await()
+
         for(document in querySnapshot.documents) {
             val product = document.toObject<ProductsInCart>()
             val price = product?.price

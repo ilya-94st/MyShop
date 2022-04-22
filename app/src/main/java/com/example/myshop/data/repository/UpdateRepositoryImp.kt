@@ -38,9 +38,9 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
     override suspend fun upDataProductsInCart(
         products: Map<String, Any>,
         oldQuantity: Int,
-        idProduct: Long
+        idOrder: Long
     ) {
-        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("quantity", oldQuantity).whereEqualTo("idProduct", idProduct).get().await()
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("quantity", oldQuantity).whereEqualTo("idOrder", idOrder).get().await()
         for (document in querySnapshot) {
                 fireStore.collection(Constants.PRODUCT_IN_CART).document(document.id).set(
                     products, SetOptions.merge()

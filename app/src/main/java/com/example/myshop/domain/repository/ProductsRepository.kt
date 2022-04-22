@@ -21,7 +21,7 @@ interface ProductsRepository {
 
     fun deleteAllProductsInCart(idBuyer: String)
 
-    fun deleteProductInCart(idBuyer: String, idProduct: Long)
+    fun deleteProductInCart(idOrder: Long)
 
    suspend fun getProduct(idSeller: String): ArrayList<Products>
 

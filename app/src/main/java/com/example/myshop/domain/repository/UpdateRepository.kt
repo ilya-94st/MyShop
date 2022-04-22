@@ -10,5 +10,5 @@ interface UpdateRepository {
 
    fun upDataProducts(products: Map<String, Any>, oldProducts: Products)
 
-  suspend fun upDataProductsInCart(products: Map<String, Any>, oldQuantity: Int, idProduct: Long)
+  suspend fun upDataProductsInCart(products: Map<String, Any>, oldQuantity: Int, idOrder: Long)
 }

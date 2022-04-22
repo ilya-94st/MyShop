@@ -56,16 +56,16 @@ class MyCartViewModel @Inject constructor(
         _products.postValue(getProducts.invoke(userId))
     }
 
-    fun getAllPriceInCart(userId: String, quantity: Int) = viewModelScope.launch {
+    fun getAllPriceInCart(userId: String, quantity: Int) = viewModelScope.launch  {
        _allPrice.postValue(getAllPriceInCart.invoke(userId, quantity))
    }
 
-    fun updateProductInCart(oldQuantity: Int, quantity: Int, idProduct: Long) = viewModelScope.launch {
-        updateProductsInCart.invoke(oldQuantity, quantity, idProduct)
+    fun updateProductInCart(oldQuantity: Int, quantity: Int, idOrder: Long) = viewModelScope.launch {
+        updateProductsInCart.invoke(oldQuantity, quantity, idOrder)
     }
 
-    fun deleteProductInCart(idBuyer: String, idProduct: Long) {
-        deleteProductInCart.invoke(idBuyer, idProduct)
+    fun deleteProductInCart(idOrder: Long) {
+        deleteProductInCart.invoke(idOrder)
     }
 
     fun plusQuantity() {

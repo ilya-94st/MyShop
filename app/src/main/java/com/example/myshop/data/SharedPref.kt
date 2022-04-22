@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 
 class SharedPref(private val context: Context) {
 
+    private val KEY_ID_USERS = "idUsers"
+
     private val KEY_LOGIN = "login"
 
     private val KEY_PASSWORD = "password"
@@ -37,5 +39,9 @@ class SharedPref(private val context: Context) {
     var qunatity: Int
         get() = preferences.getInt(QUANTITY, 1)
         set(value) = preferences.edit().putInt(QUANTITY, value).apply()
+
+    var idUser: String
+        get() = preferences.getString(KEY_ID_USERS, "")!!
+        set(value) = preferences.edit().putString(KEY_ID_USERS, value).apply()
 
 }

@@ -18,8 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddProductViewModel @Inject constructor(
     private val addProducts: AddProducts,
-    private val imageLoaderProducts: ImageLoaderProducts,
-    private val checkUserDetails: CheckUserDetails
+    private val imageLoaderProducts: ImageLoaderProducts
     ) : ViewModel() {
     private var _mSelectedImageFileUri = MutableLiveData<Uri>()
 
@@ -32,10 +31,6 @@ class AddProductViewModel @Inject constructor(
     private var _image = MutableLiveData<String>()
 
     var image: LiveData<String> = _image
-
-    private var _users = MutableLiveData<Users>()
-
-    var users: LiveData<Users> = _users
 
     private var _result = MutableLiveData<EventClass>()
 
@@ -53,16 +48,11 @@ class AddProductViewModel @Inject constructor(
         _image.postValue(imageLoaderProducts.invoke(idProducts, imageFileUri, constantsImages))
     }
 
-
-    private fun getUsers() = viewModelScope.launch {
-       _users.postValue(checkUserDetails.invoke())
-   }
-
    private  fun getIdProducts() {
         _idProducts.value = (Math.random() * Constants.ID_PRODUCTS_RANDOM).toLong()
     }
+
     init {
-        getUsers()
         getIdProducts()
     }
 }

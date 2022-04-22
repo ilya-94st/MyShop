@@ -33,4 +33,7 @@ interface ProductsRepository {
 
   suspend  fun getAllPrice(userId: String): Float?
 
+  suspend  fun getAllPriceInCart(userId: String, quantity: Int): Float?
+
+
 }

@@ -12,6 +12,7 @@ import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentAddAddressBinding
 import com.example.myshop.domain.models.AddressUser
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,6 +26,8 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgressDialog("Please wait...")
+        hideProgressDialog()
         changeColorRadioGroup()
         binding.btSubmit.setOnClickListener {
             chooseAddressLocation()
@@ -49,16 +52,13 @@ class AddAddressFragment : BaseFragment<FragmentAddAddressBinding>() {
         viewModel.idAddress.observe(viewLifecycleOwner){
             idAddress = it
         }
-        viewModel.user.observe(viewLifecycleOwner){
-            val idUser = it.id
             val name = binding.etFullName.text.toString()
             val phoneNumber = binding.etPhoneNumber.text.toString()
             val addressName = binding.etAddress.text.toString()
             val zipCode = binding.etZipCode.text.toString()
             val notes = binding.etNotes.text.toString()
-            val addressUser = AddressUser(idUser, idAddress, name, addressName, phoneNumber.toLong(), zipCode, notes, addressLocation)
+            val addressUser = AddressUser(prefs.idUser, idAddress, name, addressName, phoneNumber.toLong(), zipCode, notes, addressLocation)
             viewModel.addAddressUser(addressUser, name, phoneNumber, addressName, zipCode, notes)
-        }
     }
 
     private fun chooseAddressLocation() {

@@ -10,6 +10,7 @@ import com.example.myshop.R
 import com.example.myshop.databinding.FragmentOrdersBinding
 import com.example.myshop.presentation.adapters.OrdersAdapter
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,9 +29,9 @@ class OrdersFragment : BaseFragment<FragmentOrdersBinding>() {
     private fun initAdapter() {
         ordersAdapter = OrdersAdapter()
         binding.rvProducts.adapter = ordersAdapter
-        viewModel.user.observe(viewLifecycleOwner){
-            viewModel.getOrders(it.id)
-        }
+
+        viewModel.getOrders(prefs.idUser)
+
         viewModel.order.observe(viewLifecycleOwner){ order->
             ordersAdapter.submitList(order)
             ordersAdapter.setOnItemClickListener {

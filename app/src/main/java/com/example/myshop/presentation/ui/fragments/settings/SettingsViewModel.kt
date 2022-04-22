@@ -39,7 +39,6 @@ class SettingsViewModel @Inject constructor(
         _result.postValue(checkSettings.invoke())
     }
 
-
     init {
         getUserDetails()
     }

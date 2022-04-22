@@ -20,6 +20,7 @@ import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentAddProductsBinding
 import com.example.myshop.domain.models.Products
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -32,13 +33,11 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
 
     private var mSelectedImageFileUri: Uri? = null
     private var currency: String = ""
-    private var userId: String = ""
     private var idProducts: Long = 0L
     private  val  viewModelAdd: AddProductViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
          getPhoto()
         binding.ivGetPhoto.setOnClickListener {
             getPhotoPermission()
@@ -86,15 +85,12 @@ class AddProductsFragment : BaseFragment<FragmentAddProductsBinding>(), EasyPerm
        viewModelAdd.idProducts.observe(viewLifecycleOwner){
            idProducts = it
        }
-       viewModelAdd.users.observe(viewLifecycleOwner) {
-           userId = it.id
-       }
            val title = binding.etTitle.text.toString()
            val price = binding.etPrice.text.toString()
            val description = binding.etDescription.text.toString()
            val quantity = binding.etQuantity.text.toString()
            val products = Products(
-               idSeller = userId,
+               idSeller = prefs.idUser,
                idProducts = idProducts,
                title = title,
                price = price.toFloatOrNull(),

@@ -13,6 +13,7 @@ import com.example.myshop.databinding.FragmentCheckoutOrderBinding
 import com.example.myshop.domain.models.ProductsInOrder
 import com.example.myshop.presentation.adapters.ProductsAddInOrder
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,8 +27,6 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private var time = ""
     private var quantityProductsInCart = 0
     private var quantityProduct = 0
-
-
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentCheckoutOrderBinding::inflate
@@ -67,9 +66,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     }
 
     private fun getAllPrice() {
-        viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getAllPrice(it.id)
-        }
+        viewModel.getAllPrice(prefs.idUser)
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubtotal.text = "Subtotal $it"
             binding.tvShippingCharge.text = "Shipping Charge ${quantityProduct}$"
@@ -86,10 +83,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     }
 
     private fun deleteProductInCart() {
-        viewModel.users.observe(viewLifecycleOwner){
-            val idBuyer = it.id
-            viewModel.deleteProducts(idBuyer)
-        }
+            viewModel.deleteProducts(prefs.idUser)
     }
 
     private fun getQuantityProducts() {
@@ -112,9 +106,9 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
             itemsQuantity = quantityProductsInCart
         )
         binding.vpProducts.adapter = productsAddInOrder
-        viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getProductInCart(it.id)
-        }
+
+        viewModel.getProductInCart(prefs.idUser)
+
         viewModel.productsInCart.observe(viewLifecycleOwner){ products->
             productsAddInOrder.submitList(products)
         }

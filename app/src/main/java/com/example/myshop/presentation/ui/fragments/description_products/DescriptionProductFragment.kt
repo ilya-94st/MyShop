@@ -15,6 +15,7 @@ import com.example.myshop.common.Constants
 import com.example.myshop.databinding.FragmentDescriptionProductBinding
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
 
@@ -55,9 +56,12 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         binding.tvTitle.text = products.title
         binding.tvDescriptions.text = products.description
         binding.tvPrice.text = "${products.price} ${products.currency}"
-        viewModel.users.observe(viewLifecycleOwner){
-            if (it.id == products.idSeller) {
+            if (prefs.idUser == products.idSeller) {
                 binding.btAddToCart.visibility = View.INVISIBLE
+                if (products.quantity == 0){
+                    binding.btAddToCart.visibility = View.INVISIBLE
+                    binding.tvErrorProduct.visibility = View.VISIBLE
+                }
             }else {
                 if (products.quantity == 0) {
                     binding.btAddToCart.visibility = View.INVISIBLE
@@ -66,7 +70,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
                     binding.btAddToCart.visibility = View.VISIBLE
                 }
             }
-        }
+
     }
 
     private fun getUserMobile() {
@@ -88,11 +92,9 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         val price = product.price
         val title = product.title
         val currency = product.currency
-        viewModel.users.observe(viewLifecycleOwner){
-            val productInCart = ProductsInCart(idSeller, idProducts, it.id, idOrders, title, price!!, imageProduct, currency, Constants.QUANTITIES)
+        val productInCart = ProductsInCart(idSeller, idProducts, prefs.idUser, idOrders, title, price!!, imageProduct, currency, Constants.QUANTITIES)
             viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
-        }
     }
 
 

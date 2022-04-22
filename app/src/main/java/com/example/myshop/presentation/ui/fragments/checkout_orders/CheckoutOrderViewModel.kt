@@ -19,7 +19,6 @@ import javax.inject.Inject
 class CheckoutOrderViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
     private val getAllPrice: GetAllPrice,
-    private val checkUserDetails: CheckUserDetails,
     private val deleteAllProductsInCart: DeleteAllProductsInCart,
     private val addProductInOrder: AddProductInOrder,
     private val updateProducts: UpdateProducts,
@@ -33,9 +32,6 @@ class CheckoutOrderViewModel @Inject constructor(
 
     var time: LiveData<String> = _time
 
-    private var _users = MutableLiveData<Users>()
-
-    var users: LiveData<Users> = _users
 
     private var _productsInCart = MutableLiveData<List<ProductsInCart>>()
 
@@ -72,12 +68,7 @@ class CheckoutOrderViewModel @Inject constructor(
     }
 
     init {
-        getUser()
         currentDate()
-    }
-
-    private fun getUser() = viewModelScope.launch {
-        _users.postValue(checkUserDetails.invoke())
     }
 
  private  fun currentDate(){

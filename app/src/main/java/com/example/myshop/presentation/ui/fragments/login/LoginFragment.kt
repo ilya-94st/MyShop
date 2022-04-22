@@ -10,6 +10,7 @@ import com.example.myshop.R
 import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentLoginBinding
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -68,6 +69,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 viewModel.users.observe(viewLifecycleOwner){ user ->
                     if(user.profileCompleted == 0) {
                         // if user profile is incomplete then launch the UserProfileFragment
+                            prefs.idUser = user.id
                         val bundle = Bundle().apply {
                             putSerializable("users", user)
                         }
@@ -75,7 +77,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                         hideProgressDialog()
                     } else {
                         // Redirect the user to Main screen after log in
-
+                        prefs.idUser = user.id
                         findNavController().navigate(R.id.action_loginFragment_to_dashBoardFragment)
                         hideProgressDialog()
                     }

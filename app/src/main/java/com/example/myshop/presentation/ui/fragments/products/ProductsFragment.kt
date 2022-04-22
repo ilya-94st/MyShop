@@ -14,6 +14,7 @@ import com.example.myshop.R
 import com.example.myshop.databinding.FragmentProductsBinding
 import com.example.myshop.presentation.adapters.ProductsAdapter
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,9 +42,8 @@ class ProductsFragment : BaseFragment<FragmentProductsBinding>() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initAdapter() {
-        viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getProduct(it.id)
-        }
+        viewModel.getProduct(prefs.idUser)
+
         viewModel.products.observe(viewLifecycleOwner){ products ->
             productsAdapter = ProductsAdapter(products)
             binding.rvProducts.adapter = productsAdapter

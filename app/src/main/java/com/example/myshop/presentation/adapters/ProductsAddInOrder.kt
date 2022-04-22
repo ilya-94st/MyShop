@@ -1,5 +1,6 @@
 package com.example.myshop.presentation.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -39,6 +40,7 @@ class ProductsAddInOrder(private var itemsQuantity:  Int): RecyclerView.Adapter<
         return differ.currentList.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
         val products = differ.currentList[position]
         holder.itemView.apply {

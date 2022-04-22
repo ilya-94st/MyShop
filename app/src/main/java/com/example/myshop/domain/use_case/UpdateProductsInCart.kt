@@ -11,6 +11,7 @@ class UpdateProductsInCart @Inject constructor(private val updateRepository: Upd
         try {
         val productHashMap = mutableMapOf<String, Any>()
 
+
         if (oldQuantity != quantity) {
             productHashMap[Constants.QUANTITIES_IN_PRODUCTS_IN_CART] = quantity
         }

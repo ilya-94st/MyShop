@@ -7,15 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.myshop.common.Constants
 import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.AddressUser
-import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.AddAddressUser
-import com.example.myshop.domain.use_case.CheckUserDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddAddressViewModel @Inject constructor(private val addAddressUser: AddAddressUser, private val getUserDetails: CheckUserDetails): ViewModel() {
+class AddAddressViewModel @Inject constructor(
+    private val addAddressUser: AddAddressUser): ViewModel() {
    private var _addressLocation = MutableLiveData<String>()
 
     var addressLocation: LiveData<String> = _addressLocation
@@ -29,9 +28,7 @@ class AddAddressViewModel @Inject constructor(private val addAddressUser: AddAdd
 
     val result: LiveData<EventClass> = _result
 
-    private val _user = MutableLiveData<Users>()
 
-    val user: LiveData<Users> = _user
 
     fun addAddressUser(addressUser: AddressUser,etName: String, etPhoneNumber: String, etAddress: String, etZipCode: String, etNotes: String) = viewModelScope.launch {
         _result.postValue(addAddressUser.invoke(addressUser, etName,etPhoneNumber, etAddress, etZipCode, etNotes))
@@ -42,11 +39,7 @@ class AddAddressViewModel @Inject constructor(private val addAddressUser: AddAdd
     }
 
     init {
-        getUser()
         getIdAddress()
     }
 
-    private fun getUser() = viewModelScope.launch {
-        _user.postValue(getUserDetails.invoke())
-    }
 }

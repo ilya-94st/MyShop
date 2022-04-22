@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.myshop.common.Resource
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
-import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.models.response.CurrencyRates
 import com.example.myshop.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,8 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyCartViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
-    private val checkUserDetails: CheckUserDetails,
-    private val getAllPrice: GetAllPrice,
+    private val getAllPriceInCart: GetAllPriceInCart,
     private val deleteProductInCart: DeleteProductInCart,
     private val updateProductsInCart: UpdateProductsInCart,
     private val getProducts: GetProducts,
@@ -46,10 +44,6 @@ class MyCartViewModel @Inject constructor(
 
     var quantity: LiveData<Int> = _quantity
 
-    private var _users = MutableLiveData<Users>()
-
-    var users: LiveData<Users> = _users
-
     private var _allPrice = MutableLiveData<Float>()
 
     var allPrice: LiveData<Float> = _allPrice
@@ -62,8 +56,8 @@ class MyCartViewModel @Inject constructor(
         _products.postValue(getProducts.invoke(userId))
     }
 
-    fun getAllPrice(userId: String) = viewModelScope.launch {
-       _allPrice.postValue(getAllPrice.invoke(userId))
+    fun getAllPriceInCart(userId: String, quantity: Int) = viewModelScope.launch {
+       _allPrice.postValue(getAllPriceInCart.invoke(userId, quantity))
    }
 
     fun updateProductInCart(oldQuantity: Int, quantity: Int, idProduct: Long) = viewModelScope.launch {
@@ -102,11 +96,7 @@ class MyCartViewModel @Inject constructor(
 
     init {
         _quantity.value = 1
-        getUser()
         getCurrency()
     }
 
-   private fun getUser() = viewModelScope.launch {
-       _users.postValue(checkUserDetails.invoke())
-    }
 }

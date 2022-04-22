@@ -28,13 +28,9 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
-
-        initAdapter()
-        getAllPrice()
         getQuantity()
+        getAllPrice()
+        initAdapter()
         getQuantityInProducts()
 
         binding.btCheckout.setOnClickListener {
@@ -55,9 +51,9 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
 
     @SuppressLint("SetTextI18n")
     private fun initAdapter() {
-        viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getProductInCart(it.id)
-        }
+
+            viewModel.getProductInCart(prefs.idUser)
+
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             productsInCartAdapter = ProductsInCartAdapter(
                 itemsQuantity = quantity,
@@ -68,23 +64,23 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
             productsInCartAdapter.setOnItemClickListenerPlus {
                 viewModel.plusQuantity()
                 updateQuantity(it.idBuyer, it.idProduct)
-                viewModel.getAllPrice(it.idBuyer)
+                viewModel.getAllPriceInCart(it.idBuyer,quantity)
             }
             productsInCartAdapter.setOnItemClickListenerMinus {
                 viewModel.minusQuantity()
                 updateQuantity(it.idBuyer, it.idProduct)
-                viewModel.getAllPrice(it.idBuyer)
+                viewModel.getAllPriceInCart(it.idBuyer,quantity)
             }
 
 
             productsInCartAdapter.setOnItemClickListenerDelete { productInCart ->
-                    viewModel.deleteProductInCart(productInCart.idBuyer, productInCart.idProduct)
+                viewModel.deleteProductInCart(productInCart.idBuyer, productInCart.idProduct)
             }
         }
     }
 
     private fun updateQuantity(idBuyer: String, idProduct: Long) {
-            viewModel.getProductInCart(idBuyer)
+        viewModel.getProductInCart(idBuyer)
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             products.forEach {
                     product ->
@@ -102,22 +98,22 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
         }
     }
 
-   private fun getQuantityInProducts() {
-       viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-           products.forEach {
-               viewModel.getProduct(it.idSeller)
-           }
-       }
-       viewModel.products.observe(viewLifecycleOwner){ products ->
-           products.forEach {
-               quantityProduct = it.quantity!!
-           }
-       }
-   }
+    private fun getQuantityInProducts() {
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
+            products.forEach {
+                viewModel.getProduct(it.idSeller)
+            }
+        }
+        viewModel.products.observe(viewLifecycleOwner){ products ->
+            products.forEach {
+                quantityProduct = it.quantity!!
+            }
+        }
+    }
 
     private fun getAllPrice() {
-        viewModel.users.observe(viewLifecycleOwner){
-            viewModel.getAllPrice(it.id)
+        viewModel.quantity.observe(viewLifecycleOwner) {
+            viewModel.getAllPriceInCart(prefs.idUser, it)
         }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubPrice.text = "$it"

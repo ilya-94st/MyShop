@@ -14,6 +14,7 @@ import com.example.myshop.R
 import com.example.myshop.databinding.FragmentSelectAddressBinding
 import com.example.myshop.presentation.adapters.AddressAdapter
 import com.example.myshop.presentation.base.BaseFragment
+import com.example.myshop.presentation.ui.prefs
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -21,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
     private val viewModel: SelectAddressViewModel by viewModels()
     private lateinit var addressAdapter: AddressAdapter
-    private var userId = ""
     private var idAddress = 0L
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -37,10 +37,8 @@ class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
     }
 
     private fun initAdapter() {
-        viewModel.user.observe(viewLifecycleOwner){
-            viewModel.getItemsAddressUser(it.id)
-            userId = it.id
-        }
+        viewModel.getItemsAddressUser(prefs.idUser)
+
         viewModel.addressUser.observe(viewLifecycleOwner){ address ->
             addressAdapter = AddressAdapter(address)
             binding.rvAddress.adapter = addressAdapter

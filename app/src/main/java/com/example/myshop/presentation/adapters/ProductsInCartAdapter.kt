@@ -3,15 +3,13 @@ package com.example.myshop.presentation.adapters
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ItemsInCartBinding
 import com.example.myshop.domain.models.ProductsInCart
-import com.example.myshop.presentation.ui.prefs
 
-class ProductsInCartAdapter(private var itemsQuantity: Int, private val listProductsInCart: MutableList<ProductsInCart> , private val itemClickListener: ItemClickListener): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
+class ProductsInCartAdapter(private val listProductsInCart: MutableList<ProductsInCart> , private val itemClickListener: ItemClickListener): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ItemsInCartBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -34,15 +32,13 @@ class ProductsInCartAdapter(private var itemsQuantity: Int, private val listProd
         }
         holder.binding.tvPrice.text = "${products.price} ${products.currency}"
         holder.binding.tvTitle.text = products.title
-        holder.binding.tvQuantity.text = itemsQuantity.toString()
+        holder.binding.tvQuantity.text = "${products.quantity}"
 
         holder.binding.ibPlus.setOnClickListener {
             itemClickListener.add(listProductsInCart[position], position)
-            holder.binding.tvQuantity.text = "${prefs.qunatity}"
         }
         holder.binding.ibMinus.setOnClickListener {
             itemClickListener.minus(listProductsInCart[position], position)
-            holder.binding.tvQuantity.text = "${prefs.qunatity}"
         }
         holder.binding.ivDeleteProduct.setOnClickListener {
             itemClickListener.deleteItem(products)

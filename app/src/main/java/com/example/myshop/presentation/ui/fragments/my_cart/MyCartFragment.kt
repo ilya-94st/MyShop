@@ -61,7 +61,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
         viewModel.getProductInCart(prefs.idUser)
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             productsInCartAdapter = ProductsInCartAdapter(
-                itemsQuantity = 1,
                 listProductsInCart = products,
                 this
             )
@@ -100,19 +99,11 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
        }
     }
 
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onDestroyView() {
-        super.onDestroyView()
-        prefs.preferences.edit().clear()
-    }
-
     override fun minus(productsInCart: ProductsInCart, position: Int) {
         productsInCart.quantity -= 1
         updateQuantity(productsInCart.idBuyer, productsInCart.idOrder, productsInCart.quantity)
         viewModel.updateMinus(productsInCart.price, allPrice)
         productsInCartAdapter.notifyItemChanged(position)
-        prefs.qunatity = productsInCart.quantity
     }
 
     override fun add(productsInCart: ProductsInCart, position: Int) {
@@ -120,7 +111,6 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
         updateQuantity(productsInCart.idBuyer, productsInCart.idOrder, productsInCart.quantity)
         viewModel.updatePlus(productsInCart.price, allPrice)
         productsInCartAdapter.notifyItemChanged(position)
-        prefs.qunatity = productsInCart.quantity
     }
 
     override fun deleteItem(productsInCart: ProductsInCart) {

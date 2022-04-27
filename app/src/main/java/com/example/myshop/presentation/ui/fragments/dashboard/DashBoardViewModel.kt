@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.use_case.GetAllProducts
-import com.example.myshop.presentation.adapters.AllProductsAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -27,7 +27,6 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
     override  fun upDataProducts(products: Map<String, Any>, oldProducts: Products) {
         val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("quality", oldProducts.quantity).get()
         querySnapshot.addOnSuccessListener {
-
                 for (document in it) {
                     fireStore.collection(Constants.PRODUCTS).document(document.id).set(
                         products, SetOptions.merge())

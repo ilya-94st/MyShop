@@ -132,21 +132,10 @@ class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseF
         return priceAll
     }
 
-    override suspend fun getAllPriceInCart(userId: String, quantity: Int): Float? {
-        var priceAll: Float? = 0F
-        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", userId).get().await()
+    override suspend fun getProductQuantityInCart(userId: String, idOrder: Long): Int {
+        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", userId).whereEqualTo("idOrder", idOrder).get().await()
 
-        for(document in querySnapshot.documents) {
-            val product = document.toObject<ProductsInCart>()
-            val price = product?.price
-            if (priceAll != null) {
-                if (price != null) {
-                    priceAll += price * quantity
-                }
-            }
-        }
-        return priceAll
+        return querySnapshot.documents[0].data?.get("quantity").toString().toInt()
+
     }
-
-
 }

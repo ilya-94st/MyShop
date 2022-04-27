@@ -20,12 +20,21 @@ import javax.inject.Inject
 @HiltViewModel
 class MyCartViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
-    private val getAllPriceInCart: GetAllPriceInCart,
     private val deleteProductInCart: DeleteProductInCart,
     private val updateProductsInCart: UpdateProductsInCart,
     private val getProducts: GetProducts,
-    private val getCurrencyFromApi: GetCurrencyFromApi
+    private val getCurrencyFromApi: GetCurrencyFromApi,
+    private val getQuantityInCart: GetQuantityInCart
     ): ViewModel() {
+
+    private var _error = MutableLiveData<String>()
+
+    var error: LiveData<String> = _error
+
+    private var _quantityInCart = MutableLiveData<Int>()
+
+    var quantityInCart: LiveData<Int> = _quantityInCart
+
     private val _itemsCurrency: MutableStateFlow<Resource<CurrencyRates>> = MutableStateFlow(Resource.Loading())
 
     val itemsCurrency: StateFlow<Resource<CurrencyRates>> = _itemsCurrency.asStateFlow()
@@ -38,15 +47,19 @@ class MyCartViewModel @Inject constructor(
 
     var productsInCart: LiveData<MutableList<ProductsInCart>> = _productsInCart
 
-    private var number = 1
-
-    private var _quantity = MutableLiveData<Int>()
-
-    var quantity: LiveData<Int> = _quantity
 
     private var _allPrice = MutableLiveData<Float>()
 
     var allPrice: LiveData<Float> = _allPrice
+
+    fun getQuantityInCart(userId: String, idOrder: Long) = viewModelScope.launch {
+        val q = getQuantityInCart.invoke(userId, idOrder)
+        if (q == null) {
+            _error.value = "error quantity"
+        } else {
+            _quantityInCart.postValue(getQuantityInCart.invoke(userId, idOrder))
+        }
+    }
 
     fun getProductInCart(idBuyer: String) = viewModelScope.launch {
         _productsInCart.postValue(getProductInCart.invoke(idBuyer))
@@ -56,8 +69,24 @@ class MyCartViewModel @Inject constructor(
         _products.postValue(getProducts.invoke(userId))
     }
 
-    fun getAllPriceInCart(userId: String, quantity: Int) = viewModelScope.launch  {
-       _allPrice.postValue(getAllPriceInCart.invoke(userId, quantity))
+    fun updatePlus(price: Float, priceSum: Float) {
+         val upPrice = priceSum + price
+        _allPrice.value = upPrice
+    }
+
+    fun updateMinus(price: Float, priceSum: Float) {
+        val upPrice = priceSum - price
+        _allPrice.value = upPrice
+    }
+
+    fun getAllPriceInCart(productInCart: MutableList<ProductsInCart>) {
+        var priceAll = 0F
+       for (product in productInCart) {
+           val price = product.price
+           val quantity = product.quantity
+           priceAll += price * quantity
+       }
+        _allPrice.value = priceAll
    }
 
     fun updateProductInCart(oldQuantity: Int, quantity: Int, idOrder: Long) = viewModelScope.launch {
@@ -68,13 +97,6 @@ class MyCartViewModel @Inject constructor(
         deleteProductInCart.invoke(idOrder)
     }
 
-    fun plusQuantity() {
-        _quantity.value = ++ number
-    }
-
-    fun minusQuantity() {
-        _quantity.value = -- number
-    }
 
     private fun getCurrency() = viewModelScope.launch {
         safeBreakingNewsCall()
@@ -95,7 +117,6 @@ class MyCartViewModel @Inject constructor(
     }
 
     init {
-        _quantity.value = 1
         getCurrency()
     }
 

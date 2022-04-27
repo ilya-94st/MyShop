@@ -9,6 +9,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
 import com.example.myshop.databinding.FragmentMyCartBinding
+import com.example.myshop.domain.models.ProductsInCart
+import com.example.myshop.presentation.adapters.ItemClickListener
 import com.example.myshop.presentation.adapters.ProductsInCartAdapter
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.ui.prefs
@@ -16,11 +18,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 @SuppressLint("SetTextI18n")
-class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
+class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener {
     private val viewModel: MyCartViewModel by viewModels()
     private lateinit var productsInCartAdapter: ProductsInCartAdapter
-    private var quantity = 0
     private var quantityProduct = 0
+    private var allPrice = 0F
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentMyCartBinding::inflate
@@ -28,72 +30,53 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getQuantity()
-        getAllPrice()
+        viewModel.error.observe(viewLifecycleOwner){
+            errorSnackBar(it, true)
+        }
+
         initAdapter()
+        getAllPrice()
         getQuantityInProducts()
 
         binding.btCheckout.setOnClickListener {
-            checkProductInCart()
-        }
-    }
-
-    @SuppressLint("CommitPrefEdits")
-    private fun checkProductInCart() {
-        if (quantityProduct < quantity || quantity < 0) {
-            binding.tvErrorProduct.visibility = View.VISIBLE
-            binding.tvErrorProduct.text = "not enough products"
-        }else {
             prefs.preferences.edit().clear()
             findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
+            //checkProductInCart()
         }
     }
 
-    @SuppressLint("SetTextI18n")
+
+  //  private fun checkProductInCart() {
+ //       if (quantityProduct < quantity || quantity < 0) {
+  //          binding.tvErrorProduct.visibility = View.VISIBLE
+   //         binding.tvErrorProduct.text = "not enough products"
+    //    }else {
+     //       prefs.preferences.edit().clear()
+      //      findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
+      //  }
+   // }
+
+
     private fun initAdapter() {
-
         viewModel.getProductInCart(prefs.idUser)
-
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             productsInCartAdapter = ProductsInCartAdapter(
-                itemsQuantity = quantity,
-                listProductsInCart = products
+                itemsQuantity = 1,
+                listProductsInCart = products,
+                this
             )
             binding.rvProducts.adapter = productsInCartAdapter
-
-            productsInCartAdapter.setOnItemClickListenerPlus {
-                viewModel.plusQuantity()
-                updateQuantity(it.idBuyer, it.idOrder)
-                viewModel.getAllPriceInCart(it.idBuyer,quantity)
-            }
-            productsInCartAdapter.setOnItemClickListenerMinus {
-                viewModel.minusQuantity()
-                updateQuantity(it.idBuyer, it.idOrder)
-                viewModel.getAllPriceInCart(it.idBuyer,quantity)
-            }
-
-            productsInCartAdapter.setOnItemClickListenerDelete { productInCart ->
-                viewModel.deleteProductInCart(productInCart.idOrder)
-            }
+            viewModel.getAllPriceInCart(products)
         }
     }
 
-    private fun updateQuantity(idBuyer: String, idProduct: Long) {
-        viewModel.getProductInCart(idBuyer)
-        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-            products.forEach {
-                    product ->
-                    viewModel.updateProductInCart(product.quantity, quantity, idProduct)
-                    prefs.qunatity = quantity
-            }
+    private fun updateQuantity(idBuyer: String, idOrder: Long, quantity: Int) {
+        viewModel.getQuantityInCart(idBuyer, idOrder)
+        viewModel.quantityInCart.observe(viewLifecycleOwner){
+            viewModel.updateProductInCart(it, quantity, idOrder)
         }
     }
 
-    private fun getQuantity() {
-        viewModel.quantity.observe(viewLifecycleOwner) {
-            quantity = it
-        }
-    }
 
     private fun getQuantityInProducts() {
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
@@ -109,14 +92,12 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     }
 
     private fun getAllPrice() {
-        viewModel.quantity.observe(viewLifecycleOwner) {
-            viewModel.getAllPriceInCart(prefs.idUser, it)
-       }
-        viewModel.allPrice.observe(viewLifecycleOwner){
+        viewModel.allPrice.observe(viewLifecycleOwner) {
+            allPrice = it
             binding.tvSubPrice.text = "$it"
             binding.tvShippingPrice.text = "10"
             binding.tvTotalSum.text = "${(it + 10)}"
-        }
+       }
     }
 
 
@@ -124,5 +105,25 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
         prefs.preferences.edit().clear()
+    }
+
+    override fun minus(productsInCart: ProductsInCart, position: Int) {
+        productsInCart.quantity -= 1
+        updateQuantity(productsInCart.idBuyer, productsInCart.idOrder, productsInCart.quantity)
+        viewModel.updateMinus(productsInCart.price, allPrice)
+        productsInCartAdapter.notifyItemChanged(position)
+        prefs.qunatity = productsInCart.quantity
+    }
+
+    override fun add(productsInCart: ProductsInCart, position: Int) {
+        productsInCart.quantity += 1
+        updateQuantity(productsInCart.idBuyer, productsInCart.idOrder, productsInCart.quantity)
+        viewModel.updatePlus(productsInCart.price, allPrice)
+        productsInCartAdapter.notifyItemChanged(position)
+        prefs.qunatity = productsInCart.quantity
+    }
+
+    override fun deleteItem(productsInCart: ProductsInCart) {
+        viewModel.deleteProductInCart(productsInCart.idOrder)
     }
 }

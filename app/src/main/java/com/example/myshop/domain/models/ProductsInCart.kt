@@ -11,5 +11,5 @@ data class ProductsInCart(
     val price: Float = 0F,
     val image: String = "",
     val currency: String ="",
-    val quantity: Int = 0,
+    var quantity: Int = 0,
 ): Serializable

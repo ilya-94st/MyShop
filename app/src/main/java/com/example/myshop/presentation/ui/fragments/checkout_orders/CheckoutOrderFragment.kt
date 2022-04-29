@@ -66,10 +66,13 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     }
 
     private fun getAllPrice() {
-        viewModel.getAllPrice(prefs.idUser)
+        viewModel.getProductInCart(prefs.idUser)
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products->
+            viewModel.getAllPriceInCart(products)
+        }
         viewModel.allPrice.observe(viewLifecycleOwner){
             binding.tvSubtotal.text = "Subtotal $it"
-            binding.tvShippingCharge.text = "Shipping Charge ${quantityProduct}$"
+            binding.tvShippingCharge.text = "Shipping Charge ${10}$"
             binding.tvTotalAmount.text = "Total Amount ${(it + 10F)}"
         }
     }
@@ -77,7 +80,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private fun getProducts() {
         viewModel.productsInCart.observe(viewLifecycleOwner){ products->
             products.forEach {
-                viewModel.getProduct(it.idSeller)
+                viewModel.getProduct(it.idProduct)
             }
         }
     }
@@ -102,13 +105,10 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initAdapter() {
-        productsAddInOrder = ProductsAddInOrder(
-            itemsQuantity = quantityProductsInCart
-        )
+        productsAddInOrder = ProductsAddInOrder()
         binding.vpProducts.adapter = productsAddInOrder
 
         viewModel.getProductInCart(prefs.idUser)
-
         viewModel.productsInCart.observe(viewLifecycleOwner){ products->
             productsAddInOrder.submitList(products)
         }
@@ -120,16 +120,18 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
     private fun getQuantityProductsInCart() {
         viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             products.forEach {
-               quantityProductsInCart = it.quantity
+                quantityProductsInCart = it.quantity
             }
         }
     }
 
     private fun updateProducts() {
-        val result = quantityProduct - quantityProductsInCart
         viewModel.products.observe(viewLifecycleOwner){ products ->
-            products.forEach {
-                viewModel.updateProducts(it, result)
+            products.forEach { product ->
+                         val result = product.quantity?.minus(quantityProductsInCart)
+                         if (result != null) {
+                             viewModel.updateProducts(product, result, product.idProducts)
+                         }
             }
         }
     }
@@ -158,7 +160,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                         notes,
                         chooseAddress,
                         time,
-                        quantityProductsInCart
+                        product.quantity
                     )
                     viewModel.addProductInOrder(productInOrder)
                 }

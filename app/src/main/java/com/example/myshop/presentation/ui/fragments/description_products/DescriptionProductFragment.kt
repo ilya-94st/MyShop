@@ -27,7 +27,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
 
     private val args: DescriptionProductFragmentArgs by navArgs()
     private val viewModel: DescriptionProductViewModel by viewModels()
-    private var idOrders = 0L
+    private var idOrder = 0L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +36,7 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         getUserMobile()
 
         viewModel.idOrders.observe(viewLifecycleOwner){
-            idOrders = it
+            idOrder = it
         }
 
         binding.btAddToCart.setOnClickListener {
@@ -92,9 +92,12 @@ class DescriptionProductFragment : BaseFragment<FragmentDescriptionProductBindin
         val price = product.price
         val title = product.title
         val currency = product.currency
-        val productInCart = ProductsInCart(idSeller, idProducts, prefs.idUser, idOrders, title, price!!, imageProduct, currency, Constants.QUANTITIES)
+        viewModel.idOrders.observe(viewLifecycleOwner) {
+            val productInCart = ProductsInCart(idSeller, idProducts, prefs.idUser, idOrder, title, price!!, imageProduct, currency, Constants.QUANTITIES)
             viewModel.addProductInCart(productInCart)
             findNavController().navigate(R.id.action_descriptionProductFragment_to_myCartFragment)
+        }
+
     }
 
 

@@ -24,8 +24,8 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
     return registerResult
     }
 
-    override  fun upDataProducts(products: Map<String, Any>, oldProducts: Products) {
-        val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("quality", oldProducts.quantity).get()
+    override  fun upDataProducts(products: Map<String, Any>, oldProducts: Products, idProducts: Long) {
+        val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("quantity", oldProducts.quantity).whereEqualTo("idProducts", idProducts).get()
         querySnapshot.addOnSuccessListener {
                 for (document in it) {
                     fireStore.collection(Constants.PRODUCTS).document(document.id).set(
@@ -44,7 +44,6 @@ class UpdateRepositoryImp @Inject constructor(private val fireStore: FirebaseFir
                 fireStore.collection(Constants.PRODUCT_IN_CART).document(document.id).set(
                     products, SetOptions.merge()
                 ).await()
-
         }
     }
 }

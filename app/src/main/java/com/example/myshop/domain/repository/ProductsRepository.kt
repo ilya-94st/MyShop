@@ -25,13 +25,13 @@ interface ProductsRepository {
 
    suspend fun getProduct(idSeller: String): ArrayList<Products>
 
+   suspend fun getProductIdProduct(idProduct: Long): ArrayList<Products>
+
    suspend fun getAllProducts(): ArrayList<Products>
 
    suspend fun getProductInCart(idBuyer: String): ArrayList<ProductsInCart>
 
    suspend fun getProductInOrders(idBuyer: String): ArrayList<ProductsInOrder>
-
-  suspend  fun getAllPrice(userId: String): Float?
 
    suspend fun getProductQuantityInCart(userId: String, idOrder: Long): Int?
 }

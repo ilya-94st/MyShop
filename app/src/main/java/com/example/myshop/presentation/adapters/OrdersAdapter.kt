@@ -1,5 +1,6 @@
 package com.example.myshop.presentation.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -41,13 +42,13 @@ class OrdersAdapter :  RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
         return differ.currentList.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
         val products = differ.currentList[position]
         holder.itemView.apply {
             Glide.with(this).load(products.image).placeholder(ProgressCircleGlide.progressBar(context)).
             into(holder.binding.ivProduct)
         }
-        holder.binding.tvPrice.text = "${products.price}  ${products.currency}"
         holder.binding.tvTitle.text = products.title + "${products.idOrder}"
         holder.itemView.setOnClickListener {
             onItemClickListener.let {

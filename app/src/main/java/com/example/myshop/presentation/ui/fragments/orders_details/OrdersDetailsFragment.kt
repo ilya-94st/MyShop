@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
@@ -16,6 +17,7 @@ import java.io.IOException
 
 @AndroidEntryPoint
 class OrdersDetailsFragment : BaseFragment<FragmentOrdersDetailsBinding>() {
+    private val viewModel: OrderDetailsViewModel by viewModels()
     private val args: OrdersDetailsFragmentArgs by navArgs()
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -47,10 +49,13 @@ class OrdersDetailsFragment : BaseFragment<FragmentOrdersDetailsBinding>() {
         binding.tvFullName.text = product.name
         binding.tvNameAddress.text = product.chooseAddress
 
+        viewModel.getAllPriceInCart(product.quantity, product.price)
 
-        binding.tvSubtotal.text = "Subtotal ${product.price}"
-        binding.tvShippingCharge.text = "Shipping Charge 10$"
-        binding.tvTotalAmount.text = "Total Amount ${product.price + 10F}"
+        viewModel.allPrice.observe(viewLifecycleOwner) {
+            binding.tvSubtotal.text = "Subtotal $it"
+            binding.tvShippingCharge.text = "Shipping Charge 10$"
+            binding.tvTotalAmount.text = "Total Amount ${it + 10F}"
+        }
         hideProgressDialog()
 
     }

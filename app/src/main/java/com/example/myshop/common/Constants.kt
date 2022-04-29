@@ -33,7 +33,7 @@ object Constants {
     const val USER_PROFILE_IMAGE = "User_Profile_Image"
     const val USER_PRODUCTS_IMAGES = "USER_Products_Images"
 
-    const val QUANTITIES_IN_PRODUCTS = "quality"
+    const val QUANTITIES_IN_PRODUCTS = "quantity"
     const val QUANTITIES_IN_PRODUCTS_IN_CART = "quantity"
 
     const val ID_PRODUCTS_RANDOM = 100000000000000

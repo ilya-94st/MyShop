@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
-import com.example.myshop.domain.models.Users
 import com.example.myshop.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,12 +17,12 @@ import javax.inject.Inject
 @HiltViewModel
 class CheckoutOrderViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
-    private val getAllPrice: GetAllPrice,
     private val deleteAllProductsInCart: DeleteAllProductsInCart,
     private val addProductInOrder: AddProductInOrder,
     private val updateProducts: UpdateProducts,
-    private val getProducts: GetProducts,
+    private val getProductIdProduct: GetProductIdProduct
     ): ViewModel() {
+
     private var _products = MutableLiveData<List<Products>>()
 
     var products: LiveData<List<Products>> = _products
@@ -33,9 +32,9 @@ class CheckoutOrderViewModel @Inject constructor(
     var time: LiveData<String> = _time
 
 
-    private var _productsInCart = MutableLiveData<List<ProductsInCart>>()
+    private var _productsInCart = MutableLiveData<MutableList<ProductsInCart>>()
 
-    var productsInCart: LiveData<List<ProductsInCart>> = _productsInCart
+    var productsInCart: LiveData<MutableList<ProductsInCart>> = _productsInCart
 
 
     private var _allPrice = MutableLiveData<Float>()
@@ -46,9 +45,14 @@ class CheckoutOrderViewModel @Inject constructor(
        _productsInCart.postValue(getProductInCart.invoke(idBuyer))
     }
 
-
-    fun getAllPrice(userId: String) = viewModelScope.launch {
-        _allPrice.postValue(getAllPrice.invoke(userId))
+    fun getAllPriceInCart(productInCart: MutableList<ProductsInCart>) {
+        var priceAll = 0F
+        for (product in productInCart) {
+            val price = product.price
+            val quantity = product.quantity
+            priceAll += price * quantity
+        }
+        _allPrice.value = priceAll
     }
 
     fun deleteProducts(idBuyer: String) {
@@ -59,12 +63,13 @@ class CheckoutOrderViewModel @Inject constructor(
         addProductInOrder.invoke(productsInOrder)
     }
 
-    fun updateProducts(oldProduct: Products, quantity: Int){
-        updateProducts.invoke(oldProduct, quantity)
+
+    fun updateProducts(oldProduct: Products, quantity: Int, idProducts: Long){
+        updateProducts.invoke(oldProduct, quantity, idProducts)
     }
 
-    fun getProduct(userId: String) = viewModelScope.launch {
-        _products.postValue(getProducts.invoke(userId))
+    fun getProduct(idProducts: Long) = viewModelScope.launch {
+        _products.postValue(getProductIdProduct.invoke(idProducts))
     }
 
     init {

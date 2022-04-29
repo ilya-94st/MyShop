@@ -53,12 +53,7 @@ class MyCartViewModel @Inject constructor(
     var allPrice: LiveData<Float> = _allPrice
 
     fun getQuantityInCart(userId: String, idOrder: Long) = viewModelScope.launch {
-        val q = getQuantityInCart.invoke(userId, idOrder)
-        if (q == null) {
-            _error.value = "error quantity"
-        } else {
             _quantityInCart.postValue(getQuantityInCart.invoke(userId, idOrder))
-        }
     }
 
     fun getProductInCart(idBuyer: String) = viewModelScope.launch {
@@ -76,6 +71,11 @@ class MyCartViewModel @Inject constructor(
 
     fun updateMinus(price: Float, priceSum: Float) {
         val upPrice = priceSum - price
+        _allPrice.value = upPrice
+    }
+
+    fun updateAllPriceAfterDelete(quantity: Int, allPrice: Float, price: Float) {
+        val upPrice = allPrice - (price * quantity)
         _allPrice.value = upPrice
     }
 

@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class UpdateProducts @Inject constructor(private val updateRepository: UpdateRepository) {
 
- operator fun invoke(oldProduct: Products, quantity: Int) {
+ operator fun invoke(oldProduct: Products, quantity: Int, idProducts: Long) {
      try {
        val productHashMap = mutableMapOf<String, Any>()
 
@@ -16,7 +16,7 @@ class UpdateProducts @Inject constructor(private val updateRepository: UpdateRep
            productHashMap[Constants.QUANTITIES_IN_PRODUCTS] = quantity
        }
 
-        updateRepository.upDataProducts(productHashMap, oldProduct)
+        updateRepository.upDataProducts(productHashMap, oldProduct, idProducts)
      } catch (e: Exception) {
          Log.e("updateProductsData", "$e")
      }

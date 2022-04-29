@@ -30,12 +30,10 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
     @SuppressLint("CommitPrefEdits")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.error.observe(viewLifecycleOwner){
-            errorSnackBar(it, true)
-        }
 
         initAdapter()
         getAllPrice()
+        setAllPrice()
         getQuantityInProducts()
 
         binding.btCheckout.setOnClickListener {
@@ -51,10 +49,9 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
   //          binding.tvErrorProduct.visibility = View.VISIBLE
    //         binding.tvErrorProduct.text = "not enough products"
     //    }else {
-     //       prefs.preferences.edit().clear()
       //      findNavController().navigate(R.id.action_myCartFragment_to_selectAddressFragment)
       //  }
-   // }
+ //   }
 
 
     private fun initAdapter() {
@@ -65,14 +62,20 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
                 this
             )
             binding.rvProducts.adapter = productsInCartAdapter
+        }
+    }
+
+    private fun getAllPrice() {
+        viewModel.getProductInCart(prefs.idUser)
+        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
             viewModel.getAllPriceInCart(products)
         }
     }
 
-    private fun updateQuantity(idBuyer: String, idOrder: Long, quantity: Int) {
+    private fun updateQuantity(idBuyer: String, idOrder: Long, quantityNew: Int) {
         viewModel.getQuantityInCart(idBuyer, idOrder)
         viewModel.quantityInCart.observe(viewLifecycleOwner){
-            viewModel.updateProductInCart(it, quantity, idOrder)
+
         }
     }
 
@@ -90,7 +93,7 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
         }
     }
 
-    private fun getAllPrice() {
+    private fun setAllPrice() {
         viewModel.allPrice.observe(viewLifecycleOwner) {
             allPrice = it
             binding.tvSubPrice.text = "$it"
@@ -100,20 +103,23 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
     }
 
     override fun minus(productsInCart: ProductsInCart, position: Int) {
-        productsInCart.quantity -= 1
-        updateQuantity(productsInCart.idBuyer, productsInCart.idOrder, productsInCart.quantity)
+        val q = productsInCart.quantity
+        productsInCart.quantity --
+        viewModel.updateProductInCart(q,productsInCart.quantity,productsInCart.idOrder)
         viewModel.updateMinus(productsInCart.price, allPrice)
         productsInCartAdapter.notifyItemChanged(position)
     }
 
     override fun add(productsInCart: ProductsInCart, position: Int) {
-        productsInCart.quantity += 1
-        updateQuantity(productsInCart.idBuyer, productsInCart.idOrder, productsInCart.quantity)
+        val q = productsInCart.quantity
+        productsInCart.quantity ++
+        viewModel.updateProductInCart(q,productsInCart.quantity,productsInCart.idOrder)
         viewModel.updatePlus(productsInCart.price, allPrice)
         productsInCartAdapter.notifyItemChanged(position)
     }
 
     override fun deleteItem(productsInCart: ProductsInCart) {
         viewModel.deleteProductInCart(productsInCart.idOrder)
+        viewModel.updateAllPriceAfterDelete(productsInCart.quantity, allPrice, productsInCart.price)
     }
 }

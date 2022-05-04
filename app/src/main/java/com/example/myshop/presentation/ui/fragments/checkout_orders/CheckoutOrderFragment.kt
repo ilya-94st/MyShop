@@ -41,7 +41,6 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
         getItemsAddress()
         getAllPrice()
 
-
         binding.btPlaceOder.setOnClickListener {
             if (quantityProduct< quantityProductsInCart || quantityProductsInCart < 0) {
                 errorSnackBar("not enough products", true)
@@ -79,9 +78,7 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
 
     private fun getProducts() {
         viewModel.productsInCart.observe(viewLifecycleOwner){ products->
-            products.forEach {
-                viewModel.getProduct(it.idProduct)
-            }
+            viewModel.getProduct(products)
         }
     }
 
@@ -166,6 +163,4 @@ class CheckoutOrderFragment : BaseFragment<FragmentCheckoutOrderBinding>() {
                 }
             }
     }
-
-
 }

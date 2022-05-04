@@ -3,6 +3,8 @@ package com.example.myshop.domain.repository
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.QuerySnapshot
 
 interface ProductsRepository {
 
@@ -27,7 +29,7 @@ interface ProductsRepository {
 
    suspend fun getProductIdProduct(idProduct: Long): ArrayList<Products>
 
-   suspend fun getAllProducts(): ArrayList<Products>
+   suspend fun getAllProducts(): Task<QuerySnapshot>
 
    suspend fun getProductInCart(idBuyer: String): ArrayList<ProductsInCart>
 

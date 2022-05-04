@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @HiltViewModel
 class CheckoutOrderViewModel @Inject constructor(
@@ -45,6 +46,7 @@ class CheckoutOrderViewModel @Inject constructor(
        _productsInCart.postValue(getProductInCart.invoke(idBuyer))
     }
 
+
     fun getAllPriceInCart(productInCart: MutableList<ProductsInCart>) {
         var priceAll = 0F
         for (product in productInCart) {
@@ -68,8 +70,15 @@ class CheckoutOrderViewModel @Inject constructor(
         updateProducts.invoke(oldProduct, quantity, idProducts)
     }
 
-    fun getProduct(idProducts: Long) = viewModelScope.launch {
-        _products.postValue(getProductIdProduct.invoke(idProducts))
+    fun getProduct(productInCart: MutableList<ProductsInCart>) = viewModelScope.launch {
+        val arrayListProducts = ArrayList<Products>()
+        for (product in productInCart) {
+            val idProduct = product.idProduct
+          getProductIdProduct.invoke(idProduct).forEach {
+              arrayListProducts.add(it)
+          }
+        }
+        _products.postValue(arrayListProducts)
     }
 
     init {

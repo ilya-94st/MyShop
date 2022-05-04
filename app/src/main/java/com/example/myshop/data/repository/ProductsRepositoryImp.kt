@@ -14,15 +14,7 @@ import javax.inject.Inject
 
 class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseFirestore): ProductsRepository {
 
-    override suspend fun getAllProducts() : ArrayList<Products> {
-        val listAllProducts: ArrayList<Products> = arrayListOf()
-        val querySnapshot = fireStore.collection(Constants.PRODUCTS).get().await()
-        for (document in querySnapshot) {
-            val product = document.toObject<Products>()
-            listAllProducts.add(product)
-        }
-        return listAllProducts
-    }
+    override suspend fun getAllProducts() = fireStore.collection(Constants.PRODUCTS).get()
 
    override suspend  fun addProducts(products: Products) {
             fireStore.collection(Constants.PRODUCTS).add(products).await()

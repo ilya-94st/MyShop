@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentDashBoardBinding
 import com.example.myshop.presentation.adapters.AllProductsAdapter
 import com.example.myshop.presentation.base.BaseFragment
@@ -24,7 +25,8 @@ class DashBoardFragment : BaseFragment<FragmentDashBoardBinding>() {
         binding.settings.setOnClickListener {
             findNavController().navigate(R.id.action_dashBoardFragment_to_settingsFragment)
         }
-      initAdapter()
+        initAdapter()
+        observeProducts()
 
         allProductsAdapter.setOnItemClickListener {
              val bundle = Bundle().apply {
@@ -34,15 +36,27 @@ class DashBoardFragment : BaseFragment<FragmentDashBoardBinding>() {
         }
     }
 
+    private fun observeProducts() {
+        showProgressDialog("Please wait...")
+        viewModel.getAllProducts()
+        viewModel.result.observe(viewLifecycleOwner) {
+                event ->
+            when (event) {
+                is EventClass.SuccessList -> {
+                    allProductsAdapter.submitList(event.list)
+                    hideProgressDialog()
+                }
+                is EventClass.ErrorIn -> {
+                    hideProgressDialog()
+                    errorSnackBar(event.error, true)
+                }
+                else -> Unit
+            }
+        }
+    }
+
     private fun initAdapter() {
         allProductsAdapter = AllProductsAdapter()
         binding.rvProducts.adapter = allProductsAdapter
-        showProgressDialog("Please wait...")
-        viewModel.getAllProducts()
-        viewModel.products.observe(viewLifecycleOwner){
-            allProductsAdapter.submitList(it)
-            hideProgressDialog()
-        }
-
     }
 }

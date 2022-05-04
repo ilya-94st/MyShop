@@ -82,6 +82,5 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                         hideProgressDialog()
                     }
                 }
-
         }
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentSelectAddressBinding
 import com.example.myshop.presentation.adapters.AddressAdapter
 import com.example.myshop.presentation.base.BaseFragment
@@ -27,25 +28,35 @@ class SelectAddressFragment : BaseFragment<FragmentSelectAddressBinding>() {
         binding.btAddAddress.setOnClickListener {
             findNavController().navigate(R.id.action_selectAddressFragment_to_addAddressFragment)
         }
-        initAdapter()
+       observeAddress()
     }
 
-    private fun initAdapter() {
+    private fun observeAddress() {
         viewModel.getItemsAddressUser(prefs.idUser)
 
-        viewModel.addressUser.observe(viewLifecycleOwner){ address ->
-            addressAdapter = AddressAdapter(address)
-            binding.rvAddress.adapter = addressAdapter
 
-            addressAdapter.setOnItemClickListenerDeleteItem {
-                viewModel.deleteAddress(it.idAddress)
-            }
-            addressAdapter.setOnItemClickListener {
-                val bundle = Bundle().apply {
-                    putSerializable("userAdres", it)
+        viewModel.result.observe(viewLifecycleOwner){ event ->
+            when (event) {
+                is EventClass.GetAddressItems -> {
+                    addressAdapter = AddressAdapter(event.list)
+                    binding.rvAddress.adapter = addressAdapter
+
+                    addressAdapter.setOnItemClickListenerDeleteItem {
+                        viewModel.deleteAddress(it.idAddress)
+                    }
+                    addressAdapter.setOnItemClickListener {
+                        val bundle = Bundle().apply {
+                            putSerializable("userAdres", it)
+                        }
+                        findNavController().navigate(R.id.action_selectAddressFragment_to_checkoutOrderFragment, bundle)
+                    }
                 }
-                findNavController().navigate(R.id.action_selectAddressFragment_to_checkoutOrderFragment, bundle)
+                is EventClass.ErrorIn -> {
+                    errorSnackBar(event.error, true)
+                }
+                else -> Unit
             }
+
         }
     }
 }

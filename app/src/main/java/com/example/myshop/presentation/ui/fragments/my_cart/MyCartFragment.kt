@@ -8,9 +8,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentMyCartBinding
 import com.example.myshop.domain.models.ProductsInCart
-import com.example.myshop.presentation.adapters.ItemClickListener
+import com.example.myshop.presentation.adapters.ItemClickListenerCart
 import com.example.myshop.presentation.adapters.ProductsInCartAdapter
 import com.example.myshop.presentation.base.BaseFragment
 import com.example.myshop.presentation.ui.prefs
@@ -18,10 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 @SuppressLint("SetTextI18n")
-class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener {
+class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListenerCart {
     private val viewModel: MyCartViewModel by viewModels()
     private lateinit var productsInCartAdapter: ProductsInCartAdapter
-    private var quantityProduct = 0
     private var allPrice = 0F
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
@@ -31,10 +31,10 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initAdapter()
+        observeProductsInCart()
         getAllPrice()
         setAllPrice()
-        getQuantityInProducts()
+
 
         binding.btCheckout.setOnClickListener {
             prefs.preferences.edit().clear()
@@ -54,43 +54,28 @@ class MyCartFragment : BaseFragment<FragmentMyCartBinding>(), ItemClickListener 
  //   }
 
 
-    private fun initAdapter() {
+    private fun observeProductsInCart() {
         viewModel.getProductInCart(prefs.idUser)
-        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-            productsInCartAdapter = ProductsInCartAdapter(
-                listProductsInCart = products,
-                this
-            )
-            binding.rvProducts.adapter = productsInCartAdapter
+        viewModel.result.observe(viewLifecycleOwner){ event ->
+            when (event) {
+                is EventClass.GetProductsInCart -> {
+                    productsInCartAdapter = ProductsInCartAdapter(
+                        listProductsInCart = event.list,
+                        this
+                    )
+                    binding.rvProducts.adapter = productsInCartAdapter
+                    viewModel.getAllPriceInCart(event.list)
+                }
+                is EventClass.ErrorIn -> {
+                    errorSnackBar(event.error, true)
+                }
+                else -> Unit
+            }
         }
     }
 
     private fun getAllPrice() {
         viewModel.getProductInCart(prefs.idUser)
-        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-            viewModel.getAllPriceInCart(products)
-        }
-    }
-
-    private fun updateQuantity(idBuyer: String, idOrder: Long, quantityNew: Int) {
-        viewModel.getQuantityInCart(idBuyer, idOrder)
-        viewModel.quantityInCart.observe(viewLifecycleOwner){
-
-        }
-    }
-
-
-    private fun getQuantityInProducts() {
-        viewModel.productsInCart.observe(viewLifecycleOwner){ products ->
-            products.forEach {
-                viewModel.getProduct(it.idSeller)
-            }
-        }
-        viewModel.products.observe(viewLifecycleOwner){ products ->
-            products.forEach {
-                quantityProduct = it.quantity!!
-            }
-        }
     }
 
     private fun setAllPrice() {

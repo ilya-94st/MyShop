@@ -21,7 +21,7 @@ class GetAllProducts @Inject constructor(private val productsRepository: Product
      val product = document.toObject<Products>()
      listAllProducts.add(product)
     }
-    registerResult = EventClass.SuccessList(listAllProducts)
+    registerResult = EventClass.GetAllProducts(listAllProducts)
    }.await()
   }catch (e: Exception) {
    registerResult =  EventClass.ErrorIn("${e.message}")

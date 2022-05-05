@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 import com.example.myshop.R
+import com.example.myshop.common.EventClass
 import com.example.myshop.databinding.FragmentOrdersBinding
 import com.example.myshop.presentation.adapters.OrdersAdapter
 import com.example.myshop.presentation.base.BaseFragment
@@ -24,21 +25,31 @@ class OrdersFragment : BaseFragment<FragmentOrdersBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
                 initAdapter()
+                observeOrders()
     }
 
     private fun initAdapter() {
         ordersAdapter = OrdersAdapter()
         binding.rvProducts.adapter = ordersAdapter
+    }
 
+    private fun observeOrders() {
         viewModel.getOrders(prefs.idUser)
-
-        viewModel.order.observe(viewLifecycleOwner){ order->
-            ordersAdapter.submitList(order)
-            ordersAdapter.setOnItemClickListener {
-                val bundle = Bundle().apply {
-                   putSerializable("order", it)
+        viewModel.result.observe(viewLifecycleOwner){ event ->
+            when (event) {
+                is EventClass.GetOrders -> {
+                    ordersAdapter.submitList(event.list)
+                    ordersAdapter.setOnItemClickListener {
+                        val bundle = Bundle().apply {
+                            putSerializable("order", it)
+                        }
+                        findNavController().navigate(R.id.action_ordersFragment_to_ordersDetailsFragment, bundle)
+                    }
                 }
-                findNavController().navigate(R.id.action_ordersFragment_to_ordersDetailsFragment, bundle)
+                is EventClass.ErrorIn -> {
+                    errorSnackBar(event.error, true)
+                }
+                else -> Unit
             }
         }
     }

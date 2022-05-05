@@ -9,7 +9,7 @@ import com.example.myshop.common.ProgressCircleGlide
 import com.example.myshop.databinding.ItemsInCartBinding
 import com.example.myshop.domain.models.ProductsInCart
 
-class ProductsInCartAdapter(private val listProductsInCart: MutableList<ProductsInCart> , private val itemClickListener: ItemClickListener): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
+class ProductsInCartAdapter(private val listProductsInCart: MutableList<ProductsInCart> , private val itemClickListenerCart: ItemClickListenerCart): RecyclerView.Adapter<ProductsInCartAdapter.ProductsViewHolder>() {
 
     inner class ProductsViewHolder(var binding: ItemsInCartBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -35,13 +35,13 @@ class ProductsInCartAdapter(private val listProductsInCart: MutableList<Products
         holder.binding.tvQuantity.text = "${products.quantity}"
 
         holder.binding.ibPlus.setOnClickListener {
-            itemClickListener.add(listProductsInCart[position], position)
+            itemClickListenerCart.add(listProductsInCart[position], position)
         }
         holder.binding.ibMinus.setOnClickListener {
-            itemClickListener.minus(listProductsInCart[position], position)
+            itemClickListenerCart.minus(listProductsInCart[position], position)
         }
         holder.binding.ivDeleteProduct.setOnClickListener {
-            itemClickListener.deleteItem(products)
+            itemClickListenerCart.deleteItem(products)
             listProductsInCart.removeAt(position)
             notifyDataSetChanged()
         }

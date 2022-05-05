@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.common.EventClass
 import com.example.myshop.common.Resource
-import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.response.CurrencyRates
 import com.example.myshop.domain.use_case.*
@@ -22,46 +22,28 @@ class MyCartViewModel @Inject constructor(
     private val getProductInCart: GetProductInCart,
     private val deleteProductInCart: DeleteProductInCart,
     private val updateProductsInCart: UpdateProductsInCart,
-    private val getProducts: GetProducts,
-    private val getCurrencyFromApi: GetCurrencyFromApi,
-    private val getQuantityInCart: GetQuantityInCart
+    private val getCurrencyFromApi: GetCurrencyFromApi
     ): ViewModel() {
+    private var _result = MutableLiveData<EventClass>()
+
+    var result: LiveData<EventClass> = _result
 
     private var _error = MutableLiveData<String>()
 
     var error: LiveData<String> = _error
 
-    private var _quantityInCart = MutableLiveData<Int>()
-
-    var quantityInCart: LiveData<Int> = _quantityInCart
 
     private val _itemsCurrency: MutableStateFlow<Resource<CurrencyRates>> = MutableStateFlow(Resource.Loading())
 
     val itemsCurrency: StateFlow<Resource<CurrencyRates>> = _itemsCurrency.asStateFlow()
 
-    private var _products = MutableLiveData<MutableList<Products>>()
-
-    var products: LiveData<MutableList<Products>> = _products
-
-    private var _productsInCart = MutableLiveData<MutableList<ProductsInCart>>()
-
-    var productsInCart: LiveData<MutableList<ProductsInCart>> = _productsInCart
-
-
     private var _allPrice = MutableLiveData<Float>()
 
     var allPrice: LiveData<Float> = _allPrice
 
-    fun getQuantityInCart(userId: String, idOrder: Long) = viewModelScope.launch {
-            _quantityInCart.postValue(getQuantityInCart.invoke(userId, idOrder))
-    }
 
     fun getProductInCart(idBuyer: String) = viewModelScope.launch {
-        _productsInCart.postValue(getProductInCart.invoke(idBuyer))
-    }
-
-    fun getProduct(userId: String) = viewModelScope.launch {
-        _products.postValue(getProducts.invoke(userId))
+        _result.postValue(getProductInCart.invoke(idBuyer))
     }
 
     fun updatePlus(price: Float, priceSum: Float) {

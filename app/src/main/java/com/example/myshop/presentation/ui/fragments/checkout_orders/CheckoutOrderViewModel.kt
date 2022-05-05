@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myshop.common.EventClass
 import com.example.myshop.domain.models.Products
 import com.example.myshop.domain.models.ProductsInCart
 import com.example.myshop.domain.models.ProductsInOrder
@@ -23,6 +24,9 @@ class CheckoutOrderViewModel @Inject constructor(
     private val updateProducts: UpdateProducts,
     private val getProductIdProduct: GetProductIdProduct
     ): ViewModel() {
+    private var _quantityInCart = MutableLiveData<List<Int>>()
+
+    var quantityInCart: LiveData<List<Int>> = _quantityInCart
 
     private var _products = MutableLiveData<List<Products>>()
 
@@ -32,18 +36,16 @@ class CheckoutOrderViewModel @Inject constructor(
 
     var time: LiveData<String> = _time
 
+    private var _result = MutableLiveData<EventClass>()
 
-    private var _productsInCart = MutableLiveData<MutableList<ProductsInCart>>()
-
-    var productsInCart: LiveData<MutableList<ProductsInCart>> = _productsInCart
-
+    var result: LiveData<EventClass> = _result
 
     private var _allPrice = MutableLiveData<Float>()
 
     var allPrice: LiveData<Float> = _allPrice
 
     fun getProductInCart(idBuyer: String) = viewModelScope.launch {
-       _productsInCart.postValue(getProductInCart.invoke(idBuyer))
+       _result.postValue(getProductInCart.invoke(idBuyer))
     }
 
 
@@ -68,6 +70,14 @@ class CheckoutOrderViewModel @Inject constructor(
 
     fun updateProducts(oldProduct: Products, quantity: Int, idProducts: Long){
         updateProducts.invoke(oldProduct, quantity, idProducts)
+    }
+
+    fun getQuantityProductsInCart(productsInCart: MutableList<ProductsInCart>) = viewModelScope.launch {
+        val arrayList = ArrayList<Int>()
+        for (product in productsInCart) {
+                arrayList.add(product.quantity)
+        }
+        _quantityInCart.postValue(arrayList)
     }
 
     fun getProduct(productInCart: MutableList<ProductsInCart>) = viewModelScope.launch {

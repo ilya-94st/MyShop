@@ -74,16 +74,7 @@ class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseF
         }
     }
 
-
-    override suspend fun getProduct(idSeller: String): ArrayList<Products>{
-            val listProducts: ArrayList<Products> = arrayListOf()
-            val querySnapshot = fireStore.collection(Constants.PRODUCTS).whereEqualTo("idSeller", idSeller).get().await()
-            for (document in querySnapshot) {
-                val product = document.toObject<Products>()
-                listProducts.add(product)
-            }
-            return listProducts
-        }
+    override suspend fun getProduct(idSeller: String) = fireStore.collection(Constants.PRODUCTS).whereEqualTo("idSeller", idSeller).get()
 
     override suspend fun getProductIdProduct(
         idProduct: Long
@@ -97,28 +88,9 @@ class ProductsRepositoryImp @Inject constructor(private val fireStore: FirebaseF
         return listProducts
     }
 
-    override  suspend fun getProductInCart(idBuyer: String): ArrayList<ProductsInCart> {
-        val listProductInCart: ArrayList<ProductsInCart> = arrayListOf()
-        val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", idBuyer).get().await()
-        for (document in querySnapshot) {
-            val product = document.toObject<ProductsInCart>()
-            product.quantity
-            listProductInCart.add(product)
-        }
-        return listProductInCart
-    }
+    override  suspend fun getProductInCart(idBuyer: String) = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", idBuyer).get()
 
-
-    override suspend fun getProductInOrders(idBuyer: String): ArrayList<ProductsInOrder> {
-        val listOrdersProducts: ArrayList<ProductsInOrder> = arrayListOf()
-        val querySnapshot = fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("idBuyer", idBuyer).get().await()
-        for (document in querySnapshot) {
-            val productInOrder = document.toObject<ProductsInOrder>()
-            listOrdersProducts.add(productInOrder)
-        }
-        return listOrdersProducts
-    }
-
+    override suspend fun getProductInOrders(idBuyer: String) = fireStore.collection(Constants.PRODUCTS_IN_ORDERS).whereEqualTo("idBuyer", idBuyer).get()
 
     override suspend fun getProductQuantityInCart(userId: String, idOrder: Long): Int {
         val querySnapshot = fireStore.collection(Constants.PRODUCT_IN_CART).whereEqualTo("idBuyer", userId).whereEqualTo("idOrder", idOrder).get().await()

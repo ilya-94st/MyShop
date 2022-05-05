@@ -42,7 +42,7 @@ class DashBoardFragment : BaseFragment<FragmentDashBoardBinding>() {
         viewModel.result.observe(viewLifecycleOwner) {
                 event ->
             when (event) {
-                is EventClass.SuccessList -> {
+                is EventClass.GetAllProducts -> {
                     allProductsAdapter.submitList(event.list)
                     hideProgressDialog()
                 }

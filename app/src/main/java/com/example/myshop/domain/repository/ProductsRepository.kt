@@ -25,15 +25,15 @@ interface ProductsRepository {
 
     fun deleteProductInCart(idOrder: Long)
 
-   suspend fun getProduct(idSeller: String): ArrayList<Products>
+   suspend fun getProduct(idSeller: String): Task<QuerySnapshot>
 
    suspend fun getProductIdProduct(idProduct: Long): ArrayList<Products>
 
    suspend fun getAllProducts(): Task<QuerySnapshot>
 
-   suspend fun getProductInCart(idBuyer: String): ArrayList<ProductsInCart>
+   suspend fun getProductInCart(idBuyer: String): Task<QuerySnapshot>
 
-   suspend fun getProductInOrders(idBuyer: String): ArrayList<ProductsInOrder>
+   suspend fun getProductInOrders(idBuyer: String): Task<QuerySnapshot>
 
    suspend fun getProductQuantityInCart(userId: String, idOrder: Long): Int?
 }
